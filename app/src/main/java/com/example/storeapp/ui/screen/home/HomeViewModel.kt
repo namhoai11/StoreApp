@@ -87,12 +87,12 @@ class HomeViewModel(
         _uiState.update { it.copy(currentCategoryId = categoryId) }
     }
 
-    fun showAllItems() {
-        _uiState.update { it.copy(currentCategoryId = -2) } // Hiển thị tất cả mục
-    }
-
-    fun showRecommendedItems() {
-        _uiState.update { it.copy(currentCategoryId = -1) }
-    }
+//    fun showAllItems() {
+//        _uiState.update { it.copy(currentCategoryId = -2) } // Hiển thị tất cả mục
+//    }
+//
+//    fun showRecommendedItems() {
+//        _uiState.update { it.copy(currentCategoryId = -1) }
+//    }
 }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,10 @@ fun CategoryList(
                 picUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/All.png?alt=media&token=a6a531c9-0f2c-4d44-b088-c4f36ae10e81"
             ) // Item tĩnh
         ) + categories
+    }
+    // Gọi onCategorySelected ngay khi danh sách được khởi tạo
+    LaunchedEffect(extendedCategories, selectedIndex) {
+        onCategorySelected(extendedCategories[selectedIndex].id.toString())
     }
     LazyRow(
         modifier = Modifier
