@@ -61,48 +61,50 @@ fun HomeScreen(
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { HomeTopAppBar() },
-//        bottomBar = {
-//            StoreAppBottomNavigationBar(
-//                navigationItemList = listOf(
-//                    NavigationItem(
-//                        title = "Home",
-//                        icon = painterResource(R.drawable.icon_home_outlined),
-//                        iconActive = painterResource(R.drawable.icon_home_filled),
-//                        route = "home"
-//                    ),
-//                    NavigationItem(
-//                        title = "Product",
-//                        icon = painterResource(R.drawable.icon_shopping_bag_outlined),
-//                        iconActive = painterResource(R.drawable.icon_shopping_bag_filled),
-//                        route = "product"
-//                    ),
-//                    NavigationItem(
-//                        title = "Favorite",
-//                        icon = painterResource(R.drawable.icon_favourite_outlined),
-//                        iconActive = painterResource(R.drawable.icon_favourite_filled),
-//                        route = "favorite"
-//                    ),
-//                    NavigationItem(
-//                        title = "Orders",
-//                        icon = painterResource(R.drawable.icon_orders_outlined),
-//                        iconActive = painterResource(R.drawable.icon_orders_filled),
-//                        route = "orders"
-//                    ),
-//                    NavigationItem(
-//                        title = "Profile",
-//                        icon = painterResource(R.drawable.icon_profile_outlined),
-//                        iconActive = painterResource(R.drawable.icon_profile_filled),
-//                        route = "profile"
-//                    )
-//                ),
-//                navController = navController,
-//                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-//            )
-//        }
-
+        topBar = {
+            HomeTopAppBar(scrollBehavior = scrollBehavior) // Truyền scrollBehavior vào đây
+        },
+        bottomBar = {
+            StoreAppBottomNavigationBar(
+                navigationItemList = listOf(
+                    NavigationItem(
+                        title = "Home",
+                        icon = painterResource(R.drawable.icon_home_outlined),
+                        iconActive = painterResource(R.drawable.icon_home_filled),
+                        route = "home"
+                    ),
+                    NavigationItem(
+                        title = "Product",
+                        icon = painterResource(R.drawable.icon_shopping_bag_outlined),
+                        iconActive = painterResource(R.drawable.icon_shopping_bag_filled),
+                        route = "product"
+                    ),
+                    NavigationItem(
+                        title = "Favorite",
+                        icon = painterResource(R.drawable.icon_favourite_outlined),
+                        iconActive = painterResource(R.drawable.icon_favourite_filled),
+                        route = "favorite"
+                    ),
+                    NavigationItem(
+                        title = "Orders",
+                        icon = painterResource(R.drawable.icon_orders_outlined),
+                        iconActive = painterResource(R.drawable.icon_orders_filled),
+                        route = "orders"
+                    ),
+                    NavigationItem(
+                        title = "Profile",
+                        icon = painterResource(R.drawable.icon_profile_outlined),
+                        iconActive = painterResource(R.drawable.icon_profile_filled),
+                        route = "profile"
+                    )
+                ),
+                navController = navController,
+                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+            )
+        }
     ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,

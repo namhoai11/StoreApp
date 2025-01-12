@@ -37,7 +37,7 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Uni
         columns = GridCells.Fixed(2),
         modifier = Modifier
             .height(500.dp)
-            .padding(horizontal = 8.dp),
+            .padding(start = 8.dp, end = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -46,6 +46,7 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Uni
         }
     }
 }
+
 @Composable
 fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit){
     LazyVerticalGrid(

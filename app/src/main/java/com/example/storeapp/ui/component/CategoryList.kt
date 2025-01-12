@@ -48,7 +48,7 @@ fun CategoryList(
             CategoryModel(
                 id = -1,
                 title = "Recommend",
-                picUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/recommend.png?alt=media&token=6da5b23c-619d-4641-b566-2bda413cb7cb"
+                picUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/recommend.png?alt=media&token=0d69a7fa-9d97-489a-bfbc-f5d89c3f35fe"
             ) // Item tĩnh
         ) + categories
     } else {
@@ -56,7 +56,7 @@ fun CategoryList(
             CategoryModel(
                 id = -2,
                 title = "All",
-                picUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/All.png?alt=media&token=a6a531c9-0f2c-4d44-b088-c4f36ae10e81"
+                picUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/All.png?alt=media&token=f68f85f0-8388-4f60-b50b-fe952f2f17dd"
             ) // Item tĩnh
         ) + categories
     }
