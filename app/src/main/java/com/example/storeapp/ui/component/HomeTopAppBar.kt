@@ -9,12 +9,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +35,7 @@ import com.example.storeapp.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
+    var itemCount by remember { mutableStateOf(1) }
     // Sử dụng scrollBehavior trong TopAppBar
     TopAppBar(
         title = {
@@ -53,15 +60,39 @@ fun HomeTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                     )
                 }
                 Row {
-                    Image(
-                        painter = painterResource(id = R.drawable.fav_icon),
-                        contentDescription = ""
-                    )
+                    BadgedBox(badge = {
+                        if (itemCount > 0) {
+                            Badge(
+                                containerColor = Color.Red,
+                                contentColor = Color.White
+                            ) {
+                                Text("$itemCount")
+                            }
+                        }
+                    }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.icon_notification_outlined),
+                            contentDescription = ""
+                        )
+                    }
                     Spacer(modifier = Modifier.width(16.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.search_icon),
-                        contentDescription = ""
-                    )
+                    BadgedBox(badge = {
+                        if (itemCount > 0) {
+                            Badge(
+                                containerColor = Color.Red,
+                                contentColor = Color.White
+                            ) {
+                                Text("$itemCount")
+                            }
+                        }
+                    }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.icon_cart_outlined),
+                            contentDescription = ""
+                        )
+                    }
                 }
             }
         },

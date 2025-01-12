@@ -71,7 +71,7 @@ fun StoreAppBottomNavigationBar(
 fun PreviewStoreAppBottomNavigationBar() {
     // Fake NavController for preview
     val fakeNavController = rememberNavController()
-    val currentRoute = "orders" // Set to a route from your list, e.g. "home"
+    val currentRoute = "product" // Set to a route from your list, e.g. "home"
 
     // Sample navigation items
     val navigationItems = listOf(
@@ -83,8 +83,64 @@ fun PreviewStoreAppBottomNavigationBar() {
         ),
         NavigationItem(
             title = "Product",
-            icon = painterResource(R.drawable.icon_shopping_bag_outlined),
-            iconActive = painterResource(R.drawable.icon_shopping_bag_filled),
+            icon = painterResource(R.drawable.icon_shopping_store_outlined),
+            iconActive = painterResource(R.drawable.icon_shopping_store_filled),
+            route = "product"
+        ),
+//        NavigationItem(
+//            title = "Cart",
+//            icon = painterResource(R.drawable.icon_cart_outlined),
+//            iconActive = painterResource(R.drawable.icon_cart_filled),
+//            route = "cart"
+//        ),
+        NavigationItem(
+            title = "Favorite",
+            icon = painterResource(R.drawable.icon_favourite_outlined),
+            iconActive = painterResource(R.drawable.icon_favourite_filled),
+            route = "favorite"
+        ),
+        NavigationItem(
+            title = "Orders",
+            icon = painterResource(R.drawable.icon_orders_outlined),
+            iconActive = painterResource(R.drawable.icon_orders_filled),
+            route = "orders"
+        ),
+
+        NavigationItem(
+            title = "Profile",
+            icon = painterResource(R.drawable.icon_profile_outlined),
+            iconActive = painterResource(R.drawable.icon_profile_filled),
+            route = "profile"
+        )
+    )
+
+    StoreAppBottomNavigationBar(
+        navigationItemList = navigationItems,
+        navController = fakeNavController,
+        currentRoute = currentRoute,
+        modifier = Modifier
+    )
+}
+
+@Composable
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+fun PreviewStoreAppBottomNavigationBar2() {
+    // Fake NavController for preview
+    val fakeNavController = rememberNavController()
+    val currentRoute = "home" // Set to a route from your list, e.g. "home"
+
+    // Sample navigation items
+    val navigationItems = listOf(
+        NavigationItem(
+            title = "Home",
+            icon = painterResource(R.drawable.icon_home_outlined),
+            iconActive = painterResource(R.drawable.icon_home_filled),
+            route = "home"
+        ),
+        NavigationItem(
+            title = "Product",
+            icon = painterResource(R.drawable.icon_shopping_store_outlined),
+            iconActive = painterResource(R.drawable.icon_shopping_store_filled),
             route = "product"
         ),
 //        NavigationItem(

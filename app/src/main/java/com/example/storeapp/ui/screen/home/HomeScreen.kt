@@ -120,7 +120,7 @@ fun HomeScreen(
                 }
             }
             item {
-                SectionTitle(title = "Category", actionText = "See All")
+                SectionTitle(title = "Category", actionText = "")
             }
             //Category
             item {
