@@ -78,8 +78,8 @@ fun HomeScreen(
                     ),
                     NavigationItem(
                         title = "Product",
-                        icon = painterResource(R.drawable.icon_shopping_bag_outlined),
-                        iconActive = painterResource(R.drawable.icon_shopping_bag_filled),
+                        icon = painterResource(R.drawable.icon_shopping_store_outlined),
+                        iconActive = painterResource(R.drawable.icon_shopping_store_filled),
                         route = "product"
                     ),
                     NavigationItem(
