@@ -35,6 +35,7 @@ import com.example.storeapp.ui.component.SectionTitle
 import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.navigation.NavigationItem
+import com.example.storeapp.ui.uistate.HomeUiState
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -44,13 +45,13 @@ object HomeDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     navigateCartScreen: () -> Unit,
     navigateAllProduct: () -> Unit,
     navigateProdcutDetails: () -> Unit,
     navigateNotification: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
     val homeUiState by viewModel.uiState.collectAsState()
 
@@ -58,7 +59,7 @@ fun HomeScreen(
     val categoryLog = homeUiState.categories
     Log.d("HomeScreen", "banners: $bannersLog")
     Log.d("HomeScreen", "categories: $categoryLog")
-
+    var currentCatId by remember { mutableStateOf(homeUiState.currentCategoryId) }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -111,6 +112,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             // Banner
             item {
                 if (homeUiState.showBannerLoading) {
@@ -142,8 +144,14 @@ fun HomeScreen(
             }
 
             item {
-                SectionTitle(title = "Recommendation", actionText = "See All")
+                val selectedCategory = homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
+                SectionTitle(
+                    title = selectedCategory?.title ?: "Recommended",
+                    actionText = "See All",
+                    navigate = { navigateAllProduct() }
+                )
             }
+
             item {
                 if (homeUiState.showRecommenedLoading) {
                     LoadingBox(height = 200.dp)

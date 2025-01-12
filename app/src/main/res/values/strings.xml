@@ -12,4 +12,6 @@
     <string name="letgo">"Let's Get Started"</string>
     <string name="sign">Already have an account?</string>
     <string name="login_title">Login</string>
+    <string name="category_title">Category</string>
+
 </resources>

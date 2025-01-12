@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.storeapp.ui.screen.category.CategoryDestination
+import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.home.HomeScreen
 import com.example.storeapp.ui.screen.intro.IntroDestination
@@ -25,7 +27,7 @@ fun StoreAppNavHost(
         composable(route = IntroDestination.route) {
             IntroScreen(
                 onNavigateSignIn = { navController.navigate(LoginDestination.route) },
-                onNavigateHome = {navController.navigate(HomeDestination.route)}
+                onNavigateHome = { navController.navigate(HomeDestination.route) }
             )
         }
         composable(route = LoginDestination.route) {
@@ -34,10 +36,15 @@ fun StoreAppNavHost(
         composable(route = HomeDestination.route) {
             HomeScreen(
                 navigateCartScreen = { /*TODO*/ },
-                navigateAllProduct = { /*TODO*/ },
+                navigateAllProduct = { navController.navigate(CategoryDestination.route) },
                 navigateProdcutDetails = { /*TODO*/ },
                 navigateNotification = { /*TODO*/ },
                 navController = navController
+            )
+        }
+        composable(route = CategoryDestination.route) {
+            CategoryScreen(
+                navcontroller = navController,
             )
         }
     }

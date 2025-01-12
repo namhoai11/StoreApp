@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +33,7 @@ import com.example.storeapp.R
 import com.example.storeapp.model.ItemsModel
 
 @Composable
-fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit={}) {
+fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit = {}) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -48,11 +49,11 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Uni
 }
 
 @Composable
-fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit){
+fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit = {}) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .fillMaxSize()
+            .height(1000.dp)
             .padding(start = 8.dp, end = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
