@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -35,11 +36,11 @@ import com.example.storeapp.ui.component.SectionTitle
 import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.navigation.NavigationItem
-import com.example.storeapp.ui.uistate.HomeUiState
+import com.example.storeapp.ui.ourproduct.OurProductDestination
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
-    override val titleRes = R.string.intro_title
+    override val titleRes = R.string.home_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,16 +73,16 @@ fun HomeScreen(
             StoreAppBottomNavigationBar(
                 navigationItemList = listOf(
                     NavigationItem(
-                        title = "Home",
+                        title = stringResource(id = HomeDestination.titleRes),
                         icon = painterResource(R.drawable.icon_home_outlined),
                         iconActive = painterResource(R.drawable.icon_home_filled),
-                        route = "home"
+                        route = HomeDestination.route
                     ),
                     NavigationItem(
-                        title = "Product",
+                        title = stringResource(id = OurProductDestination.titleRes),
                         icon = painterResource(R.drawable.icon_shopping_store_outlined),
                         iconActive = painterResource(R.drawable.icon_shopping_store_filled),
-                        route = "product"
+                        route = OurProductDestination.route
                     ),
                     NavigationItem(
                         title = "Favorite",

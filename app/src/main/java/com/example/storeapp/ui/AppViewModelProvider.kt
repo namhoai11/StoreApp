@@ -6,13 +6,16 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
+import com.example.storeapp.ui.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeViewModel(storeAppManagerApplication().container.storeAppRepository)
+            HomeViewModel(
+                storeAppManagerApplication().container.storeAppRepository
+            )
         }
 
         initializer {
@@ -21,6 +24,12 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.storeAppRepository
             )
 
+        }
+
+        initializer {
+            OurProductViewModel(
+                storeAppManagerApplication().container.storeAppRepository
+            )
         }
     }
 

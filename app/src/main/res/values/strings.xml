@@ -12,8 +12,10 @@
     <string name="letgo">"Let's Get Started"</string>
     <string name="sign">Already have an account?</string>
     <string name="login_title">Login</string>
+    <string name="home_title">Home</string>
     <string name="category_title">Category</string>
     <string name="productdetails_title">ProductDetails</string>
     <string name="product_detail">Product Details</string>
+    <string name="our_product">Our Product</string>
 
 </resources>

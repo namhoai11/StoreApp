@@ -14,8 +14,6 @@ fun defaultItemsModel() = ItemsModel(
     showRecommended = false,
     categoryId = ""
 )
-
-
 data class ProductDetailsUiState(
     val productDetailsItem: ItemsModel = defaultItemsModel(),
     val showProductDetailsLoading: Boolean = true,

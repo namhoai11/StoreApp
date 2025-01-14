@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.storeapp.ui.ourproduct.OurProductDestination
+import com.example.storeapp.ui.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
@@ -33,7 +35,9 @@ fun StoreAppNavHost(
                 onNavigateSignIn = { navController.navigate(LoginDestination.route) },
                 onNavigateHome = {
                     navController.navigate(HomeDestination.route) {
-                        popUpTo(IntroDestination.route) { inclusive = true } // xóa bỏ các màn hình cũ không cần thiết
+                        popUpTo(IntroDestination.route) {
+                            inclusive = true
+                        } // xóa bỏ các màn hình cũ không cần thiết
                     }
                 }
             )
@@ -71,6 +75,16 @@ fun StoreAppNavHost(
                 navController = navController,
                 onAddToCartClick = {},
                 onCartClick = {}
+            )
+        }
+        composable(
+            route = OurProductDestination.route
+        ) {
+            OurProductScreen(
+                navigateProductDetails = {
+                    navController.navigate("${ProductDetailsDestination.route}/$it")
+                },
+                navController = navController
             )
         }
 

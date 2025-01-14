@@ -57,6 +57,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.model.ItemsModel
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 
@@ -73,7 +74,7 @@ fun ProductDetailsScreen(
     navController: NavController,
     onAddToCartClick: () -> Unit,
     onCartClick: () -> Unit,
-    viewModel: ProductDetailsViewModel = viewModel(factory=AppViewModelProvider.Factory)
+    viewModel: ProductDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
 
     val productDetailsUiState by viewModel.uiState.collectAsState()
@@ -124,10 +125,15 @@ fun ProductDetailsScreen(
             )
         }
     ) { innerPadding ->
-        ProductDetailsContent(
-            innerPadding = innerPadding,
-            item = productDetailsUiState.productDetailsItem
-        )
+        if (productDetailsUiState.showProductDetailsLoading) {
+            LoadingBox(height = 200.dp)
+        }
+        else {
+            ProductDetailsContent(
+                innerPadding = innerPadding,
+                item = productDetailsUiState.productDetailsItem
+            )
+        }
     }
 }
 
@@ -163,15 +169,15 @@ fun PrevewProductDetailsContent() {
 fun ProductDetailsContent(
     item: ItemsModel,
 //    modifier: Modifier,
-    onAddToCartClick: () -> Unit={},
+    onAddToCartClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     innerPadding: PaddingValues
-){
+) {
     var selectedImageUrl by remember { mutableStateOf(item.picUrl.firstOrNull()) }
     LaunchedEffect(item.picUrl) {
         selectedImageUrl = item.picUrl.firstOrNull() ?: ""
     }
-    Log.d("ProductDetailsContent","selectdImageUrl: $selectedImageUrl")
+    Log.d("ProductDetailsContent", "selectdImageUrl: $selectedImageUrl")
     var selectedModelIndex by remember { mutableStateOf(-1) }
 
     Column(
