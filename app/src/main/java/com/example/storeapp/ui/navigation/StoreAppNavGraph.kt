@@ -3,8 +3,10 @@ package com.example.storeapp.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
@@ -47,5 +49,13 @@ fun StoreAppNavHost(
                 navcontroller = navController,
             )
         }
+//        composable(
+//            route = ContactEditDestination.routeWithArgs,
+//            arguments = listOf(navArgument(ContactEditDestination.contactIdArg) {
+//                type = NavType.IntType
+//            })
+//        ) {
+//            ContactEditScreen(navigateBack = { navController.popBackStack() }, onNavigateUp = { navController.navigateUp() })
+//        }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.storeapp.model
 
 data class ItemsModel(
+    var id: Int = 0,
     var title: String = "",
     var description: String = "",
     var picUrl: ArrayList<String> = ArrayList(),

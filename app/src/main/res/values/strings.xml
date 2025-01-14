@@ -13,5 +13,7 @@
     <string name="sign">Already have an account?</string>
     <string name="login_title">Login</string>
     <string name="category_title">Category</string>
+    <string name="productdetails_title">ProductDetails</string>
+    <string name="product_detail">Product Details</string>
 
 </resources>

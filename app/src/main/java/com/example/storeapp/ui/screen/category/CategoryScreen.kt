@@ -47,8 +47,7 @@ object CategoryDestination : NavigationDestination {
 fun CategoryScreen(
     navcontroller: NavHostController,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-
-    ) {
+) {
     val homeUiState by viewModel.uiState.collectAsState()
 //    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
@@ -67,7 +66,8 @@ fun CategoryScreen(
             CenterAlignedTopAppBar(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 title = {
-                    val selectedCategory = homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
+                    val selectedCategory =
+                        homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
                     Text(
                         text = selectedCategory?.title ?: "All",
 //                        fontFamily = poppinsFontFamily,
