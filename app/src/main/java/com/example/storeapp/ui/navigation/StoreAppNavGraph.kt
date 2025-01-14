@@ -31,13 +31,18 @@ fun StoreAppNavHost(
         composable(route = IntroDestination.route) {
             IntroScreen(
                 onNavigateSignIn = { navController.navigate(LoginDestination.route) },
-                onNavigateHome = { navController.navigate(HomeDestination.route) }
+                onNavigateHome = {
+                    navController.navigate(HomeDestination.route) {
+                        popUpTo(IntroDestination.route) { inclusive = true } // xóa bỏ các màn hình cũ không cần thiết
+                    }
+                }
             )
         }
         composable(route = LoginDestination.route) {
             LoginScreen()
         }
         composable(route = HomeDestination.route) {
+
             HomeScreen(
                 navigateCartScreen = { /*TODO*/ },
                 navigateAllProduct = { navController.navigate(CategoryDestination.route) },

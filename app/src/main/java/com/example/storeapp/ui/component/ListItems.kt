@@ -1,5 +1,6 @@
 package com.example.storeapp.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetails: (Int) -> Unit) {
         items(items.size) { index ->
             Item(items[index], navigateToItemDetails)
         }
+
     }
 }
 
@@ -71,7 +73,10 @@ fun Item(item: ItemsModel, navigateToItemDetail: (Int) -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .height(235.dp)
-            .clickable { navigateToItemDetail(item.id) }
+            .clickable {
+                navigateToItemDetail(item.id)
+                Log.d("ListItems", "ItemClicked: ${item.id}")
+            }
     ) {
         AsyncImage(
             model = item.picUrl.firstOrNull(),

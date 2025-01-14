@@ -1,6 +1,7 @@
 package com.example.storeapp.ui.screen.productdetails
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +34,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,10 +51,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.model.ItemsModel
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 
@@ -65,36 +70,25 @@ object ProductDetailsDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(
-    navController: NavHostController,
+    navController: NavController,
     onAddToCartClick: () -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    viewModel: ProductDetailsViewModel = viewModel(factory=AppViewModelProvider.Factory)
 ) {
-    val item = ItemsModel(
-        id = 1,
-        title = "Business Laptop",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-        picUrl = arrayListOf(
-            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
-            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
-            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
-        ),
-        model = arrayListOf(
-            "core i3",
-            "core i5",
-            "core i7"
-        ),
-        price = 550.0,
-        rating = 4.7,
-        showRecommended = true,
-        categoryId = "0"
-    )
-    var selectedImageUrl by remember { mutableStateOf(item.picUrl.first()) }
+
+    val productDetailsUiState by viewModel.uiState.collectAsState()
+//    var selectedImageUI by remember { mutableStateOf(productDetailsUiState.productDetailsItem.picUrl.firstOrNull()) }
+//    Log.d("ProductDetailsContent","selectdImageUI: $selectedImageUI")
+//
+//
+//    LaunchedEffect(productDetailsUiState.productDetailsItem) {
+//        selectedImageUI = productDetailsUiState.productDetailsItem.picUrl.firstOrNull() ?: ""
+//    }
+
     var isProductFavorited by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
-    var selectedModelIndex by remember { mutableStateOf(-1) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -132,7 +126,7 @@ fun ProductDetailsScreen(
     ) { innerPadding ->
         ProductDetailsContent(
             innerPadding = innerPadding,
-            item = item
+            item = productDetailsUiState.productDetailsItem
         )
     }
 }
@@ -173,7 +167,11 @@ fun ProductDetailsContent(
     onCartClick: () -> Unit = {},
     innerPadding: PaddingValues
 ){
-    var selectedImageUrl by remember { mutableStateOf(item.picUrl.first()) }
+    var selectedImageUrl by remember { mutableStateOf(item.picUrl.firstOrNull()) }
+    LaunchedEffect(item.picUrl) {
+        selectedImageUrl = item.picUrl.firstOrNull() ?: ""
+    }
+    Log.d("ProductDetailsContent","selectdImageUrl: $selectedImageUrl")
     var selectedModelIndex by remember { mutableStateOf(-1) }
 
     Column(
@@ -184,18 +182,35 @@ fun ProductDetailsContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = selectedImageUrl),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(290.dp)
-                .background(
-                    colorResource(id = R.color.lightGrey),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(16.dp)
-        )
+        if (item.picUrl.isNotEmpty()) {
+            Image(
+                painter = rememberAsyncImagePainter(model = selectedImageUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(290.dp)
+                    .background(
+                        colorResource(id = R.color.lightGrey),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(16.dp)
+            )
+        } else {
+            Text(
+                text = "No image available",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(290.dp)
+                    .background(
+                        colorResource(id = R.color.lightGrey),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(16.dp),
+                textAlign = TextAlign.Center
+            )
+        }
 
         LazyRow(modifier = Modifier.padding(vertical = 16.dp)) {
             items(item.picUrl) { imgUrl ->
