@@ -31,14 +31,32 @@ class OurProductViewModel(
             _uiState.update { it.copy(showItemsLoading = true) }
             val allItems = repository.loadAllItems()
             Log.d("OurProductViewModel", "Our Product:$allItems")
-            _uiState.update { it.copy(
-                allItems = allItems,
-                showItemsLoading = false
-            ) }
+            _uiState.update {
+                it.copy(
+                    allItems = allItems,
+                    showItemsLoading = false
+                )
+            }
 
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             // Xử lý lỗi nếu cần (thêm trạng thái lỗi vào UiState hoặc log)
         }
 
+    }
+
+    // Hàm tìm kiếm sản phẩm theo tên
+    fun searchItemsByName(query: String) = viewModelScope.launch {
+        _uiState.update { currentState ->
+            val filteredItems = if (query.isNotBlank()) {
+                currentState.allItems.filter { it.title.contains(query, ignoreCase = true) }
+            } else {
+                currentState.allItems
+            }
+            currentState.copy(
+                itemsSearched = filteredItems,
+                currentQuery = query
+            )
+        }
+        Log.d("OurProductViewModel", "itemsSearched:${_uiState.value.itemsSearched}")
     }
 }

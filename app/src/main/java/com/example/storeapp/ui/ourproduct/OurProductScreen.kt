@@ -38,7 +38,7 @@ fun OurProductScreen(
     val ourProductUiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
-            SearchBar()
+            SearchBar(onSearch = { viewModel.searchItemsByName(it) })
         },
         bottomBar = {
             StoreAppBottomNavigationBar(
@@ -89,13 +89,16 @@ fun OurProductScreen(
                     LoadingBox(height = 200.dp)
                 } else {
                     ListItemsFullSize(
-                        items = ourProductUiState.allItems,
+                        items = if (ourProductUiState.currentQuery.isNotBlank()) {
+                            ourProductUiState.itemsSearched
+                        } else {
+                            ourProductUiState.allItems
+                        },
                         navigateToItemDetail = navigateProductDetails
                     )
                 }
             }
         }
-
     }
 }
 
