@@ -33,7 +33,7 @@ import com.example.storeapp.R
 import com.example.storeapp.model.ItemsModel
 
 @Composable
-fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit = {}) {
+fun ListItems(items: List<ItemsModel>, navigateToItemDetails: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -43,13 +43,13 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Uni
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(items.size) { index ->
-            Item(items[index], navigateToItemDetail)
+            Item(items[index], navigateToItemDetails)
         }
     }
 }
 
 @Composable
-fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel) -> Unit = {}) {
+fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -66,12 +66,12 @@ fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (ItemsModel
 }
 
 @Composable
-fun Item(item: ItemsModel, navigateToItemDetail: (ItemsModel) -> Unit) {
+fun Item(item: ItemsModel, navigateToItemDetail: (Int) -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .height(235.dp)
-            .clickable { navigateToItemDetail(item) }
+            .clickable { navigateToItemDetail(item.id) }
     ) {
         AsyncImage(
             model = item.picUrl.firstOrNull(),

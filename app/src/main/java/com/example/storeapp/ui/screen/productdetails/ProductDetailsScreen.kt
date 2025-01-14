@@ -58,18 +58,38 @@ import com.example.storeapp.ui.navigation.NavigationDestination
 object ProductDetailsDestination : NavigationDestination {
     override val route = "product_details"
     override val titleRes = R.string.productdetails_title
-    const val productDetailsId = "productId"
-    val routeWithArgs = "$route/${productDetailsId}"
+    const val productDetailsIdArg = "productId"
+    val routeWithArgs = "$route/{$productDetailsIdArg}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreen(
-    item: ItemsModel,
-    navcontroller: NavHostController,
-    onAddToCartClick: () -> Unit={},
-    onCartClick: () -> Unit = {}
+    navController: NavHostController,
+    onAddToCartClick: () -> Unit,
+    onCartClick: () -> Unit
 ) {
+    val item = ItemsModel(
+        id = 1,
+        title = "Business Laptop",
+        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
+        picUrl = arrayListOf(
+            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
+            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
+            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
+            "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
+        ),
+        model = arrayListOf(
+            "core i3",
+            "core i5",
+            "core i7"
+        ),
+        price = 550.0,
+        rating = 4.7,
+        showRecommended = true,
+        categoryId = "0"
+    )
     var selectedImageUrl by remember { mutableStateOf(item.picUrl.first()) }
     var isProductFavorited by remember {
         mutableStateOf(false)
@@ -91,7 +111,7 @@ fun ProductDetailsScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
-                        modifier = Modifier.clickable { navcontroller.navigateUp() }
+                        modifier = Modifier.clickable { navController.navigateUp() }
                     )
                 },
                 actions = {

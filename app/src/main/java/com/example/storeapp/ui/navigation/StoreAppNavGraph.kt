@@ -15,6 +15,8 @@ import com.example.storeapp.ui.screen.intro.IntroDestination
 import com.example.storeapp.ui.screen.intro.IntroScreen
 import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.LoginScreen
+import com.example.storeapp.ui.screen.productdetails.ProductDetailsDestination
+import com.example.storeapp.ui.screen.productdetails.ProductDetailsScreen
 
 @Composable
 fun StoreAppNavHost(
@@ -39,23 +41,33 @@ fun StoreAppNavHost(
             HomeScreen(
                 navigateCartScreen = { /*TODO*/ },
                 navigateAllProduct = { navController.navigate(CategoryDestination.route) },
-                navigateProdcutDetails = { /*TODO*/ },
+                navigateProductDetails = {
+                    navController.navigate("${ProductDetailsDestination.route}/$it")
+                },
                 navigateNotification = { /*TODO*/ },
                 navController = navController
             )
         }
         composable(route = CategoryDestination.route) {
             CategoryScreen(
-                navcontroller = navController,
+                navController = navController,
+                navigateProductDetails = {
+                    navController.navigate("${ProductDetailsDestination.route}/$it")
+                }
             )
         }
-//        composable(
-//            route = ContactEditDestination.routeWithArgs,
-//            arguments = listOf(navArgument(ContactEditDestination.contactIdArg) {
-//                type = NavType.IntType
-//            })
-//        ) {
-//            ContactEditScreen(navigateBack = { navController.popBackStack() }, onNavigateUp = { navController.navigateUp() })
-//        }
+        composable(
+            route = ProductDetailsDestination.routeWithArgs,
+            arguments = listOf(navArgument(ProductDetailsDestination.productDetailsIdArg) {
+                type = NavType.IntType
+            })
+        ) {
+            ProductDetailsScreen(
+                navController = navController,
+                onAddToCartClick = {},
+                onCartClick = {}
+            )
+        }
+
     }
 }

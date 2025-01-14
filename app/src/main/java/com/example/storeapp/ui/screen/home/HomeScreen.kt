@@ -48,7 +48,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateCartScreen: () -> Unit,
     navigateAllProduct: () -> Unit,
-    navigateProdcutDetails: () -> Unit,
+    navigateProductDetails: (Int) -> Unit,
     navigateNotification: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavController,
@@ -144,7 +144,8 @@ fun HomeScreen(
             }
 
             item {
-                val selectedCategory = homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
+                val selectedCategory =
+                    homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
                 SectionTitle(
                     title = selectedCategory?.title ?: "Recommended",
                     actionText = "See All",
@@ -157,7 +158,8 @@ fun HomeScreen(
                     LoadingBox(height = 200.dp)
                 } else {
                     ListItems(
-                        items = homeUiState.currentListItems
+                        items = homeUiState.currentListItems,
+                        navigateToItemDetails = navigateProductDetails
                     )
                 }
             }

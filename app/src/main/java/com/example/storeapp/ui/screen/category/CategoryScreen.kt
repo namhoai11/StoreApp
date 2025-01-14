@@ -12,17 +12,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +26,6 @@ import androidx.navigation.NavHostController
 import com.example.storeapp.R
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.CategoryList
-import com.example.storeapp.ui.component.ListItems
 import com.example.storeapp.ui.component.ListItemsFullSize
 import com.example.storeapp.ui.component.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
@@ -45,7 +39,8 @@ object CategoryDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
-    navcontroller: NavHostController,
+    navController: NavHostController,
+    navigateProductDetails: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val homeUiState by viewModel.uiState.collectAsState()
@@ -79,7 +74,7 @@ fun CategoryScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
-                        modifier = Modifier.clickable { navcontroller.navigateUp() }
+                        modifier = Modifier.clickable { navController.navigateUp() }
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -116,7 +111,8 @@ fun CategoryScreen(
                     LoadingBox(height = 200.dp)
                 } else {
                     ListItemsFullSize(
-                        items = homeUiState.currentListItems
+                        items = homeUiState.currentListItems,
+                        navigateToItemDetail = navigateProductDetails
                     )
                 }
             }
