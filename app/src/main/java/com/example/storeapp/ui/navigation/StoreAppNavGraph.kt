@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.storeapp.ui.cart.CartDestination
+import com.example.storeapp.ui.cart.CartScreen
 import com.example.storeapp.ui.ourproduct.OurProductDestination
 import com.example.storeapp.ui.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
@@ -48,7 +50,7 @@ fun StoreAppNavHost(
         composable(route = HomeDestination.route) {
 
             HomeScreen(
-                navigateCartScreen = { /*TODO*/ },
+                navigateCartScreen = { navController.navigate(CartDestination.route) },
                 navigateAllProduct = { navController.navigate(CategoryDestination.route) },
                 navigateProductDetails = {
                     navController.navigate("${ProductDetailsDestination.route}/$it")
@@ -86,6 +88,11 @@ fun StoreAppNavHost(
                 },
                 navController = navController
             )
+        }
+        composable(
+            CartDestination.route
+        ) {
+            CartScreen(navController = navController)
         }
 
     }

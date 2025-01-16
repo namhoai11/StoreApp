@@ -2,6 +2,7 @@ package com.example.storeapp.ui.component
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +35,10 @@ import com.example.storeapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
+fun HomeTopAppBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    navigateCartScreen: () -> Unit,
+) {
     var itemCount by remember { mutableStateOf(1) }
     // Sử dụng scrollBehavior trong TopAppBar
     TopAppBar(
@@ -90,7 +94,10 @@ fun HomeTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.icon_cart_outlined),
-                            contentDescription = ""
+                            contentDescription = "",
+                            modifier = Modifier.clickable {
+                                navigateCartScreen()
+                            }
                         )
                     }
                 }
@@ -107,5 +114,5 @@ fun HomeTopAppBar(scrollBehavior: TopAppBarScrollBehavior) {
 @Composable
 fun PreviewHomeTopAppBar() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    HomeTopAppBar(scrollBehavior = scrollBehavior)
+    HomeTopAppBar(scrollBehavior = scrollBehavior, {})
 }

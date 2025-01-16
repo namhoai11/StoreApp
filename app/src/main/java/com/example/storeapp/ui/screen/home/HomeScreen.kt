@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.cart.CartDestination
 import com.example.storeapp.ui.component.Banners
 import com.example.storeapp.ui.component.CategoryList
 import com.example.storeapp.ui.component.HomeTopAppBar
@@ -67,7 +68,10 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            HomeTopAppBar(scrollBehavior = scrollBehavior) // Truyền scrollBehavior vào đây
+            HomeTopAppBar(
+                scrollBehavior = scrollBehavior,// Truyền scrollBehavior vào đây
+                navigateCartScreen
+            )
         },
         bottomBar = {
             StoreAppBottomNavigationBar(
@@ -85,10 +89,10 @@ fun HomeScreen(
                         route = OurProductDestination.route
                     ),
                     NavigationItem(
-                        title = "Favorite",
+                        title = stringResource(id = CartDestination.titleRes),
                         icon = painterResource(R.drawable.icon_favourite_outlined),
                         iconActive = painterResource(R.drawable.icon_favourite_filled),
-                        route = "favorite"
+                        route = CartDestination.route
                     ),
                     NavigationItem(
                         title = "Orders",
