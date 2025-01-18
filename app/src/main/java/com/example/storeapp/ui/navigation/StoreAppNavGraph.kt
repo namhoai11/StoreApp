@@ -9,6 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.storeapp.ui.cart.CartDestination
 import com.example.storeapp.ui.cart.CartScreen
+import com.example.storeapp.ui.component.FavListPreview
+import com.example.storeapp.ui.favorite.FavoriteDestination
+import com.example.storeapp.ui.favorite.FavoriteScreen
 import com.example.storeapp.ui.ourproduct.OurProductDestination
 import com.example.storeapp.ui.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
@@ -93,6 +96,12 @@ fun StoreAppNavHost(
             CartDestination.route
         ) {
             CartScreen(navController = navController)
+        }
+
+        composable(
+            FavoriteDestination.route
+        ){
+            FavoriteScreen(navController = navController)
         }
 
     }

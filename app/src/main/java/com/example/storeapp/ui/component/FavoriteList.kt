@@ -3,8 +3,6 @@ package com.example.storeapp.ui.component
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,20 +10,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,10 +32,9 @@ import com.example.storeapp.R
 import com.example.storeapp.model.ItemsModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
-
 @Composable
-fun CartList(
-    cartItems: ArrayList<ItemsModel>,
+fun FavoriteList(
+    favItems: ArrayList<ItemsModel>,
 ) {
     LazyColumn(
         Modifier
@@ -45,9 +42,9 @@ fun CartList(
             .heightIn(max = 500.dp) // Đặt chiều cao tối đa
     )
     {
-        items(cartItems) { item ->
-            CartItem(
-                cartItem = item,
+        items(favItems) { item ->
+            FavItem(
+                favItem = item,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
@@ -55,8 +52,8 @@ fun CartList(
 }
 
 @Composable
-fun CartItem(
-    cartItem: ItemsModel,
+fun FavItem(
+    favItem: ItemsModel,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -70,7 +67,7 @@ fun CartItem(
 //                .padding(top = 8.dp, bottom = 8.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = cartItem.picUrl[0]),
+                painter = rememberAsyncImagePainter(model = favItem.picUrl[0]),
                 contentDescription = null,
                 modifier = Modifier
                     .size(90.dp)
@@ -82,109 +79,50 @@ fun CartItem(
             )
             Column {
                 Text(
-                    text = cartItem.title,
+                    text = favItem.title,
                     modifier = Modifier
                         .padding(start = 8.dp)
                 )
                 Text(
-                    text = "$${cartItem.price}",
-                    color = colorResource(id = R.color.purple),
+                    text = favItem.categoryId,
                     modifier = Modifier
                         .padding(start = 8.dp, bottom = 8.dp)
                 )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth() // Đảm bảo Row chiếm toàn bộ chiều rộng
-//                    .padding(horizontal = 8.dp)
                 ) {
                     Text(
-                        text = "$${cartItem.price}",
+                        text = "$${favItem.price}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(start = 8.dp, top = 8.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    NumberInCart(numberInCart = 2)
+                    Icon(
+                        painter = painterResource(R.drawable.icon_favourite_filled_red),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .padding(
+                                end = 8.dp,
+                                bottom = 4.dp,
+
+                                )
+                            .align(Alignment.Bottom)
+                    )
                 }
             }
         }
     }
-}
 
-@Composable
-fun NumberInCart(
-    numberInCart: Int
-) {
-    Row(
-        modifier = Modifier
-            .width(100.dp)
-            .background(
-                colorResource(id = R.color.lightGrey),
-                shape = RoundedCornerShape(10.dp)
-            ),
-        horizontalArrangement = Arrangement.Center, // Căn giữa các phần tử theo chiều ngang
-        verticalAlignment = Alignment.CenterVertically // Căn giữa theo chiều dọc
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(2.dp)
-                .size(28.dp)
-                .background(
-                    colorResource(id = R.color.purple),
-                    shape = RoundedCornerShape(10.dp)
-                )
-        ) {
-            Text(
-                text = "-",
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Center),
-                textAlign = TextAlign.Center
-            )
-        }
-        Text(
-            text = numberInCart.toString(),
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 12.dp) // Thêm khoảng cách giữa số và các nút
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(2.dp)
-                .size(28.dp)
-                .background(
-                    colorResource(id = R.color.purple),
-                    shape = RoundedCornerShape(10.dp)
-                )
-        ) {
-            Text(
-                text = "+",
-                color = Color.White,
-                modifier = Modifier.align(Alignment.Center),
-                textAlign = TextAlign.Center
-            )
-        }
-
-    }
 }
 
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun NumberInCartPreview() {
-    StoreAppTheme {
-        NumberInCart(
-            1
-        )
-    }
-}
-
-@Preview("Light Theme", showBackground = true)
-@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun CartItemPreview() {
+fun FavItemsPreview() {
     StoreAppTheme {
         val item = ItemsModel(
             id = 1,
@@ -207,7 +145,7 @@ fun CartItemPreview() {
             showRecommended = true,
             categoryId = "0"
         )
-        CartItem(
+        FavItem(
             item
         )
     }
@@ -216,7 +154,7 @@ fun CartItemPreview() {
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun CartListPreview() {
+fun FavListPreview() {
     StoreAppTheme {
         val listItem = arrayListOf(
             ItemsModel(
@@ -262,7 +200,7 @@ fun CartListPreview() {
                 categoryId = "0"
             )
         )
-        CartList(
+        FavoriteList(
             listItem
         )
     }

@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -21,8 +19,6 @@ import com.example.storeapp.ui.component.LoadingBox
 import com.example.storeapp.ui.component.SearchBar
 import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
-import com.example.storeapp.ui.navigation.NavigationItem
-import com.example.storeapp.ui.screen.home.HomeDestination
 
 object OurProductDestination : NavigationDestination {
     override val route = "ourproduct"
@@ -42,38 +38,6 @@ fun OurProductScreen(
         },
         bottomBar = {
             StoreAppBottomNavigationBar(
-                navigationItemList = listOf(
-                    NavigationItem(
-                        title = stringResource(id = HomeDestination.titleRes),
-                        icon = painterResource(R.drawable.icon_home_outlined),
-                        iconActive = painterResource(R.drawable.icon_home_filled),
-                        route = HomeDestination.route
-                    ),
-                    NavigationItem(
-                        title = stringResource(id = OurProductDestination.titleRes),
-                        icon = painterResource(R.drawable.icon_shopping_store_outlined),
-                        iconActive = painterResource(R.drawable.icon_shopping_store_filled),
-                        route = OurProductDestination.route
-                    ),
-                    NavigationItem(
-                        title = "Favorite",
-                        icon = painterResource(R.drawable.icon_favourite_outlined),
-                        iconActive = painterResource(R.drawable.icon_favourite_filled),
-                        route = "favorite"
-                    ),
-                    NavigationItem(
-                        title = "Orders",
-                        icon = painterResource(R.drawable.icon_orders_outlined),
-                        iconActive = painterResource(R.drawable.icon_orders_filled),
-                        route = "orders"
-                    ),
-                    NavigationItem(
-                        title = "Profile",
-                        icon = painterResource(R.drawable.icon_profile_outlined),
-                        iconActive = painterResource(R.drawable.icon_profile_filled),
-                        route = "profile"
-                    )
-                ),
                 navController = navController,
                 currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
             )
