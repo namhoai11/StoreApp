@@ -7,13 +7,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.storeapp.ui.cart.CartDestination
-import com.example.storeapp.ui.cart.CartScreen
+import com.example.storeapp.ui.screen.cart.CartDestination
+import com.example.storeapp.ui.screen.cart.CartScreen
 import com.example.storeapp.ui.component.FavListPreview
-import com.example.storeapp.ui.favorite.FavoriteDestination
-import com.example.storeapp.ui.favorite.FavoriteScreen
-import com.example.storeapp.ui.ourproduct.OurProductDestination
-import com.example.storeapp.ui.ourproduct.OurProductScreen
+import com.example.storeapp.ui.screen.favorite.FavoriteDestination
+import com.example.storeapp.ui.screen.favorite.FavoriteScreen
+import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
+import com.example.storeapp.ui.screen.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
@@ -22,6 +22,8 @@ import com.example.storeapp.ui.screen.intro.IntroDestination
 import com.example.storeapp.ui.screen.intro.IntroScreen
 import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.LoginScreen
+import com.example.storeapp.ui.screen.notification.NotificateDestination
+import com.example.storeapp.ui.screen.notification.NotificationScreen
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsDestination
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsScreen
 
@@ -51,14 +53,13 @@ fun StoreAppNavHost(
             LoginScreen()
         }
         composable(route = HomeDestination.route) {
-
             HomeScreen(
                 navigateCartScreen = { navController.navigate(CartDestination.route) },
                 navigateAllProduct = { navController.navigate(CategoryDestination.route) },
                 navigateProductDetails = {
                     navController.navigate("${ProductDetailsDestination.route}/$it")
                 },
-                navigateNotification = { /*TODO*/ },
+                navigateNotification = { navController.navigate(NotificateDestination.route) },
                 navController = navController
             )
         }
@@ -100,8 +101,14 @@ fun StoreAppNavHost(
 
         composable(
             FavoriteDestination.route
-        ){
+        ) {
             FavoriteScreen(navController = navController)
+        }
+
+        composable(
+            NotificateDestination.route
+        ) {
+            NotificationScreen(navController = navController)
         }
 
     }

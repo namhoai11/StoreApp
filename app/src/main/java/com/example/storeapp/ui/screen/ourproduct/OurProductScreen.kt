@@ -1,4 +1,4 @@
-package com.example.storeapp.ui.ourproduct
+package com.example.storeapp.ui.screen.ourproduct
 
 
 import androidx.compose.foundation.layout.fillMaxSize

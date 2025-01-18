@@ -1,4 +1,4 @@
-package com.example.storeapp.ui.favorite
+package com.example.storeapp.ui.screen.favorite
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -92,7 +92,7 @@ fun FavoriteScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 title = {
                     Text(
-                        text = "Your Cart",
+                        text = "Favorite",
 //                        fontFamily = poppinsFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold

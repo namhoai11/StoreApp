@@ -59,7 +59,8 @@ fun HomeScreen(
         topBar = {
             HomeTopAppBar(
                 scrollBehavior = scrollBehavior,// Truyền scrollBehavior vào đây
-                navigateCartScreen
+                navigateCartScreen,
+                navigateNotification
             )
         },
         bottomBar = {

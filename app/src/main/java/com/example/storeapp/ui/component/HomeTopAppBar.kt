@@ -38,6 +38,7 @@ import com.example.storeapp.R
 fun HomeTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateCartScreen: () -> Unit,
+    navigateNotificateScreen:()->Unit,
 ) {
     var itemCount by remember { mutableStateOf(1) }
     // Sử dụng scrollBehavior trong TopAppBar
@@ -77,7 +78,10 @@ fun HomeTopAppBar(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.icon_notification_outlined),
-                            contentDescription = ""
+                            contentDescription = "",
+                            modifier = Modifier.clickable {
+                                navigateNotificateScreen()
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
@@ -114,5 +118,5 @@ fun HomeTopAppBar(
 @Composable
 fun PreviewHomeTopAppBar() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    HomeTopAppBar(scrollBehavior = scrollBehavior, {})
+    HomeTopAppBar(scrollBehavior = scrollBehavior, {},{})
 }

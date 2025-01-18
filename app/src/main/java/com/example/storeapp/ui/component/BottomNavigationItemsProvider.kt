@@ -1,9 +1,9 @@
 package com.example.storeapp.ui.component
 
 import com.example.storeapp.R
-import com.example.storeapp.ui.favorite.FavoriteDestination
+import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.navigation.NavigationItem
-import com.example.storeapp.ui.ourproduct.OurProductDestination
+import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
 
 
