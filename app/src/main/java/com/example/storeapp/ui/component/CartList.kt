@@ -60,7 +60,7 @@ fun CartItem(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(10.dp),
         modifier = modifier
     ) {
