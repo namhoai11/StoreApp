@@ -54,7 +54,7 @@ fun FilterOrder(
                     Icons.Default.ArrowDropDown, // Thay bằng icon dropdown
                     contentDescription = "Dropdown Icon",
                     modifier = Modifier
-                        .clickable { expanded = !expanded }
+//                        .clickable { expanded = !expanded }
                         .padding(8.dp),
                     tint = MaterialTheme.colorScheme.outline
                 )

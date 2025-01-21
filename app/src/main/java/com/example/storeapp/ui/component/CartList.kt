@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -67,6 +68,7 @@ fun CartItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(90.dp)
 //                .padding(top = 8.dp, bottom = 8.dp)
         ) {
             Image(
@@ -90,19 +92,20 @@ fun CartItem(
                     text = "$${cartItem.price}",
                     color = colorResource(id = R.color.purple),
                     modifier = Modifier
-                        .padding(start = 8.dp, bottom = 8.dp)
+                        .padding(start = 8.dp)
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth() // Đảm bảo Row chiếm toàn bộ chiều rộng
-//                    .padding(horizontal = 8.dp)
+                        .padding(bottom = 8.dp)
                 ) {
                     Text(
                         text = "$${cartItem.price}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(start = 8.dp, top = 8.dp)
+                            .padding(start = 8.dp,top=4.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     NumberInCart(numberInCart = 2)

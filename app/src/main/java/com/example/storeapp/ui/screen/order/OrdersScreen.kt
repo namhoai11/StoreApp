@@ -27,10 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.ui.component.FilterOrder
 import com.example.storeapp.ui.component.OrderList
 import com.example.storeapp.ui.component.SearchOrder
+import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -77,6 +79,12 @@ fun OrdersScreen(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
+            )
+        },
+        bottomBar = {
+            StoreAppBottomNavigationBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
             )
         }
     ) { innerPadding ->

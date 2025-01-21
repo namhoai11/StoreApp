@@ -8,31 +8,26 @@ import java.util.TimeZone
 
 data class Checkout(
     val id: Int = 0,
-
     val receiverName: String,
-
     val receiverAddress: String,
-
     val orderItems: List<Cart>,
-
     val shippingMethod: String,
-
     val coupon: String,
-
-    val formattedCheckoutDate: String = getCurrentFormattedDate(),
-
-    val formattedCheckoutTime: String = getCurrentFormattedTime(),
-
+//    val formattedCheckoutDate: String = getCurrentFormattedDate(),
+//    val formattedCheckoutTime: String = getCurrentFormattedTime(),
     val checkoutDate: Long = System.currentTimeMillis(),
-
     val shippingCost: Double,
-
     val shippingDescription: String,
-
     val paymentMethod: String = "",
-
     val totalPrice: Double,
-)
+){
+    init {
+        require(receiverName.isNotBlank()) { "Receiver name cannot be blank." }
+        require(receiverAddress.isNotBlank()) { "Receiver address cannot be blank." }
+        require(orderItems.isNotEmpty()) { "Order items cannot be empty." }
+        require(totalPrice > 0) { "Total price must be greater than 0." }
+    }
+}
 
 fun getCurrentFormattedDate(): String {
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
