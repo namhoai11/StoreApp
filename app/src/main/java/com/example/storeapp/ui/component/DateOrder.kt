@@ -31,7 +31,7 @@ fun DateOrder(
 ) {
     Row(
         modifier = modifier
-            .padding(bottom = 8.dp, top = 8.dp, end = 8.dp),
+            .padding(bottom = 8.dp, end = 8.dp, start = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
@@ -46,14 +46,14 @@ fun DateOrder(
             text = dateOrderText,
             color = Color.Gray,
             fontWeight = FontWeight.Normal,
-            fontSize = 14.sp
+            fontSize = 10.sp
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = date,
             color = Color.Gray,
             fontWeight = FontWeight.Bold,
-            fontSize = 14.sp
+            fontSize = 10.sp
         )
     }
 }

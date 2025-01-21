@@ -5,6 +5,7 @@ import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.navigation.NavigationItem
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
+import com.example.storeapp.ui.screen.order.OrdersDestination
 
 
 object BottomNavigationItemsProvider {
@@ -31,7 +32,7 @@ object BottomNavigationItemsProvider {
             title = R.string.orders_title,
             icon = R.drawable.icon_orders_outlined,
             iconActive = R.drawable.icon_orders_filled,
-            route = "orders"
+            route = OrdersDestination.route
         ),
         NavigationItem(
             title = R.string.profile_title,

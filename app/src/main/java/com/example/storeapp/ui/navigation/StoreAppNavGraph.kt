@@ -24,6 +24,8 @@ import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.LoginScreen
 import com.example.storeapp.ui.screen.notification.NotificateDestination
 import com.example.storeapp.ui.screen.notification.NotificationScreen
+import com.example.storeapp.ui.screen.order.OrdersDestination
+import com.example.storeapp.ui.screen.order.OrdersScreen
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsDestination
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsScreen
 
@@ -109,6 +111,10 @@ fun StoreAppNavHost(
             NotificateDestination.route
         ) {
             NotificationScreen(navController = navController)
+        }
+        
+        composable(OrdersDestination.route) { 
+            OrdersScreen(navController = navController)
         }
 
     }

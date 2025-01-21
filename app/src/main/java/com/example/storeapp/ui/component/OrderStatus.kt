@@ -24,7 +24,7 @@ fun OrderStatus(
     // Xác định màu sắc dựa trên trạng thái
     val containerColor = when (status.lowercase()) {
         "đang giao" -> colorResource(id = R.color.blue) // Màu xanh dương
-        "thành công" -> Color(0xFF4CAF50) // Màu xanh lá
+        "hoàn thành" -> Color(0xFF4CAF50) // Màu xanh lá
         "đã hủy" -> Color(0xFFF44336) // Màu đỏ
         else -> Color(0xFF9E9E9E) // Màu xám mặc định
     }
@@ -39,7 +39,7 @@ fun OrderStatus(
     ) {
         Text(
             text = status,
-            modifier = Modifier.padding(24.dp, 8.dp),
+            modifier = Modifier.padding(20.dp, 8.dp),
             fontWeight = FontWeight.Bold
         )
     }
