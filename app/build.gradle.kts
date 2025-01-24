@@ -102,4 +102,9 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.coilCompose)
 
+
+//    Map
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.maps.compose)
 }
