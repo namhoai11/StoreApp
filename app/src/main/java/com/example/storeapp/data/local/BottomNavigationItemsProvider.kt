@@ -1,4 +1,4 @@
-package com.example.storeapp.ui.component
+package com.example.storeapp.data.local
 
 import com.example.storeapp.R
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination

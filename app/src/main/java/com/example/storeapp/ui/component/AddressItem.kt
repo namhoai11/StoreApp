@@ -134,6 +134,7 @@ fun AddressItemScreen2(
     modifier: Modifier = Modifier
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         border = BorderStroke(
             width = 1.dp,
             color = Color.LightGray

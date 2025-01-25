@@ -28,6 +28,8 @@ import com.example.storeapp.ui.screen.order.OrdersDestination
 import com.example.storeapp.ui.screen.order.OrdersScreen
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsDestination
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsScreen
+import com.example.storeapp.ui.screen.profile.ProfileDestination
+import com.example.storeapp.ui.screen.profile.ProfileScreen
 
 @Composable
 fun StoreAppNavHost(
@@ -115,6 +117,9 @@ fun StoreAppNavHost(
         
         composable(OrdersDestination.route) { 
             OrdersScreen(navController = navController)
+        }
+        composable(ProfileDestination.route) {
+            ProfileScreen(navController)
         }
 
     }

@@ -54,7 +54,7 @@ fun AutoSlidingCarousel(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
-                .padding(vertical = 16.dp)
+                .padding(bottom = 16.dp)
                 .height(150.dp)
         ) { page ->
             AsyncImage(

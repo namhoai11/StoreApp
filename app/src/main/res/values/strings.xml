@@ -13,13 +13,13 @@
     <string name="sign">Already have an account?</string>
     <string name="login_title">Login</string>
     <string name="home_title">Home</string>
+
     <string name="cart_title">Your Cart</string>
     <string name="notificate_title">Notification</string>
     <string name="orders_title">Orders</string>
     <string name="favorite_title">Favorite</string>
     <string name="category_title">Category</string>
     <string name="profile_title">Profile</string>
-
     <string name="productdetails_title">ProductDetails</string>
     <string name="product_detail">Product Details</string>
     <string name="our_product">Product</string>

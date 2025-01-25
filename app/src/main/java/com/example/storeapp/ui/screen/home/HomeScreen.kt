@@ -60,12 +60,12 @@ fun HomeScreen(
                 navigateNotification
             )
         },
-        bottomBar = {
-            StoreAppBottomNavigationBar(
-                navController = navController,
-                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-            )
-        }
+            bottomBar = {
+                StoreAppBottomNavigationBar(
+                    navController = navController,
+                    currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+                )
+            }
     ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,
