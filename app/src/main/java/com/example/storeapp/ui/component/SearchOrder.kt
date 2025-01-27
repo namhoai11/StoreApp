@@ -46,7 +46,8 @@ fun SearchOrder(
                 contentDescription = "Search",
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .scale(1f),
+                    .scale(1f)
+                    .height(50.dp),
                 tint = MaterialTheme.colorScheme.outline,
             )
         },
@@ -60,7 +61,7 @@ fun SearchOrder(
         placeholder = {
             Text(
                 text = "Nhập mã đơn hàng",
-                fontSize = 12.sp,
+                fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier
                     .offset(y = (-1.4).dp)
@@ -73,7 +74,7 @@ fun SearchOrder(
                 shape = RoundedCornerShape(12.dp)
             )
             .fillMaxWidth()
-            .height(50.dp)
+//            .height(50.dp)
     )
 }
 

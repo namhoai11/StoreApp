@@ -3,7 +3,6 @@ package com.example.storeapp.ui.component
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -46,6 +45,7 @@ fun Search(
                 contentDescription = "Search",
                 modifier = Modifier
                     .padding(start = 8.dp)
+                    .height(50.dp)
                     .scale(1f),
                 tint = MaterialTheme.colorScheme.outline,
             )
@@ -54,8 +54,10 @@ fun Search(
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color(0xFFE3E3E3),
             unfocusedContainerColor = Color(0xFFE3E3E3),
-            focusedIndicatorColor = Color(0xFFE3E3E3),
-            unfocusedIndicatorColor = Color(0xFFE3E3E3),
+//            focusedIndicatorColor = Color(0xFFE3E3E3),
+//            unfocusedIndicatorColor = Color(0xFFE3E3E3),
+            focusedIndicatorColor = Color.Transparent, // Xóa gạch dưới khi focus
+            unfocusedIndicatorColor = Color.Transparent // Xóa gạch dưới khi không focus
         ),
         placeholder = {
             Text(
@@ -63,7 +65,7 @@ fun Search(
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.outline,
                 modifier = Modifier
-                    .offset(y = (-1.4).dp)
+//                    .offset(y = (-2).dp)
             )
         },
         modifier = modifier
@@ -73,7 +75,7 @@ fun Search(
                 shape = RoundedCornerShape(10.dp)
             )
             .fillMaxWidth()
-            .height(50.dp)
+//            .height(50.dp)
     )
 }
 

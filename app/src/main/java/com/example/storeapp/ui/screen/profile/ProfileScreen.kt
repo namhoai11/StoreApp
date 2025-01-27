@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,17 +26,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,7 +51,6 @@ object ProfileDestination : NavigationDestination {
 @Composable
 fun ProfileScreen(
     navController: NavController,
-
     ) {
     Scaffold(
         bottomBar = {
@@ -94,8 +85,8 @@ fun ProfileTopBar(
             painter = painterResource(R.drawable.icon_profile_filled),
             contentDescription = "profile",
             modifier = Modifier
-                .size(100.dp)
-                .clip(RoundedCornerShape(100.dp))
+                .size(80.dp)
+                .clip(RoundedCornerShape(80.dp))
                 .border(
                     width = 2.dp,
                     color = MaterialTheme.colorScheme.primary,
@@ -113,7 +104,7 @@ fun ProfileTopBar(
             Text(
                 text = "LaHoaiNam",
                 color = Color.Black,
-                fontSize = 32.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -163,7 +154,7 @@ fun ProfileScreenContent() {
         elevation = CardDefaults.cardElevation(8.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             item {
                 Text(
                     text = "Account Settings",
@@ -212,13 +203,14 @@ fun SettingItem(
     Row(
         modifier = Modifier
             .clickable(onClick = onItemClicked)
-            .padding(start = 32.dp),
+            .padding(start = 32.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = title,
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(40.dp),
             tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -229,11 +221,11 @@ fun SettingItem(
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
             )
             Text(
                 text = descript,
-                fontSize = 16.sp
+                fontSize = 12.sp
             )
 
         }

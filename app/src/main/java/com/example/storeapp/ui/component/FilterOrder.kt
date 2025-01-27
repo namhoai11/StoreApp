@@ -2,9 +2,7 @@
 
 import android.content.res.Configuration
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -62,7 +60,7 @@ fun FilterOrder(
             placeholder = {
                 Text(
                     text = "Chọn trạng thái",
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.outline
                 )
             },
@@ -76,7 +74,7 @@ fun FilterOrder(
             modifier = modifier
                 .menuAnchor() // Gắn menu vào TextField
                 .fillMaxWidth()
-                .height(50.dp)
+//                .height(50.dp)
                 .border(
                 width = 3.dp,
                 color = Color("#D1D5DB".toColorInt()),
