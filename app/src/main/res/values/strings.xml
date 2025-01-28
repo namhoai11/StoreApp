@@ -17,12 +17,17 @@
     <string name="dashboard_title">Dashboard</string>
     <string name="manage_title">Quản lý</string>
     <string name="notificate_title">Notification</string>
-    <string name="orders_title">Orders</string>
+    <string name="orders_title">Đơn hàng</string>
+    <string name="customer_title">Khách hàng</string>
+    <string name="adminaccount_title">Tài khoản Admin</string>
+    <string name="voucher_title">Khuyến mãi</string>
+
     <string name="favorite_title">Favorite</string>
-    <string name="category_title">Category</string>
+    <string name="category_title">Danh mục</string>
     <string name="profile_title">Profile</string>
     <string name="productdetails_title">ProductDetails</string>
     <string name="product_detail">Product Details</string>
-    <string name="our_product">Product</string>
+    <string name="our_product">Sản phẩm</string>
+
 
 </resources>
