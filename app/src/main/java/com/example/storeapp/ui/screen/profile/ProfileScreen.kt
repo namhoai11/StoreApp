@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.SettingProfileNavigatonItemProvider
 import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
@@ -51,7 +52,7 @@ object ProfileDestination : NavigationDestination {
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    ) {
+) {
     Scaffold(
         bottomBar = {
             StoreAppBottomNavigationBar(
@@ -64,7 +65,7 @@ fun ProfileScreen(
             modifier = Modifier.padding(contentPadding)
         ) {
             ProfileTopBar({})
-            ProfileScreenContent()
+            ProfileScreenContent(navController)
         }
     }
 }
@@ -143,7 +144,9 @@ fun ProfileTopBar(
 }
 
 @Composable
-fun ProfileScreenContent() {
+fun ProfileScreenContent(
+    navController: NavController,
+    ) {
     Card(
         shape = RoundedCornerShape(
             topStart = 32.dp,
@@ -164,8 +167,18 @@ fun ProfileScreenContent() {
                 )
             }
             items(SettingProfileNavigatonItemProvider.navigationItemList) { item ->
-                SettingItem(icon = item.icon, title = item.title, descript = item.description) {
-                }
+                SettingItem(
+                    icon = item.icon, title = item.title, descript = item.description,
+                    onItemClicked = {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
             item {
                 OutlinedButton(
@@ -238,7 +251,7 @@ fun SettingItem(
 @Composable
 fun PreviewProfileScreenConten() {
     StoreAppTheme {
-        ProfileScreenContent()
+        ProfileScreenContent(rememberNavController())
 
     }
 }

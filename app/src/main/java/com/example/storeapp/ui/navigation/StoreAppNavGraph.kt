@@ -9,7 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.storeapp.ui.screen.cart.CartDestination
 import com.example.storeapp.ui.screen.cart.CartScreen
-import com.example.storeapp.ui.component.FavListPreview
+import com.example.storeapp.ui.screen.admin.dashboard.DashBoardScreen
+import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
@@ -114,13 +115,18 @@ fun StoreAppNavHost(
         ) {
             NotificationScreen(navController = navController)
         }
-        
-        composable(OrdersDestination.route) { 
+
+        composable(OrdersDestination.route) {
             OrdersScreen(navController = navController)
         }
         composable(ProfileDestination.route) {
             ProfileScreen(navController)
         }
-
+        composable(DashboardAdminDestination.route) {
+            DashBoardScreen(navController = navController,
+                navigateUserApp = {
+                    navController.navigate(ProfileDestination.route)
+                })
+        }
     }
 }

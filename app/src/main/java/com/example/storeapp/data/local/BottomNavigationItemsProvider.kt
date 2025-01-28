@@ -6,6 +6,7 @@ import com.example.storeapp.ui.navigation.NavigationItem
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
+import com.example.storeapp.ui.screen.profile.ProfileDestination
 
 
 object BottomNavigationItemsProvider {
@@ -38,7 +39,7 @@ object BottomNavigationItemsProvider {
             title = R.string.profile_title,
             icon = R.drawable.icon_profile_outlined,
             iconActive = R.drawable.icon_profile_filled,
-            route = "profile"
+            route = ProfileDestination.route
         )
     )
 }

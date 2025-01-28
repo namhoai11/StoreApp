@@ -102,7 +102,6 @@ fun CartScreen(
 //        },
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp),
                 title = {
                     Text(
                         text = "Your Cart",
@@ -115,7 +114,9 @@ fun CartScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
-                        modifier = Modifier.clickable { navController.navigateUp() }
+                        modifier = Modifier
+                            .clickable { navController.navigateUp() }
+                            .padding(horizontal = 16.dp)
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -156,12 +157,13 @@ fun CartContent(
             item {
                 CartList(cartItems = cartItems)
             }
-            item { 
+            item {
                 CartSummary(465.0, 12.9, 10.0)
             }
         }
     }
 }
+
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

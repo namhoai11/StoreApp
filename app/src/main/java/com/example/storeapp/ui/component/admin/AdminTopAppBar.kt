@@ -41,11 +41,14 @@ fun AdminTopAppBar(
     @DrawableRes icon: Int,
     textRole: String,
     text: String,
+    iconClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.Cyan
-        )
+        ),
+        modifier = modifier
     ) {
         Box(
             modifier = Modifier
@@ -58,7 +61,8 @@ fun AdminTopAppBar(
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.CenterStart) // Đặt Icon nằm ở bên trái
-                    .size(24.dp),
+                    .size(24.dp)
+                    .clickable { iconClicked() },
                 tint = Color.Black
             )
 
@@ -94,13 +98,13 @@ fun AdminTopAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminDetailsTopAppBar(
-    text:String,
+    text: String,
     navController: NavController
-){
+) {
     TopAppBar(
         title = {
             Text(
-                text = text ,
+                text = text,
 //                        fontFamily = poppinsFontFamily,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold
@@ -110,7 +114,8 @@ fun AdminDetailsTopAppBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "back",
-                modifier = Modifier.clickable { navController.navigateUp() }
+                modifier = Modifier
+                    .clickable { navController.navigateUp() }
                     .padding(horizontal = 16.dp)
             )
         },
@@ -124,7 +129,7 @@ fun AdminDetailsTopAppBar(
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewHomeTopAppBar() {
-    AdminTopAppBar(R.drawable.icon_navhome, "Admin","LaHoaiNam")
+    AdminTopAppBar(R.drawable.icon_navhome, "Admin", "LaHoaiNam", {})
 }
 
 
@@ -137,8 +142,10 @@ fun PreviewManageTopAppBar() {
         R.drawable.arrowback,
         "Quan ly",
         "Don Hang",
+        {}
     )
 }
+
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
