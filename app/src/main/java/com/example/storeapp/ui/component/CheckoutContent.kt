@@ -34,26 +34,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.Coupon
-import com.example.storeapp.model.Order
-import com.example.storeapp.model.Shipping
-import com.example.storeapp.model.UserLocation
+import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.ShippingModel
+import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
 fun CheckoutContent(
     modifier: Modifier = Modifier,
     onEditAddress: () -> Unit,
-    state: Order? = null,
+    state: OrderModel? = null,
     selectedLocationId: Int?,
-    selectedLocation: UserLocation,
+    selectedLocation: UserLocationModel,
     onShowDialog: () -> Unit,
     onChooseShipping: () -> Unit,
     onChooseCoupon: () -> Unit,
     selectedShippingId: Int?,
-    shippingItem: List<Shipping>,
+    shippingItem: List<ShippingModel>,
     selectedCouponId: Int?,
-    couponItem: List<Coupon>,
+    couponItem: List<CouponModel>,
     isButtonEnabled: Boolean = false,
     onChoosePayment: () -> Unit,
     finalPrice: Double,
@@ -341,7 +341,7 @@ private fun CheckoutContentPreview() {
             onEditAddress = {},
             onShowDialog = {},
             onChooseShipping = {},
-            selectedLocation = UserLocation(
+            selectedLocation = UserLocationModel(
                 id = 1,
                 name = "Store Name",
                 address = "123 Main Street"

@@ -35,19 +35,5 @@ class FirebaseStoreAppRepository : StoreAppRepository {
         return categories
     }
 
-//    override suspend fun loadRecommended(): List<ItemsModel> {
-//        val ref = firebaseDatabase.getReference("Items")
-//        val query = ref.orderByChild("showRecommended").equalTo(true)
-//        val snapshot = query.get().await()
-//        val recommendedItems = snapshot.children.mapNotNull { it.getValue(ItemsModel::class.java) }
-//        Log.d("FirebaseStoreAppRepository", "Loaded Recommended: $recommendedItems")
-//        return recommendedItems
-//    }
 
-//    override suspend fun loadFiltered(categoryId: String): List<ItemsModel> {
-//        val ref = firebaseDatabase.getReference("Items")
-//        val query = ref.orderByChild("categoryId").equalTo(categoryId)
-//        val snapshot = query.get().await()
-//        return snapshot.children.mapNotNull { it.getValue(ItemsModel::class.java) }
-//    }
 }

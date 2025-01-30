@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
-import com.example.storeapp.model.Cart
+import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.ItemsModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -240,7 +240,7 @@ fun CartItemMini(
 }
 @Composable
 fun CartMiniList(
-    cartItems: List<Cart>,
+    cartItems: List<CartModel>,
 ) {
     LazyColumn(
         Modifier
@@ -382,7 +382,7 @@ fun CartListPreview() {
 fun CartMiniListPreview() {
     StoreAppTheme {
         val items = listOf(
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -390,7 +390,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -398,7 +398,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -406,7 +406,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -414,7 +414,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -422,7 +422,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",
@@ -430,7 +430,7 @@ fun CartMiniListPreview() {
                 productId = 1,
                 productCategory = ""
             ),
-            Cart(
+            CartModel(
                 productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
                 productImage = "",
                 productPrice = "78",

@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.UserLocation
+import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddressContent(
     modifier: Modifier = Modifier,
-    state: List<UserLocation>,
+    state: List<UserLocationModel>,
     scope: CoroutineScope,
     selectedItemId: Int?,
     onSelectedItem: (Int) -> Unit,

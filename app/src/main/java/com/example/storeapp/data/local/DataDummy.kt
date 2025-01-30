@@ -2,21 +2,21 @@
 
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
-import com.example.storeapp.model.Coupon
-import com.example.storeapp.model.PaymentMethod
-import com.example.storeapp.model.Shipping
-import com.example.storeapp.model.UserLocation
+import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.PaymentMethodModel
+import com.example.storeapp.model.ShippingModel
+import com.example.storeapp.model.UserLocationModel
 
 object DataDummy {
     val dummyUserLocation = listOf(
-        UserLocation(
+        UserLocationModel(
             id = 1,
             name = "Mas Azi",
             address = "Jl. Durian No. 123, Banyubiru " +
                     "Kab. Semarang, Jawa Tengah " +
                     "Indonesia 50664"
         ),
-        UserLocation(
+        UserLocationModel(
             id = 2,
             name = "Haryanto",
             address = "Jl. Durian No. 123, Banyubiru " +
@@ -25,42 +25,42 @@ object DataDummy {
         ),
     )
     val dummyShipping = listOf(
-        Shipping(
+        ShippingModel(
             name = "REG",
             price = 13.00,
             description = "Estimated time of arrival 2 - 3 days"
         ),
-        Shipping(
+        ShippingModel(
             name = "OKE",
             price = 15.00,
             description = "Estimated time of arrival 1 - 2 days"
         ),
-        Shipping(
+        ShippingModel(
             name = "YES",
             price = 10.00,
             description = "Estimated time of arrival 1 - 2 days"
         )
     )
     val dummyPaymentMethod = listOf(
-        PaymentMethod(
+        PaymentMethodModel(
             icon = R.drawable.icon_discover,
             name = "Discover"
         ),
-        PaymentMethod(
+        PaymentMethodModel(
             icon = R.drawable.icon_master_card,
             name = "Master Card"
         ),
-        PaymentMethod(
+        PaymentMethodModel(
             icon = R.drawable.icon_paypal,
             name = "Paypal"
         ),
-        PaymentMethod(
+        PaymentMethodModel(
             icon = R.drawable.icon_visa,
             name = "Visa"
         ),
     )
     val dummyCoupon = listOf(
-        Coupon(
+        CouponModel(
             discountedPrice = "FREE SHIPPING",
             description = "Applies to get free shipping",
             expiredDate = "31 Desember 2024",
@@ -68,7 +68,7 @@ object DataDummy {
             color2 = Color(0xFFDA22FF),
             couponCode = "FWHWFW45A"
         ),
-        Coupon(
+        CouponModel(
             discountedPrice = "25%",
             description = "Applies to get 25% off",
             expiredDate = "31 Desember 2024",
@@ -76,7 +76,7 @@ object DataDummy {
             color2 = Color(0xFFFFD54F),
             couponCode = "ADERTS4TA"
         ),
-        Coupon(
+        CouponModel(
             discountedPrice = "50%",
             couponCode = "NHJASE32Q",
             description = "Applies to get 50% off",

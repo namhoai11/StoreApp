@@ -1,7 +1,7 @@
 ﻿package com.example.storeapp.model
 
 
-data class Order(
+data class OrderModel(
 
     val id: Int = 0,
 
@@ -9,6 +9,6 @@ data class Order(
 
     val orderDate: Long = System.currentTimeMillis(),
 
-    val items: List<Cart>
+    val items: List<CartModel>
 )
 

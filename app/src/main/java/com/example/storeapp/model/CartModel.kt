@@ -1,6 +1,7 @@
-﻿package com.example.storeapp.model
+package com.example.storeapp.model
 
-data class Favorite(
+
+data class CartModel(
     var id: Int = 0,
     var productId: Int = 0,
     var productName: String = "",
@@ -9,3 +10,4 @@ data class Favorite(
     var productCategory: String = "",
     var productQuantity: Int = 0
 )
+

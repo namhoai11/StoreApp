@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storeapp.R
-import com.example.storeapp.model.Notification
+import com.example.storeapp.model.NotificationModel
 import com.example.storeapp.ui.component.NotificationItem
 import com.example.storeapp.ui.navigation.NavigationDestination
 
@@ -35,8 +35,8 @@ object NotificateDestination : NavigationDestination {
 fun NotificationScreen(
     navController: NavController
 ) {
-    val notificateItems: ArrayList<Notification> = arrayListOf(
-        Notification(
+    val notificateItems: ArrayList<NotificationModel> = arrayListOf(
+        NotificationModel(
             id = 1,
             notificationType = "Shopping",
             firstProductImage = "",
@@ -47,7 +47,7 @@ fun NotificationScreen(
             messageDetail = "Your order has been shipped",
             isRead = false,
         ),
-        Notification(
+        NotificationModel(
             id = 2,
             notificationType = "Info",
             date = "20 Agustus 2023",

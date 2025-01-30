@@ -1,6 +1,6 @@
 ﻿package com.example.storeapp.model
 
-data class PaymentMethod(
+data class PaymentMethodModel(
     val icon: Int,
     val name: String,
 )

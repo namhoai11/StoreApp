@@ -3,7 +3,7 @@ package com.example.storeapp.model
 
 
 
-data class Notification(
+data class NotificationModel(
 
     val id: Int = 0,
 

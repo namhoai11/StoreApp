@@ -6,11 +6,11 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-data class Checkout(
+data class CheckoutModel(
     val id: Int = 0,
     val receiverName: String,
     val receiverAddress: String,
-    val orderItems: List<Cart>,
+    val orderItems: List<CartModel>,
     val shippingMethod: String,
     val coupon: String,
 //    val formattedCheckoutDate: String = getCurrentFormattedDate(),

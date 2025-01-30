@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 //    val color2: Color                 // Màu gradient 2
 //)
 
-data class Coupon(
+data class CouponModel(
     val discountedPrice: String,       // Giá trị giảm giá
     val description: String,          // Mô tả coupon
     val expiredDate: String,       // Ngày hết hạn

@@ -12,32 +12,38 @@ object ManagementNavigationItems {
     val navigationItemList = listOf(
         NavigationItem(
             title = HomeDestination.titleRes,
-            icon = R.drawable.icon_home_outlined,
-            iconActive = R.drawable.icon_home_filled,
+            icon = R.drawable.admin_iconorders,
+            iconActive = R.drawable.admin_iconorders,
             route = HomeDestination.route
         ),
         NavigationItem(
             title = OurProductDestination.titleRes,
-            icon = R.drawable.icon_shopping_store_outlined,
-            iconActive = R.drawable.icon_shopping_store_filled,
+            icon = R.drawable.admin_iconcustomer,
+            iconActive = R.drawable.admin_iconcustomer,
             route = OurProductDestination.route
         ),
         NavigationItem(
             title = FavoriteDestination.titleRes,
-            icon = R.drawable.icon_favourite_outlined,
-            iconActive = R.drawable.icon_favourite_filled,
+            icon = R.drawable.admin_iconmanager,
+            iconActive = R.drawable.admin_iconmanager,
             route = FavoriteDestination.route
         ),
         NavigationItem(
-            title = R.string.orders_title,
-            icon = R.drawable.icon_orders_outlined,
-            iconActive = R.drawable.icon_orders_filled,
+            title = OrdersDestination.titleRes,
+            icon = R.drawable.admin_iconcategory,
+            iconActive = R.drawable.admin_iconcategory,
             route = OrdersDestination.route
         ),
         NavigationItem(
+            title = ProfileDestination.titleRes,
+            icon = R.drawable.admin_iconproduct,
+            iconActive = R.drawable.admin_iconproduct,
+            route = ProfileDestination.route
+        ),
+        NavigationItem(
             title = R.string.profile_title,
-            icon = R.drawable.icon_profile_outlined,
-            iconActive = R.drawable.icon_profile_filled,
+            icon = R.drawable.admin_iconcoupon,
+            iconActive = R.drawable.admin_iconcoupon,
             route = ProfileDestination.route
         )
     )

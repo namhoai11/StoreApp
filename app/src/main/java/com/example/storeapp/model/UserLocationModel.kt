@@ -1,6 +1,6 @@
 ﻿package com.example.storeapp.model
 
-data class UserLocation(
+data class UserLocationModel(
     val id: Int = 0,
     val name: String,
     val address: String,

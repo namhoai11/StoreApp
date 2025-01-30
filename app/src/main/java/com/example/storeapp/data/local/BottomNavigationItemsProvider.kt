@@ -30,13 +30,13 @@ object BottomNavigationItemsProvider {
             route = FavoriteDestination.route
         ),
         NavigationItem(
-            title = R.string.orders_title,
+            title = OrdersDestination.titleRes,
             icon = R.drawable.icon_orders_outlined,
             iconActive = R.drawable.icon_orders_filled,
             route = OrdersDestination.route
         ),
         NavigationItem(
-            title = R.string.profile_title,
+            title = ProfileDestination.titleRes,
             icon = R.drawable.icon_profile_outlined,
             iconActive = R.drawable.icon_profile_filled,
             route = ProfileDestination.route
