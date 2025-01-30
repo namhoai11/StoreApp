@@ -99,8 +99,7 @@ fun CategoryItem(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = (item.picUrl), contentDescription = item.title,
+        AsyncImage(            model = (item.picUrl), contentDescription = item.title,
             modifier = Modifier
                 .size(45.dp)
                 .background(
@@ -108,6 +107,7 @@ fun CategoryItem(
                     shape = RoundedCornerShape(8.dp)
                 ),
             contentScale = ContentScale.Inside,
+
             colorFilter = if (isSelected) {
                 ColorFilter.tint(Color.White)
             } else {

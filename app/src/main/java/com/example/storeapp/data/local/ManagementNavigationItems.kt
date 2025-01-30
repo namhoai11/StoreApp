@@ -2,6 +2,7 @@
 
 import com.example.storeapp.R
 import com.example.storeapp.ui.navigation.NavigationItem
+import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
@@ -30,10 +31,10 @@ object ManagementNavigationItems {
             route = FavoriteDestination.route
         ),
         NavigationItem(
-            title = OrdersDestination.titleRes,
+            title = CategoryManagementDestination.titleRes,
             icon = R.drawable.admin_iconcategory,
             iconActive = R.drawable.admin_iconcategory,
-            route = OrdersDestination.route
+            route = CategoryManagementDestination.route
         ),
         NavigationItem(
             title = ProfileDestination.titleRes,

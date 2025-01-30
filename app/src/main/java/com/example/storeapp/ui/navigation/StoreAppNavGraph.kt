@@ -13,6 +13,8 @@ import com.example.storeapp.ui.screen.admin.dashboard.DashBoardScreen
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.admin.manage.ManageScreen
 import com.example.storeapp.ui.screen.admin.manage.ManegeAdminDestination
+import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementScreen
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
@@ -140,6 +142,9 @@ fun StoreAppNavHost(
         }
         composable(OrderManagementDestination.route) { 
             OrderManagementScreen(navController = navController)
+        }
+        composable(CategoryManagementDestination.route) { 
+            CategoryManagementScreen(navController = navController)
         }
     }
 }

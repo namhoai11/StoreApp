@@ -43,7 +43,6 @@ fun OrderManagementList(
             OrderManagementItem(orderItem = item)
         }
     }
-
 }
 
 @Composable
