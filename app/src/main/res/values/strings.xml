@@ -16,6 +16,8 @@
     <string name="cart_title">Your Cart</string>
     <string name="dashboard_title">Dashboard</string>
     <string name="manage_title">Quản lý</string>
+    <string name="ordermanage_title">Quản lý đơn hàng</string>
+
     <string name="notificate_title">Notification</string>
     <string name="orders_title">Đơn hàng</string>
     <string name="customer_title">Khách hàng</string>

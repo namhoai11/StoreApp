@@ -2,6 +2,7 @@
 
 import com.example.storeapp.R
 import com.example.storeapp.ui.navigation.NavigationItem
+import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
@@ -11,10 +12,10 @@ import com.example.storeapp.ui.screen.profile.ProfileDestination
 object ManagementNavigationItems {
     val navigationItemList = listOf(
         NavigationItem(
-            title = HomeDestination.titleRes,
+            title = OrderManagementDestination.titleRes,
             icon = R.drawable.admin_iconorders,
             iconActive = R.drawable.admin_iconorders,
-            route = HomeDestination.route
+            route = OrderManagementDestination.route
         ),
         NavigationItem(
             title = OurProductDestination.titleRes,

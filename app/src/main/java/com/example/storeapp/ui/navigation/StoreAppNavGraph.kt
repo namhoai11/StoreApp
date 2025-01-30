@@ -13,6 +13,8 @@ import com.example.storeapp.ui.screen.admin.dashboard.DashBoardScreen
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.admin.manage.ManageScreen
 import com.example.storeapp.ui.screen.admin.manage.ManegeAdminDestination
+import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
@@ -135,6 +137,9 @@ fun StoreAppNavHost(
                 navigateUserApp = {
                     navController.navigate(ProfileDestination.route)
                 })
+        }
+        composable(OrderManagementDestination.route) { 
+            OrderManagementScreen(navController = navController)
         }
     }
 }

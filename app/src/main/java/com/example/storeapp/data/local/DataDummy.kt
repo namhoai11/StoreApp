@@ -2,10 +2,13 @@
 
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
+import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.UserLocationModel
+import com.google.firebase.Timestamp
 
 object DataDummy {
     val dummyUserLocation = listOf(
@@ -83,6 +86,73 @@ object DataDummy {
             expiredDate = "31 Desember 2024",
             color1 = Color(0xFF00C9FF),
             color2 = Color(0xFF92FE9D)
+        )
+    )
+    // Tạo một số CartModel mẫu
+    val cartItems = listOf(
+        CartModel(
+            id = 1,
+            productId = 101,
+            productName = "Sản phẩm A",
+            productPrice = "1000000.0",
+            productImage = "url_to_image_1",
+            productCategory = "Điện tử",
+            productQuantity = 2
+        ),
+        CartModel(
+            id = 2,
+            productId = 102,
+            productName = "Sản phẩm B",
+            productPrice = "1500000.0",
+            productImage = "url_to_image_2",
+            productCategory = "Điện tử",
+            productQuantity = 1
+        )
+    )
+
+    // Tạo đối tượng OrderModel
+    val order = OrderModel(
+        id = 1,
+        orderCode = "ORD12345",
+        totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+        orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+        items = cartItems
+    )
+    val listOrder = listOf(
+        OrderModel(
+            id = 1,
+            orderCode = "ORD12345",
+            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+            items = cartItems
+        ),
+        OrderModel(
+            id = 2,
+            orderCode = "ORD12345",
+            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+            items = cartItems
+        ),
+        OrderModel(
+            id = 3,
+            orderCode = "ORD12345",
+            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+            items = cartItems
+        ),
+        OrderModel(
+            id = 4,
+            orderCode = "ORD12345",
+            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+            items = cartItems
+        ),
+        OrderModel(
+            id = 5,
+            orderCode = "ORD12345",
+            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
+            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
+            items = cartItems
         )
     )
 }

@@ -2,6 +2,7 @@
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import java.util.logging.Filter
 
 @Composable
 fun FilterList(
+    modifier: Modifier = Modifier,
     filterList: List<String>,
     onFilterSelected: (String) -> Unit,
 ) {
@@ -42,10 +44,11 @@ fun FilterList(
         mutableStateOf(0)
     }
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+//        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         items(filterList.size) { index ->
             FilterItem(
@@ -69,9 +72,15 @@ fun FilterItem(
 ) {
     Card(
         modifier = Modifier
-            .clickable(onClick = onItemClicked),
+            .clickable(onClick = onItemClicked)
+            .border(
+                width = 1.dp,
+//                color = Color("#D1D5DB".toColorInt()),
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(3.dp)
+            ),
         shape = RoundedCornerShape(3.dp),
-        elevation = CardDefaults.cardElevation(10.dp)
+        elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Box(
             modifier = Modifier
@@ -85,10 +94,9 @@ fun FilterItem(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 color = Color.Black,
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
-
     }
 }
 
@@ -100,6 +108,7 @@ fun PreviewFilterItem() {
         FilterItem(true, "Đang giao", {})
     }
 }
+
 @Preview("LightTheme", showBackground = true)
 @Preview("DarkTheme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -107,6 +116,7 @@ fun PreviewFilterList() {
     StoreAppTheme {
         val filterList = OrderStatusProvider.orderStatusList
         FilterList(
+            modifier = Modifier,
             filterList,
             {}
         )
