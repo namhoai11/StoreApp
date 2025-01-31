@@ -34,6 +34,4 @@ class FirebaseStoreAppRepository : StoreAppRepository {
         Log.d("FirebaseStoreAppRepository", "Loaded Categories: $categories")
         return categories
     }
-
-
 }

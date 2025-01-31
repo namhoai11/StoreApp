@@ -54,7 +54,7 @@ fun StoreAppNavHost(
                 onNavigateHome = {
                     navController.navigate(HomeDestination.route) {
                         popUpTo(IntroDestination.route) {
-                            inclusive = true
+//                            inclusive = true
                         } // xóa bỏ các màn hình cũ không cần thiết
                     }
                 }

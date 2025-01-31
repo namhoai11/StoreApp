@@ -28,13 +28,7 @@ class HomeViewModel(
 
     private fun loadData() = viewModelScope.launch {
         try {
-//            val banners = repository.loadBanner()
-//            Log.d("HomeViewModel", "banners: $banners")
-//            val categories = repository.loadCategory()
-//            Log.d("HomeViewModel", "categories:$categories")
-//            val allItems = repository.loadAllItems()
-//            Log.d("HomeViewModel", "All Item:$allItems")
-//            val itemsByCategory = allItems.groupBy { it.categoryId.toIntOrNull() ?: -1 }
+
 
             _uiState.update { it.copy(showBannerLoading = true) }
             val banners = repository.loadBanner()
@@ -46,15 +40,7 @@ class HomeViewModel(
             Log.d("HomeViewModel", "categories:$categories")
             _uiState.update { it.copy(categories = categories, showCategoryLoading = false) }
 
-//            _uiState.update { it.copy(showRecommenedLoading = true) }
-//            val recommendedItems = repository.loadRecommended()
-//            Log.d("HomeViewModel", "recommendedItems:$recommendedItems")
-//            _uiState.update {
-//                it.copy(
-//                    recommendedItems = recommendedItems,
-//                    showRecommenedLoading = false
-//                )
-//            }
+
 
             val allItems = repository.loadAllItems()
             Log.d("HomeViewModel", "All Item:$allItems")
@@ -86,13 +72,5 @@ class HomeViewModel(
     fun selectCategory(categoryId: Int) {
         _uiState.update { it.copy(currentCategoryId = categoryId) }
     }
-
-//    fun showAllItems() {
-//        _uiState.update { it.copy(currentCategoryId = -2) } // Hiển thị tất cả mục
-//    }
-//
-//    fun showRecommendedItems() {
-//        _uiState.update { it.copy(currentCategoryId = -1) }
-//    }
 }
 

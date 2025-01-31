@@ -47,7 +47,8 @@ object IntroDestination : NavigationDestination {
 @Preview
 fun IntroScreen(
     onNavigateHome: () -> Unit = {},
-    onNavigateSignIn: () -> Unit = {}
+    onNavigateSignIn: () -> Unit = {},
+    onNavigateSignUp: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -83,7 +84,6 @@ fun IntroScreen(
             textAlign = TextAlign.Center,
             lineHeight = 24.sp
         )
-
         Button(
             onClick = { onNavigateHome() },
             modifier = Modifier
@@ -105,6 +105,27 @@ fun IntroScreen(
                 fontSize = 18.sp
             )
         }
+        Button(
+            onClick = { onNavigateSignIn() },
+            modifier = Modifier
+                .padding(
+                    horizontal = 32.dp,
+                    vertical = 16.dp
+                )
+                .fillMaxWidth()
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor =
+                colorResource(id = R.color.purple)
+            ),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Text(
+                text = " Sign in",
+                color = Color.White,
+                fontSize = 18.sp
+            )
+        }
 
 //        Text(
 //            text = stringResource(id = R.string.sign),
@@ -113,24 +134,29 @@ fun IntroScreen(
 //            fontSize = 18.sp
 //        )
         // Các thành phần khác
-        SignInText(onSignInClick = {
-            // Xử lý khi bấm "Sign in"
-            onNavigateSignIn()
-            Log.d("SignIn", "Sign in clicked!")
+        SignInText(onSignUpClick = {
+            // Xử lý khi bấm "Sign un"
+            onNavigateSignUp()
+            Log.d("SignUp", "Sign up clicked!")
             // Hoặc chuyển sang màn hình đăng nhập
         })
     }
 }
 
 @Composable
-fun SignInText(onSignInClick: () -> Unit) {
+fun SignInText(onSignUpClick: () -> Unit) {
     val normalText = stringResource(id = R.string.sign)
-    val clickableText = " Sign in"
+    val clickableText = "SignUp"
 
     val annotatedString = buildAnnotatedString {
         append(normalText)
-        withStyle(style = SpanStyle(color = colorResource(id = R.color.purple), fontWeight = FontWeight.Bold)) {
-            pushStringAnnotation(tag = "SignIn", annotation = "sign_in")
+        withStyle(
+            style = SpanStyle(
+                color = colorResource(id = R.color.purple),
+                fontWeight = FontWeight.Bold
+            )
+        ) {
+            pushStringAnnotation(tag = "SignUp", annotation = "sign_up")
             append(clickableText)
             pop()
         }
@@ -138,9 +164,9 @@ fun SignInText(onSignInClick: () -> Unit) {
     ClickableText(
         text = annotatedString,
         onClick = { offset ->
-            annotatedString.getStringAnnotations(tag = "SignIn", start = offset, end = offset)
+            annotatedString.getStringAnnotations(tag = "SignUp", start = offset, end = offset)
                 .firstOrNull()?.let {
-                    onSignInClick()
+                    onSignUpClick()
                 }
         },
         modifier = Modifier.padding(top = 16.dp),
