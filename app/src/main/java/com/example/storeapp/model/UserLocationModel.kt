@@ -1,16 +1,21 @@
 ﻿package com.example.storeapp.model
 
+import com.google.firebase.Timestamp
+
+
 data class UserLocationModel(
-    val id: Int = 0,
-    val name: String,
-    val address: String,
-    val latitude: Double? = null, // Tọa độ GPS, có thể null nếu không cần
+    val id: String,
+    val street: String,
+    val province: String,
+    val district: String,
+    val ward: String,
+    val isDefault: Boolean,
+    val userId: String,
+    val provinceId: String,
+    val districtId: String,
+    val wardId: String,
+    val latitude: Double? = null,  // Thêm tọa độ GPS
     val longitude: Double? = null,
-    val isPrimary: Boolean = false, // Địa điểm chính
-    val createdAt: Long = System.currentTimeMillis() // Thời gian tạo
-) {
-    init {
-        require(name.isNotBlank()) { "Location name cannot be blank." }
-        require(address.isNotBlank()) { "Address cannot be blank." }
-    }
-}
+    val createdAt: Timestamp = Timestamp.now(),
+    val updatedAt: Timestamp = Timestamp.now()
+)

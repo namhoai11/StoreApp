@@ -35,13 +35,14 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.model.CartModel
-import com.example.storeapp.model.ItemsModel
+import com.example.storeapp.model.ProductModel
+import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 
 @Composable
 fun CartList(
-    cartItems: ArrayList<ItemsModel>,
+    cartItems: CartModel,
 ) {
     LazyColumn(
         Modifier
@@ -49,7 +50,7 @@ fun CartList(
             .heightIn(max = 500.dp) // Đặt chiều cao tối đa
     )
     {
-        items(cartItems) { item ->
+        items(cartItems.products) { item ->
             CartItem(
                 cartItem = item,
                 modifier = Modifier.padding(top = 16.dp)
@@ -60,7 +61,7 @@ fun CartList(
 
 @Composable
 fun CartItem(
-    cartItem: ItemsModel,
+    cartItem: ProductsOnCart,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -75,7 +76,7 @@ fun CartItem(
 //                .padding(top = 8.dp, bottom = 8.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(model = cartItem.picUrl[0]),
+                painter = rememberAsyncImagePainter(model = cartItem.productImage),
                 contentDescription = null,
                 modifier = Modifier
                     .size(90.dp)
@@ -87,12 +88,12 @@ fun CartItem(
             )
             Column {
                 Text(
-                    text = cartItem.title,
+                    text = cartItem.productName,
                     modifier = Modifier
                         .padding(start = 8.dp)
                 )
                 Text(
-                    text = "$${cartItem.price}",
+                    text = "$${cartItem.productPrice}",
                     color = colorResource(id = R.color.purple),
                     modifier = Modifier
                         .padding(start = 8.dp)
@@ -104,14 +105,14 @@ fun CartItem(
                         .padding(bottom = 8.dp)
                 ) {
                     Text(
-                        text = "$${cartItem.price}",
+                        text = "$${cartItem.productPrice}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(start = 8.dp,top=4.dp)
+                            .padding(start = 8.dp, top = 4.dp)
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    NumberInCart(numberInCart = 2)
+                    NumberInCart(numberInCart = cartItem.quantity)
                 }
             }
         }
@@ -181,12 +182,12 @@ fun CartItemMini(
     modifier: Modifier = Modifier,
     productName: String,
     imageId: String,
-    price: String,
+    price: Double,
     orderCount: Int,
     totalOrder: Int,
     onDetailOrder: () -> Unit,
 ) {
-    val totalPrice = price.toDouble() * orderCount
+    val totalPrice = price * orderCount
 
     Row(
         modifier = modifier
@@ -238,9 +239,10 @@ fun CartItemMini(
         }
     }
 }
+
 @Composable
 fun CartMiniList(
-    cartItems: List<CartModel>,
+    cartItems: CartModel,
 ) {
     LazyColumn(
         Modifier
@@ -248,12 +250,12 @@ fun CartMiniList(
             .heightIn(max = 500.dp) // Đặt chiều cao tối đa
     )
     {
-        items(cartItems) { item ->
+        items(cartItems.products) { item ->
             CartItemMini(
-                productName=item.productName,
-                imageId=item.productImage,
-                price=item.productPrice,
-                orderCount=item.productQuantity,
+                productName = item.productName,
+                imageId = item.productImage,
+                price = item.productPrice,
+                orderCount = item.quantity,
                 totalOrder = 0,
                 onDetailOrder = {}
             )
@@ -269,7 +271,7 @@ private fun CartItemMiniPreview() {
     ) {
         CartItemMini(
             productName = "Fjallraven - Foldsack No. 1 Backpack",
-            price = "78",
+            price = 234.0,
             orderCount = 2,
             imageId = "",
             totalOrder = 3,
@@ -295,29 +297,37 @@ fun NumberInCartPreview() {
 @Composable
 fun CartItemPreview() {
     StoreAppTheme {
-        val item = ItemsModel(
-            id = 1,
-            title = "Business Laptop",
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-            picUrl = arrayListOf(
-                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
-                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
-                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
-            ),
-            model = arrayListOf(
-                "core i3",
-                "core i5",
-                "core i7"
-            ),
-            price = 550.0,
-            rating = 4.7,
-            showRecommended = true,
-            categoryId = "0"
+//        val item = ProductModel(
+//            id = 1,
+//            title = "Business Laptop",
+//            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
+//            picUrl = arrayListOf(
+//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
+//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
+//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
+//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
+//            ),
+//            model = arrayListOf(
+//                "core i3",
+//                "core i5",
+//                "core i7"
+//            ),
+//            price = 550.0,
+//            rating = 4.7,
+//            showRecommended = true,
+//            categoryId = "0"
+//        )
+        val item2 = ProductsOnCart(
+            productId = "1",
+            productName = "Business Laptop",
+            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+            productPrice = 550.0,
+            productOptions = null,
+            quantity = 2,
         )
         CartItem(
-            item
+            item2
         )
     }
 }
@@ -327,119 +337,83 @@ fun CartItemPreview() {
 @Composable
 fun CartListPreview() {
     StoreAppTheme {
-        val listItem = arrayListOf(
-            ItemsModel(
-                id = 1,
-                title = "Business Laptop",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-                picUrl = arrayListOf(
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
-                ),
-                model = arrayListOf(
-                    "core i3",
-                    "core i5",
-                    "core i7"
-                ),
-                price = 550.0,
-                rating = 4.7,
-                showRecommended = true,
-                categoryId = "0"
+        val products = arrayListOf(
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
             ),
-            ItemsModel(
-                id = 2,
-                title = "Business Laptop",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-                picUrl = arrayListOf(
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
-                    "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
-                ),
-                model = arrayListOf(
-                    "core i3",
-                    "core i5",
-                    "core i7"
-                ),
-                price = 550.0,
-                rating = 4.7,
-                showRecommended = true,
-                categoryId = "0"
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
+            ),
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
             )
         )
+        val cart = CartModel(
+            id = "2",
+            products = products,
+            total = 234.0,
+            userId = "12"
+        )
         CartList(
-            listItem
+            cart
         )
     }
 }
+
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun CartMiniListPreview() {
     StoreAppTheme {
-        val items = listOf(
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
+        val products = arrayListOf(
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
             ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
             ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
-            ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
-            ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
-            ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
-            ),
-            CartModel(
-                productName = "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                productImage = "",
-                productPrice = "78",
-                productQuantity = 2,
-                productId = 1,
-                productCategory = ""
-            ),
+            ProductsOnCart(
+                productId = "1",
+                productName = "Business Laptop",
+                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                productPrice = 550.0,
+                productOptions = null,
+                quantity = 2,
+            )
         )
-        CartMiniList(cartItems = items)
+        val cart = CartModel(
+            id = "2",
+            products = products,
+            total = 234.0,
+            userId = "12"
+        )
+
+        CartMiniList(cartItems = cart)
     }
 }
 

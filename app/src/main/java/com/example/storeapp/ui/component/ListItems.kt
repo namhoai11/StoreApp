@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.storeapp.R
-import com.example.storeapp.model.ItemsModel
+import com.example.storeapp.model.ProductModel
 
 @Composable
-fun ListItems(items: List<ItemsModel>, navigateToItemDetails: (Int) -> Unit) {
+fun ListItems(items: List<ProductModel>, navigateToItemDetails: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -49,7 +49,7 @@ fun ListItems(items: List<ItemsModel>, navigateToItemDetails: (Int) -> Unit) {
 }
 
 @Composable
-fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (Int) -> Unit) {
+fun ListItemsFullSize(items: List<ProductModel>, navigateToItemDetail: (Int) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -66,19 +66,19 @@ fun ListItemsFullSize(items: List<ItemsModel>, navigateToItemDetail: (Int) -> Un
 }
 
 @Composable
-fun Item(item: ItemsModel, navigateToItemDetail: (Int) -> Unit) {
+fun Item(item: ProductModel, navigateToItemDetail: (Int) -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .height(235.dp)
             .clickable {
-                navigateToItemDetail(item.id)
+                navigateToItemDetail(item.id.toInt())
                 Log.d("ListItems", "ItemClicked: ${item.id}")
             }
     ) {
         AsyncImage(
-            model = item.picUrl.firstOrNull(),
-            contentDescription = item.title,
+            model = item.images.firstOrNull(),
+            contentDescription = item.name,
             modifier = Modifier
                 .width(175.dp)
                 .background(
@@ -90,7 +90,7 @@ fun Item(item: ItemsModel, navigateToItemDetail: (Int) -> Unit) {
             contentScale = ContentScale.Inside
         )
         Text(
-            text = item.title,
+            text = item.name,
             color = Color.Black,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,

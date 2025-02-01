@@ -2,7 +2,7 @@ package com.example.storeapp.data.repository
 
 import android.util.Log
 import com.example.storeapp.model.CategoryModel
-import com.example.storeapp.model.ItemsModel
+import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.SliderModel
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
@@ -19,10 +19,10 @@ class FirebaseStoreAppRepository : StoreAppRepository {
         return banners
     }
 
-    override suspend fun loadAllItems(): List<ItemsModel> {
+    override suspend fun loadAllItems(): List<ProductModel> {
         val ref = firebaseDatabase.getReference("Items")
         val snapshot = ref.get().await()
-        val allItems = snapshot.children.mapNotNull { it.getValue(ItemsModel::class.java) }
+        val allItems = snapshot.children.mapNotNull { it.getValue(ProductModel::class.java) }
         Log.d("FirebaseStoreAppRepository", "Loaded allItems:$allItems")
         return allItems
     }

@@ -2,31 +2,57 @@
 
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
+import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
+import com.example.storeapp.model.ProductDataForOrderModel
+import com.example.storeapp.model.ProductModel
+import com.example.storeapp.model.ProductOptions
+import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.UserLocationModel
 import com.google.firebase.Timestamp
 
 object DataDummy {
+    // Dữ liệu mẫu cho địa chỉ người dùng
     val dummyUserLocation = listOf(
         UserLocationModel(
-            id = 1,
-            name = "Mas Azi",
-            address = "Jl. Durian No. 123, Banyubiru " +
-                    "Kab. Semarang, Jawa Tengah " +
-                    "Indonesia 50664"
+            id = "1",
+            street = "Jl. Durian No. 123",
+            province = "Jawa Tengah",
+            district = "Kab. Semarang",
+            ward = "Banyubiru",
+            isDefault = true,
+            userId = "user123",
+            provinceId = "province01",
+            districtId = "district01",
+            wardId = "ward01",
+            latitude = -7.123456,
+            longitude = 110.123456,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
         ),
         UserLocationModel(
-            id = 2,
-            name = "Haryanto",
-            address = "Jl. Durian No. 123, Banyubiru " +
-                    "Kab. Semarang, Jawa Tengah " +
-                    "Indonesia 50664"
+            id = "2",
+            street = "Jl. Durian No. 124",
+            province = "Jawa Tengah",
+            district = "Kab. Semarang",
+            ward = "Banyubiru",
+            isDefault = false,
+            userId = "user123",
+            provinceId = "province01",
+            districtId = "district01",
+            wardId = "ward01",
+            latitude = -7.654321,
+            longitude = 110.654321,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
         ),
     )
+
+    // Dữ liệu mẫu cho phương thức vận chuyển
     val dummyShipping = listOf(
         ShippingModel(
             name = "REG",
@@ -44,6 +70,8 @@ object DataDummy {
             description = "Estimated time of arrival 1 - 2 days"
         )
     )
+
+    // Dữ liệu mẫu cho phương thức thanh toán
     val dummyPaymentMethod = listOf(
         PaymentMethodModel(
             icon = R.drawable.icon_discover,
@@ -62,97 +90,128 @@ object DataDummy {
             name = "Visa"
         ),
     )
+
+    // Dữ liệu mẫu cho Coupon
     val dummyCoupon = listOf(
         CouponModel(
-            discountedPrice = "FREE SHIPPING",
+            id = "1",
+            code = "FWHWFW45A",
+            name = "Free Shipping",
             description = "Applies to get free shipping",
-            expiredDate = "31 Desember 2024",
+            type = "FIXED_AMOUNT",
+            value = 0.0,
+            maxDiscount = null,
+            minOrderValue = null,
+            quantity = 1,
+            isActive = true,
+            startDate = Timestamp.now(),
+            endDate = Timestamp.now(),
             color1 = Color(0xFF9733EE),
-            color2 = Color(0xFFDA22FF),
-            couponCode = "FWHWFW45A"
+            color2 = Color(0xFFDA22FF)
         ),
         CouponModel(
-            discountedPrice = "25%",
+            id = "2",
+            code = "ADERTS4TA",
+            name = "25% Off",
             description = "Applies to get 25% off",
-            expiredDate = "31 Desember 2024",
+            type = "PERCENTAGE",
+            value = 25.0,
+            maxDiscount = null,
+            minOrderValue = 100.0,
+            quantity = 1,
+            isActive = true,
+            startDate = Timestamp.now(),
+            endDate = Timestamp.now(),
             color1 = Color(0xFFFFA726),
-            color2 = Color(0xFFFFD54F),
-            couponCode = "ADERTS4TA"
+            color2 = Color(0xFFFFD54F)
         ),
         CouponModel(
-            discountedPrice = "50%",
-            couponCode = "NHJASE32Q",
+            id = "3",
+            code = "NHJASE32Q",
+            name = "50% Off",
             description = "Applies to get 50% off",
-            expiredDate = "31 Desember 2024",
+            type = "PERCENTAGE",
+            value = 50.0,
+            maxDiscount = null,
+            minOrderValue = 50.0,
+            quantity = 1,
+            isActive = true,
+            startDate = Timestamp.now(),
+            endDate = Timestamp.now(),
             color1 = Color(0xFF00C9FF),
             color2 = Color(0xFF92FE9D)
         )
     )
-    // Tạo một số CartModel mẫu
+
+    // Dữ liệu mẫu cho Cart
     val cartItems = listOf(
         CartModel(
-            id = 1,
-            productId = 101,
-            productName = "Sản phẩm A",
-            productPrice = "1000000.0",
-            productImage = "url_to_image_1",
-            productCategory = "Điện tử",
-            productQuantity = 2
+            id = "1",
+            products = listOf(
+                ProductsOnCart(
+                    productId = "101",
+                    productName = "Sản phẩm A",
+                    productImage = "url_to_image_1",
+                    productPrice = 1000000.0,
+                    productOptions =  ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                    quantity = 2
+                )
+            ),
+            total = 2000000.0,
+            userId = "user123"
         ),
         CartModel(
-            id = 2,
-            productId = 102,
-            productName = "Sản phẩm B",
-            productPrice = "1500000.0",
-            productImage = "url_to_image_2",
-            productCategory = "Điện tử",
-            productQuantity = 1
+            id = "2",
+            products = listOf(
+                ProductsOnCart(
+                    productId = "102",
+                    productName = "Sản phẩm B",
+                    productImage = "url_to_image_2",
+                    productPrice = 1500000.0,
+                    productOptions =  ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                    quantity = 1
+                )
+            ),
+            total = 1500000.0,
+            userId = "user123"
         )
     )
 
-    // Tạo đối tượng OrderModel
-    val order = OrderModel(
-        id = 1,
-        orderCode = "ORD12345",
-        totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-        orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-        items = cartItems
-    )
+    // Dữ liệu mẫu cho Order
     val listOrder = listOf(
         OrderModel(
-            id = 1,
-            orderCode = "ORD12345",
-            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-            items = cartItems
-        ),
-        OrderModel(
-            id = 2,
-            orderCode = "ORD12345",
-            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-            items = cartItems
-        ),
-        OrderModel(
-            id = 3,
-            orderCode = "ORD12345",
-            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-            items = cartItems
-        ),
-        OrderModel(
-            id = 4,
-            orderCode = "ORD12345",
-            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-            items = cartItems
-        ),
-        OrderModel(
-            id = 5,
-            orderCode = "ORD12345",
-            totalPrice = 3500000.0, // Tổng giá trị đơn hàng
-            orderDate = Timestamp.now(), // Lấy thời gian hiện tại làm ngày đặt hàng
-            items = cartItems
+            id = "1",
+            userId = "user123",
+            products = listOf(
+                ProductDataForOrderModel(
+                    id = "101",
+                    product = ProductModel(
+                        id = "101",
+                        name = "Sản phẩm A",
+                        images = listOf("url_to_image_1"),
+                        price = 1000000.0,
+                        stockQuantity = 50,
+                        brandId = "brand01",
+                        categoryId = "category01",
+                        hidden = false,
+                        description = "Product A description",
+                        rating = 4.5,
+                        availableOptions = ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                        options = listOf("Option1"),
+                        createdAt = Timestamp.now(),
+                        updatedAt = Timestamp.now(),
+                        brand = BrandModel(id = "brand01", name = "Brand A", imageUrl = "", description = "Brand A", hidden = false, createdAt = Timestamp.now(), updatedAt = Timestamp.now())
+                    ),
+                    orderId = "ORD12345",
+                    quantity = 2
+                )
+            ),
+            totalPrice = 3500000.0,
+            status = "Pending",
+            paymentMethod = "Credit Card",
+            addressId = "address123",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
         )
     )
 }

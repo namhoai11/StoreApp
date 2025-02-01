@@ -55,10 +55,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
-import com.example.storeapp.model.ItemsModel
+import com.example.storeapp.model.ProductModel
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.google.firebase.Timestamp
 
 
 object ProductDetailsDestination : NavigationDestination {
@@ -141,15 +142,15 @@ fun ProductDetailsScreen(
 
 @Composable
 fun ProductDetailsContent(
-    item: ItemsModel,
+    item: ProductModel,
 //    modifier: Modifier,
     onAddToCartClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     innerPadding: PaddingValues
 ) {
-    var selectedImageUrl by remember { mutableStateOf(item.picUrl.firstOrNull()) }
-    LaunchedEffect(item.picUrl) {
-        selectedImageUrl = item.picUrl.firstOrNull() ?: ""
+    var selectedImageUrl by remember { mutableStateOf(item.images.firstOrNull()) }
+    LaunchedEffect(item.images) {
+        selectedImageUrl = item.images.firstOrNull() ?: ""
     }
     Log.d("ProductDetailsContent", "selectdImageUrl: $selectedImageUrl")
     var selectedModelIndex by remember { mutableStateOf(-1) }
@@ -162,7 +163,7 @@ fun ProductDetailsContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        if (item.picUrl.isNotEmpty()) {
+        if (item.images.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(model = selectedImageUrl),
                 contentDescription = null,
@@ -193,7 +194,7 @@ fun ProductDetailsContent(
         }
 
         LazyRow(modifier = Modifier.padding(vertical = 16.dp)) {
-            items(item.picUrl) { imgUrl ->
+            items(item.images) { imgUrl ->
                 ImageThumbnail(
                     imageUrl = imgUrl,
                     isSelected = selectedImageUrl == imgUrl,
@@ -209,7 +210,7 @@ fun ProductDetailsContent(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
-                text = item.title,
+                text = item.name,
                 fontSize = 23.sp,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -223,7 +224,7 @@ fun ProductDetailsContent(
         }
         RatingBar(rating = item.rating)
         ModelSelector(
-            models = item.model,
+            models = item.options,
             selectedModelIndex = selectedModelIndex,
             onModelSelected = { selectedModelIndex = it }
         )
@@ -377,26 +378,29 @@ fun ImageThumbnail(
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PrevewProductDetailsContent() {
-    val item = ItemsModel(
-        id = 1,
-        title = "Business Laptop",
+    val item = ProductModel(
+        id = "1",
+        name = "Business Laptop",
         description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-        picUrl = arrayListOf(
+        images = arrayListOf(
             "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
             "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
             "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
             "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
             "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
         ),
-        model = arrayListOf(
+        options = arrayListOf(
             "core i3",
             "core i5",
             "core i7"
         ),
         price = 550.0,
         rating = 4.7,
-        showRecommended = true,
-        categoryId = "0"
+        categoryId = "0",
+        hidden = false,
+        stockQuantity = 12,
+        createdAt = Timestamp.now(),
+        updatedAt = Timestamp.now(),
     )
     ProductDetailsContent(item = item, innerPadding = PaddingValues(0.dp))
 }
