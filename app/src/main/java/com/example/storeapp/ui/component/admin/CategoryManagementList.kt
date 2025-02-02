@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.ui.theme.StoreAppTheme
+import com.google.firebase.Timestamp
 
 @Composable
 fun CategoryManagementList(
@@ -56,7 +57,7 @@ fun CategoryManagementItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = (item.picUrl), contentDescription = item.title,
+                model = (item.imageUrl), contentDescription = item.name,
                 modifier = Modifier
                     .size(80.dp),
                 contentScale = ContentScale.Inside,
@@ -72,7 +73,7 @@ fun CategoryManagementItem(
                     Column(
                     ) {
                         Text(
-                            text = item.title,
+                            text = item.name,
                             color = Color.Black,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
@@ -110,9 +111,27 @@ fun CategoryManagementItem(
 @Composable
 fun PreviewCategoryManagementList() {
     val sampleCategories = listOf(
-        CategoryModel(id = 0, title = "PC", picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"),
-        CategoryModel(id = 1, title = "PC", picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"),
-        CategoryModel(id = 2, title = "PC", picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e")
+        CategoryModel(
+            id = 0,
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        CategoryModel(
+            id = 0,
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        CategoryModel(
+            id = 0,
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        )
     )
     StoreAppTheme {
         CategoryManagementList(sampleCategories)
@@ -124,8 +143,10 @@ fun PreviewCategoryManagementList() {
 fun PreviewCategoryManagementItem() {
     val sampleItem = CategoryModel(
         id = 0,
-        title = "PC",
-        picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"
+        name = "PC",
+        imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+        createdAt = Timestamp.now(),
+        updatedAt = Timestamp.now(),
     )
     StoreAppTheme {
         CategoryManagementItem(sampleItem)

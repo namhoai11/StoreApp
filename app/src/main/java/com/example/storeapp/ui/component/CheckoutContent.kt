@@ -39,6 +39,7 @@ import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.ui.theme.StoreAppTheme
+import com.google.firebase.Timestamp
 
 @Composable
 fun CheckoutContent(
@@ -116,18 +117,18 @@ fun CheckoutContent(
                         .height(125.dp)
                 ) {
                     AddressItemScreen(
-                        name = selectedLocation.name,
-                        address = selectedLocation.address
+                        name = selectedLocation.street,
+                        address = selectedLocation.province
                     )
                 }
             }
-            state?.items?.firstOrNull()?.let { item ->
+            state?.products?.firstOrNull()?.let { item ->
                 CartItemMini(
-                    productName = item.productName,
-                    imageId = item.productImage,
-                    price = item.productPrice,
-                    orderCount = item.productQuantity,
-                    totalOrder = state.items.size,
+                    productName = item.product.name,
+                    imageId = item.product.images.firstOrNull().toString(),
+                    price = item.product.price,
+                    orderCount = item.quantity,
+                    totalOrder = item.quantity,
                     onDetailOrder = { onShowDialog() }
                 )
             }
@@ -213,7 +214,7 @@ fun CheckoutContent(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .clickable { onChooseCoupon() },
-                    discountTittle = selectedCouponChoose.discountedPrice
+                    discountTittle = selectedCouponChoose.maxDiscount.toString()
                 )
             }
         }
@@ -342,9 +343,20 @@ private fun CheckoutContentPreview() {
             onShowDialog = {},
             onChooseShipping = {},
             selectedLocation = UserLocationModel(
-                id = 1,
-                name = "Store Name",
-                address = "123 Main Street"
+                id = "1",
+                street = "Jl. Durian No. 123",
+                province = "Jawa Tengah",
+                district = "Kab. Semarang",
+                ward = "Banyubiru",
+                isDefault = true,
+                userId = "user123",
+                provinceId = "province01",
+                districtId = "district01",
+                wardId = "ward01",
+                latitude = -7.123456,
+                longitude = 110.123456,
+                createdAt = Timestamp.now(),
+                updatedAt = Timestamp.now()
             ),
             selectedLocationId = -1,
             selectedShippingId = 2,

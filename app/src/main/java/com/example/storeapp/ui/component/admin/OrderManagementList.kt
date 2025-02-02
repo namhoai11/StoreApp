@@ -157,5 +157,5 @@ fun formatCurrency2(amount: Double): String {
 }
 
 fun getTotalProductCount(order: OrderModel): Int {
-    return order.items.sumOf { it.productQuantity }
+    return order.products.sumOf { it.quantity }
 }

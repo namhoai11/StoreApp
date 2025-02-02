@@ -153,7 +153,11 @@ object DataDummy {
                     productName = "Sản phẩm A",
                     productImage = "url_to_image_1",
                     productPrice = 1000000.0,
-                    productOptions =  ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                    productOptions = ProductOptions(
+                        listOf("Option1", "Option2"),
+                        listOf("4GB", "8GB"),
+                        listOf("64GB", "128GB")
+                    ),
                     quantity = 2
                 )
             ),
@@ -168,13 +172,64 @@ object DataDummy {
                     productName = "Sản phẩm B",
                     productImage = "url_to_image_2",
                     productPrice = 1500000.0,
-                    productOptions =  ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                    productOptions = ProductOptions(
+                        listOf("Option1", "Option2"),
+                        listOf("4GB", "8GB"),
+                        listOf("64GB", "128GB")
+                    ),
                     quantity = 1
                 )
             ),
             total = 1500000.0,
             userId = "user123"
         )
+    )
+    val order = OrderModel(
+        id = "1",
+        userId = "user123",
+        products = listOf(
+            ProductDataForOrderModel(
+                id = "101",
+                product = ProductModel(
+                    id = "101",
+                    name = "Sản phẩm A",
+                    images = listOf("url_to_image_1"),
+                    price = 1000000.0,
+                    stockQuantity = 50,
+                    brandId = "brand01",
+                    categoryId = "category01",
+                    hidden = false,
+                    description = "Product A description",
+                    rating = 4.5,
+                    availableOptions = ProductOptions(
+                        listOf("Option1", "Option2"),
+                        listOf("4GB", "8GB"),
+                        listOf("64GB", "128GB")
+                    ),
+                    options = listOf("Option1"),
+                    createdAt = Timestamp.now(),
+                    updatedAt = Timestamp.now(),
+                    brand = BrandModel(
+                        id = "brand01",
+                        name = "Brand A",
+                        imageUrl = "",
+                        description = "Brand A",
+                        hidden = false,
+                        createdAt = Timestamp.now(),
+                        updatedAt = Timestamp.now()
+                    )
+                ),
+                orderId = "ORD12345",
+                quantity = 2
+            )
+        ),
+        totalPrice = 3500000.0,
+        status = "Pending",
+        orderCode = "VoHuyenTram",
+        paymentMethod = "Credit Card",
+        addressId = "address123",
+        createdAt = Timestamp.now(),
+        updatedAt = Timestamp.now()
     )
 
     // Dữ liệu mẫu cho Order
@@ -196,11 +251,23 @@ object DataDummy {
                         hidden = false,
                         description = "Product A description",
                         rating = 4.5,
-                        availableOptions = ProductOptions(listOf("Option1", "Option2"), listOf("4GB", "8GB"), listOf("64GB", "128GB")),
+                        availableOptions = ProductOptions(
+                            listOf("Option1", "Option2"),
+                            listOf("4GB", "8GB"),
+                            listOf("64GB", "128GB")
+                        ),
                         options = listOf("Option1"),
                         createdAt = Timestamp.now(),
                         updatedAt = Timestamp.now(),
-                        brand = BrandModel(id = "brand01", name = "Brand A", imageUrl = "", description = "Brand A", hidden = false, createdAt = Timestamp.now(), updatedAt = Timestamp.now())
+                        brand = BrandModel(
+                            id = "brand01",
+                            name = "Brand A",
+                            imageUrl = "",
+                            description = "Brand A",
+                            hidden = false,
+                            createdAt = Timestamp.now(),
+                            updatedAt = Timestamp.now()
+                        )
                     ),
                     orderId = "ORD12345",
                     quantity = 2
@@ -208,6 +275,54 @@ object DataDummy {
             ),
             totalPrice = 3500000.0,
             status = "Pending",
+            orderCode = "VoHuyenTram",
+            paymentMethod = "Credit Card",
+            addressId = "address123",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
+        ),
+        OrderModel(
+            id = "1",
+            userId = "user123",
+            products = listOf(
+                ProductDataForOrderModel(
+                    id = "101",
+                    product = ProductModel(
+                        id = "101",
+                        name = "Sản phẩm A",
+                        images = listOf("url_to_image_1"),
+                        price = 1000000.0,
+                        stockQuantity = 50,
+                        brandId = "brand01",
+                        categoryId = "category01",
+                        hidden = false,
+                        description = "Product A description",
+                        rating = 4.5,
+                        availableOptions = ProductOptions(
+                            listOf("Option1", "Option2"),
+                            listOf("4GB", "8GB"),
+                            listOf("64GB", "128GB")
+                        ),
+                        options = listOf("Option1"),
+                        createdAt = Timestamp.now(),
+                        updatedAt = Timestamp.now(),
+                        brand = BrandModel(
+                            id = "brand01",
+                            name = "Brand A",
+                            imageUrl = "",
+                            description = "Brand A",
+                            hidden = false,
+                            createdAt = Timestamp.now(),
+                            updatedAt = Timestamp.now()
+                        )
+                    ),
+                    orderId = "ORD12345",
+                    quantity = 2
+                )
+            ),
+            totalPrice = 3500000.0,
+            status = "Pending",
+            orderCode = "VoHuyenTram",
             paymentMethod = "Credit Card",
             addressId = "address123",
             createdAt = Timestamp.now(),

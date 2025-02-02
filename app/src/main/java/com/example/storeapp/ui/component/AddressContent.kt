@@ -45,7 +45,7 @@ fun AddressContent(
     modifier: Modifier = Modifier,
     state: List<UserLocationModel>,
     scope: CoroutineScope,
-    selectedItemId: Int?,
+    selectedItemId: Int,
     onSelectedItem: (Int) -> Unit,
     onDeletedItem: (Int) -> Unit,
     onConfirmationClick: () -> Unit,
@@ -73,11 +73,11 @@ fun AddressContent(
                 LazyColumn {
                     items(items = state, key = { it.id }) { userLocation ->
                         AddressItemScreen2(
-                            name = userLocation.name,
-                            address = userLocation.address,
-                            isSelected = selectedItemId == userLocation.id,
-                            onChooseClick = { onSelectedItem(userLocation.id) },
-                            onDeleteClick = { onDeletedItem(userLocation.id) },
+                            name = userLocation.street,
+                            address = userLocation.province,
+                            isSelected = selectedItemId == userLocation.id.toInt(),
+                            onChooseClick = { onSelectedItem(userLocation.id.toInt()) },
+                            onDeleteClick = { onDeletedItem(userLocation.id.toInt()) },
 //                            modifier = Modifier.animateItemPlacement(tween(100))
                         )
                         Spacer(modifier = Modifier.size(16.dp))

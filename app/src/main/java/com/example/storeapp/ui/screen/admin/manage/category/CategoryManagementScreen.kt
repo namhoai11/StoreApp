@@ -17,6 +17,7 @@ import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.CategoryManagementList
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
+import com.google.firebase.Timestamp
 
 object CategoryManagementDestination : NavigationDestination {
     override val route = "categorymanagement"
@@ -56,18 +57,24 @@ fun CategoryManagementContent(
     val sampleCategories = listOf(
         CategoryModel(
             id = 0,
-            title = "PC",
-            picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 1,
-            title = "PC",
-            picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"
+            id = 0,
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 2,
-            title = "PC",
-            picUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e"
+            id = 0,
+            name = "PC",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
         )
     )
     Column(

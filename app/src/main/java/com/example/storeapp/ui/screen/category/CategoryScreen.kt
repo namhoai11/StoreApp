@@ -64,7 +64,7 @@ fun CategoryScreen(
                     val selectedCategory =
                         homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
                     Text(
-                        text = selectedCategory?.title ?: "All",
+                        text = selectedCategory?.name ?: "All",
 //                        fontFamily = poppinsFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold

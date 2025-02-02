@@ -48,7 +48,7 @@ class OurProductViewModel(
     fun searchItemsByName(query: String) = viewModelScope.launch {
         _uiState.update { currentState ->
             val filteredItems = if (query.isNotBlank()) {
-                currentState.allItems.filter { it.title.contains(query, ignoreCase = true) }
+                currentState.allItems.filter { it.name.contains(query, ignoreCase = true) }
             } else {
                 currentState.allItems
             }

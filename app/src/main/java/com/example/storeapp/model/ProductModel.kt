@@ -12,6 +12,7 @@ data class ProductModel(
     val brandId: String? = null,
     val categoryId: String,
     val hidden: Boolean,
+    var showRecommended: Boolean = false,
     val description: String,
     val rating: Double,
     val availableOptions: ProductOptions? = null,  // List các tùy chọn có sẵn

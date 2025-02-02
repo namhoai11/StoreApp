@@ -19,7 +19,7 @@ data class NotificationModel(
 
     val messageDetail: String = "",
 
-    val date: String = getCurrentFormattedDate(),
+    val date: String = "",
 
     val isRead: Boolean = false
 )

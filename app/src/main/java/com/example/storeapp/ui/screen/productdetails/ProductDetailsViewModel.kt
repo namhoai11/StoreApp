@@ -18,7 +18,7 @@ class ProductDetailsViewModel(
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState
 
-    private val productDetailsId: Int =
+    private val productDetailsId: String =
         checkNotNull(savedStateHandle[ProductDetailsDestination.productDetailsIdArg])
 
     init {
@@ -41,9 +41,9 @@ class ProductDetailsViewModel(
             val productDetails = allItems.find { it.id == productDetailsId }
             if (productDetails != null) {
                 Log.d("ProductDetailsViewmodel", "Product Item: $productDetails")
-                Log.d("ProductDetailsViewmodel", "PicUrls: ${productDetails.picUrl}")
+                Log.d("ProductDetailsViewmodel", "PicUrls: ${productDetails.images}")
                 _uiState.update { it.copy(productDetailsItem = productDetails, showProductDetailsLoading = false) }
-                Log.d("ProductDetailsViewmodel", "ProductItem_uiState_picUrl: ${_uiState.value.productDetailsItem.picUrl.firstOrNull()}")
+                Log.d("ProductDetailsViewmodel", "ProductItem_uiState_picUrl: ${_uiState.value.productDetailsItem.images.firstOrNull()}")
 
             } else {
                 Log.e("ProductDetailsViewmodel", "Product not found for id: $productDetailsId")

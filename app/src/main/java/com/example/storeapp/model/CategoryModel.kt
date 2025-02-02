@@ -12,9 +12,9 @@ data class CategoryModel(
     val id: Int = 0,
     val name: String,
     val imageUrl: String,
-    val description: String,
-    val hidden: Boolean,
-    val productCount: Int,
+    val description: String = "",
+    val hidden: Boolean = false,
+    val productCount: Int = 1,
     val createdAt: Timestamp,
     val updatedAt: Timestamp
 )

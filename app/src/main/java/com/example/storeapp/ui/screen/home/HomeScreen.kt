@@ -107,7 +107,7 @@ fun HomeScreen(
                 val selectedCategory =
                     homeUiState.categories.find { it.id == homeUiState.currentCategoryId }
                 SectionTitle(
-                    title = selectedCategory?.title ?: "Recommended",
+                    title = selectedCategory?.name ?: "Recommended",
                     actionText = "See All",
                     navigate = { navigateAllProduct() }
                 )

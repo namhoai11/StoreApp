@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 data class OrderModel(
     val id: String,
     val userId: String,
+    val orderCode: String,
     val products: List<ProductDataForOrderModel>,
     val totalPrice: Double,
     val status: String,
@@ -21,6 +22,10 @@ data class ProductDataForOrderModel(
     val orderId: String,
     val quantity: Int
 )
+
+enum class OrderStatus {
+    PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELED, RETURNED
+}
 
 //data class OrderModel(
 //
