@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeapp.data.repository.StoreAppRepository
+import com.example.storeapp.data.repository.RealtimeDatabaseRepository
 import com.example.storeapp.ui.uistate.ProductDetailsUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(
     savedStateHandle: SavedStateHandle,
-    private val repository: StoreAppRepository
+    private val repository: RealtimeDatabaseRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState
@@ -33,12 +33,12 @@ class ProductDetailsViewModel(
 
     private fun loadProduct() = viewModelScope.launch {
         try {
-            val allItems = repository.loadAllItems()
-            Log.d("ProductDetailsViewmodel", "All Item:$allItems")
+            val allProducts = repository.loadAllProducts()
+            Log.d("ProductDetailsViewmodel", "All Product:$allProducts")
 
             _uiState.update { it.copy(showProductDetailsLoading = true) }
 
-            val productDetails = allItems.find { it.id == productDetailsId }
+            val productDetails = allProducts.find { it.id == productDetailsId }
             if (productDetails != null) {
                 Log.d("ProductDetailsViewmodel", "Product Item: $productDetails")
                 Log.d("ProductDetailsViewmodel", "PicUrls: ${productDetails.images}")

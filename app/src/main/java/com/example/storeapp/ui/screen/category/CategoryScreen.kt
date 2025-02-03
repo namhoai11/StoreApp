@@ -2,6 +2,8 @@ package com.example.storeapp.ui.screen.category
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -83,40 +85,41 @@ fun CategoryScreen(
             )
         }
     ) { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding,
-            modifier = Modifier
-                .fillMaxSize()
+        Column(
+            modifier = Modifier.padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
-                if (homeUiState.showCategoryLoading) {
-                    LoadingBox(height = 200.dp)
-                } else {
-                    CategoryList(
-                        categories = homeUiState.categories,
-                        onCategorySelected = { id ->
-                            viewModel.selectCategory(
-                                id.toInt()
-                            )
-                            Log.d("HomeScreenId", "selectCategory: $id")
-                        },
-                        isShowRecommend = false
-                    )
-                    val listItemsLog = homeUiState.categories
-                    Log.d("HomeScreen", "CurrentListItems: $listItemsLog")
-                }
+            if (homeUiState.showCategoryLoading) {
+                LoadingBox(height = 200.dp)
+            } else {
+                CategoryList(
+                    categories = homeUiState.categories,
+                    onCategorySelected = { id ->
+                        viewModel.selectCategory(
+                            id.toInt()
+                        )
+                        Log.d("HomeScreenId", "selectCategory: $id")
+                    },
+                    isShowRecommend = false
+                )
+                val listItemsLog = homeUiState.categories
+                Log.d("HomeScreen", "CurrentListItems: $listItemsLog")
             }
-            item {
-                if (homeUiState.showRecommenedLoading) {
-                    LoadingBox(height = 200.dp)
-                } else {
-                    ListItemsFullSize(
-                        items = homeUiState.currentListItems,
-                        navigateToItemDetail = navigateProductDetails
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                item {
+                    if (homeUiState.showRecommendedLoading) {
+                        LoadingBox(height = 200.dp)
+                    } else {
+                        ListItemsFullSize(
+                            items = homeUiState.currentListItems,
+                            navigateToItemDetail = navigateProductDetails
+                        )
+                    }
                 }
             }
         }
-
     }
 }

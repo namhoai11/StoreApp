@@ -3,9 +3,9 @@ package com.example.storeapp.ui.uistate
 import com.example.storeapp.model.ProductModel
 
 data class OurProductUiState(
-    val allItems: List<ProductModel> = emptyList(),
-    val itemsSearched: List<ProductModel> = emptyList(),
+    val allProducts: List<ProductModel> = emptyList(),
+    val productsSearched: List<ProductModel> = emptyList(),
     val currentQuery: String = "",
-    val showItemsLoading: Boolean = true,
-    val showItemsSearchedLoading: Boolean = false // Set mặc định là false
+    val showProductsLoading: Boolean = true,
+    val showProductsSearchedLoading: Boolean = false // Set mặc định là false
 )

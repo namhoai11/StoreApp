@@ -1,33 +1,14 @@
 {
   "project_info": {
-    "project_number": "303608502892",
-    "firebase_url": "https://commerc-b4186-default-rtdb.firebaseio.com",
-    "project_id": "commerc-b4186",
-    "storage_bucket": "commerc-b4186.appspot.com"
+    "project_number": "1039681137422",
+    "firebase_url": "https://store-app-d6dda-default-rtdb.firebaseio.com",
+    "project_id": "store-app-d6dda",
+    "storage_bucket": "store-app-d6dda.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:303608502892:android:3dc67f03da6d32eb909649",
-        "android_client_info": {
-          "package_name": "com.example.commerc"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAjW85Yaoini2jZSa9ddSDjEMRjND-ffJM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:303608502892:android:7546f377164697af909649",
+        "mobilesdk_app_id": "1:1039681137422:android:988b7bd45b8216fb87055f",
         "android_client_info": {
           "package_name": "com.example.storeapp"
         }
@@ -35,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAjW85Yaoini2jZSa9ddSDjEMRjND-ffJM"
+          "current_key": "AIzaSyAhOoGKqqf4R9E-umFS7bMDKTHuXAO5Qhc"
         }
       ],
       "services": {

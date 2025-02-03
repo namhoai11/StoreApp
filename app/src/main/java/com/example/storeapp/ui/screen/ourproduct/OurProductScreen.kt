@@ -49,14 +49,14 @@ fun OurProductScreen(
                 .fillMaxSize()
         ) {
             item {
-                if (ourProductUiState.showItemsLoading) {
+                if (ourProductUiState.showProductsLoading) {
                     LoadingBox(height = 200.dp)
                 } else {
                     ListItemsFullSize(
                         items = if (ourProductUiState.currentQuery.isNotBlank()) {
-                            ourProductUiState.itemsSearched
+                            ourProductUiState.productsSearched
                         } else {
-                            ourProductUiState.allItems
+                            ourProductUiState.allProducts
                         },
                         navigateToItemDetail = navigateProductDetails
                     )

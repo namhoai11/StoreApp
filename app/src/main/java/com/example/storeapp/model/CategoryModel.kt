@@ -17,4 +17,6 @@ data class CategoryModel(
     val productCount: Int = 1,
     val createdAt: Timestamp,
     val updatedAt: Timestamp
+//    val createdAt: Timestamp,
+//    val updatedAt: Timestamp
 )

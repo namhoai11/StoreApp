@@ -1,14 +1,13 @@
 package com.example.storeapp.data.container
 
-import com.example.storeapp.data.repository.FirebaseStoreAppRepository
-import com.example.storeapp.data.repository.StoreAppRepository
+import com.example.storeapp.data.repository.RealtimeDatabaseRepository
 
 interface AppContainer {
-    val storeAppRepository: StoreAppRepository
+    val realtimeDatabaseRepository: RealtimeDatabaseRepository
 }
 
 class AppDataContainer : AppContainer {
-    override val storeAppRepository: StoreAppRepository by lazy {
-        FirebaseStoreAppRepository()
+    override val realtimeDatabaseRepository: RealtimeDatabaseRepository by lazy {
+        RealtimeDatabaseRepository()
     }
 }

@@ -114,7 +114,7 @@ fun HomeScreen(
             }
 
             item {
-                if (homeUiState.showRecommenedLoading) {
+                if (homeUiState.showRecommendedLoading) {
                     LoadingBox(height = 200.dp)
                 } else {
                     ListItems(

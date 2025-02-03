@@ -15,8 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,17 +39,18 @@ fun CategoryList(
     onCategorySelected: (String) -> Unit = {},
     isShowRecommend: Boolean = true
 ) {
-    var selectedIndex by remember {
-        mutableStateOf(0)
+    var selectedIndex by rememberSaveable {
+        mutableIntStateOf(0)
     }
+
 //    val context = LocalContext.current
     // Thêm "All" hoặc "Recommend" vào đầu danh sách nếu được yêu cầu
     val extendedCategories = if (isShowRecommend) {
         listOf(
             CategoryModel(
-                id = 0,
-                name = "PC",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+                id = -1,
+                name = "Recommend",
+                imageUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/recommend.png?alt=media&token=0d69a7fa-9d97-489a-bfbc-f5d89c3f35fe",
                 createdAt = Timestamp.now(),
                 updatedAt = Timestamp.now(),
             ) // Item tĩnh
@@ -57,9 +58,9 @@ fun CategoryList(
     } else {
         listOf(
             CategoryModel(
-                id = 0,
-                name = "PC",
-                imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+                id = -2,
+                name = "All",
+                imageUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/All.png?alt=media&token=f68f85f0-8388-4f60-b50b-fe952f2f17dd",
                 createdAt = Timestamp.now(),
                 updatedAt = Timestamp.now(),
             ) // Item tĩnh

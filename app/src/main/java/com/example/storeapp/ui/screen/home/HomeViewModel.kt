@@ -3,7 +3,7 @@ package com.example.storeapp.ui.screen.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeapp.data.repository.StoreAppRepository
+import com.example.storeapp.data.repository.RealtimeDatabaseRepository
 import com.example.storeapp.ui.uistate.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val repository: StoreAppRepository
+    private val repository: RealtimeDatabaseRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
@@ -42,25 +42,25 @@ class HomeViewModel(
 
 
 
-            val allItems = repository.loadAllItems()
-            Log.d("HomeViewModel", "All Item:$allItems")
-            val itemsByCategory = allItems.groupBy { it.categoryId.toIntOrNull() ?: -2 }
+            val allProducts = repository.loadAllProducts()
+            Log.d("HomeViewModel", "All Product:$allProducts")
+            val itemsByCategory = allProducts.groupBy { it.categoryId.toIntOrNull() ?: -2 }
 
             _uiState.update {
                 it.copy(
-                    allItems = allItems,
+                    allProducts = allProducts,
                     itemsByCategory = itemsByCategory,
 //                    currentCategoryId = -1
                 )
             }
 
-            _uiState.update { it.copy(showRecommenedLoading = true) }
-            val recommendedItems = allItems.filter { it.showRecommended == true }
-            Log.d("HomeViewModel", "Recommended Items: $recommendedItems")
+            _uiState.update { it.copy(showRecommendedLoading = true) }
+            val recommendedProducts = allProducts.filter { it.showRecommended }
+            Log.d("HomeViewModel", "Recommended Products: $recommendedProducts")
             _uiState.update {
                 it.copy(
-                    recommendedItems = recommendedItems,
-                    showRecommenedLoading = false
+                    recommendedProducts = recommendedProducts,
+                    showRecommendedLoading = false
                 )
             }
 

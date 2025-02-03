@@ -14,21 +14,21 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(
-                storeAppManagerApplication().container.storeAppRepository
+                storeAppManagerApplication().container.realtimeDatabaseRepository
             )
         }
 
         initializer {
             ProductDetailsViewModel(
                 this.createSavedStateHandle(),
-                storeAppManagerApplication().container.storeAppRepository
+                storeAppManagerApplication().container.realtimeDatabaseRepository
             )
 
         }
 
         initializer {
             OurProductViewModel(
-                storeAppManagerApplication().container.storeAppRepository
+                storeAppManagerApplication().container.realtimeDatabaseRepository
             )
         }
     }
