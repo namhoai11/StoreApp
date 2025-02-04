@@ -26,11 +26,11 @@ class FirebaseAuthRepository {
                     "lastName" to userModel.lastName,
                     "phone" to userModel.phone,
                     "fullAddress" to userModel.fullAddress,
-                    // Thêm các thuộc tính khác từ UserModel
+//                     Thêm các thuộc tính khác từ UserModel
                     "createdAt" to userModel.createdAt,
                     "updatedAt" to userModel.updatedAt
                 )
-                firestore.collection("users").document(user.uid).set(userMap).await()
+                firestore.collection("Users").document(user.uid).set(userMap).await()
             }
             Log.d("FirebaseAuthRepository", "Registration successful: ${user?.uid}")
             result

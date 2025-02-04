@@ -18,8 +18,10 @@ class ProductDetailsViewModel(
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState
 
-    private val productDetailsId: String =
+    private val productDetailsId: Int =
         checkNotNull(savedStateHandle[ProductDetailsDestination.productDetailsIdArg])
+
+
 
     init {
         loadProduct()
@@ -38,7 +40,7 @@ class ProductDetailsViewModel(
 
             _uiState.update { it.copy(showProductDetailsLoading = true) }
 
-            val productDetails = allProducts.find { it.id == productDetailsId }
+            val productDetails = allProducts.find { it.id == productDetailsId.toString() }
             if (productDetails != null) {
                 Log.d("ProductDetailsViewmodel", "Product Item: $productDetails")
                 Log.d("ProductDetailsViewmodel", "PicUrls: ${productDetails.images}")
