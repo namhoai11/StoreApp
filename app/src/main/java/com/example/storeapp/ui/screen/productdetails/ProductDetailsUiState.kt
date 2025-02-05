@@ -1,4 +1,4 @@
-package com.example.storeapp.ui.uistate
+package com.example.storeapp.ui.screen.productdetails
 
 import com.example.storeapp.model.ProductModel
 import com.google.firebase.Timestamp

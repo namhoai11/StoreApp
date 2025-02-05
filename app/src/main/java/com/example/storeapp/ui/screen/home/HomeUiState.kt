@@ -1,4 +1,4 @@
-package com.example.storeapp.ui.uistate
+package com.example.storeapp.ui.screen.home
 
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ProductModel

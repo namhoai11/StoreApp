@@ -30,9 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,7 +49,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.storeapp.R
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
@@ -63,7 +65,9 @@ object SignUpDestination : NavigationDestination {
 @Composable
 fun SignUpScreen(
     onNavigateSignIn: () -> Unit,
+    viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsState()  // Lấy trạng thái từ ViewModel
     Column(
         Modifier
             .padding(WindowInsets.statusBars.asPaddingValues())
@@ -72,12 +76,6 @@ fun SignUpScreen(
             .background(color = Color(android.graphics.Color.parseColor("#ffffff"))),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.top_background),
-//            contentDescription = null,
-//            contentScale = ContentScale.FillBounds,
-//            modifier = Modifier.fillMaxWidth()
-//        )
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
@@ -104,15 +102,7 @@ fun SignUpScreen(
 
                 )
         }
-//        Text(
-//            text = "Welcome to Commerc",
-//            fontSize = 30.sp,
-//            fontStyle = FontStyle.Italic,
-//            fontWeight = FontWeight.Bold,
-//            color = Color(android.graphics.Color.parseColor("#7d32a8"))
-//        )
-        var user by remember { mutableStateOf("") }
-        var pass by remember { mutableStateOf("") }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -121,8 +111,8 @@ fun SignUpScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = 16.dp, bottom = 8.dp, top = 8.dp),
-                value = user,
-                onValueChange = { user = it },
+                value = uiState.lastName,
+                onValueChange = { viewModel.onLastNameChange(it) },
                 placeholder = "Tên",
                 isPasswordField = false,
                 leadingIcon = R.drawable.icon_user_outlined
@@ -131,8 +121,8 @@ fun SignUpScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 16.dp, bottom = 8.dp, top = 8.dp),
-                value = user,
-                onValueChange = { user = it },
+                value = uiState.firstName,
+                onValueChange = { viewModel.onFirstNameChange(it) },
                 placeholder = "Họ",
                 isPasswordField = false,
                 leadingIcon = R.drawable.icon_user_outlined
@@ -140,38 +130,36 @@ fun SignUpScreen(
         }
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = user,
-            onValueChange = { user = it },
+            value = uiState.email,
+            onValueChange = { viewModel.onEmailChange(it) },
             placeholder = "Email",
             isPasswordField = false,
             leadingIcon = R.drawable.icon_email
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = user,
-            onValueChange = { user = it },
+            value = uiState.phone,
+            onValueChange = { viewModel.onPhoneChange(it) },
             placeholder = "Số điện thoại",
             isPasswordField = false,
             leadingIcon = R.drawable.icon_telephone
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.password,
+            onValueChange = { viewModel.onPasswordChange(it) },
             placeholder = "Mật khẩu",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.confirmPassword,
+            onValueChange = { viewModel.onConfirmPasswordChange(it) },
             placeholder = "Nhập lại mật khẩu",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
-        // Checkbox
-        var isChecked by remember { mutableStateOf(false) }
         Row(
             verticalAlignment = Alignment.CenterVertically,
 //            modifier = Modifier.padding(top = 16.dp)
@@ -180,8 +168,8 @@ fun SignUpScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Checkbox(
-                checked = isChecked,
-                onCheckedChange = { isChecked = it },
+                checked = uiState.isChecked,
+                onCheckedChange = { viewModel.onCheckedChange(it) },
                 colors = CheckboxDefaults.colors(checkedColor = Color(0xFF7D32A8))
             )
             Text(
@@ -191,7 +179,7 @@ fun SignUpScreen(
             )
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { viewModel.signUp() },
             Modifier
                 .fillMaxWidth()
                 .height(66.dp)
@@ -215,19 +203,6 @@ fun SignUpScreen(
             clickableText = R.string.login_title,
             textAnnomation = R.string.signin_annotation
         )
-
-//        Row() {
-//            Image(
-//                painter = painterResource(id = R.drawable.google),
-//                contentDescription = null,
-//                Modifier.padding(8.dp)
-//            )
-//            Image(
-//                painter = painterResource(id = R.drawable.facebook),
-//                contentDescription = null,
-//                Modifier.padding(8.dp)
-//            )
-//        }
     }
 }
 
@@ -329,7 +304,7 @@ fun PreviewLoginFields() {
 @Preview("LightMode", showBackground = true)
 @Preview("DarkMode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewSignUpScreen(){
+fun PreviewSignUpScreen() {
     StoreAppTheme {
         SignUpScreen(onNavigateSignIn = {})
     }
