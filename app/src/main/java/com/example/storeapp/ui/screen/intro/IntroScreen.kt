@@ -2,7 +2,6 @@
 
 package com.example.storeapp.ui.screen.intro
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,16 +24,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.R
+import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 object IntroDestination : NavigationDestination {
@@ -110,7 +105,7 @@ fun IntroScreen(
             modifier = Modifier
                 .padding(
                     horizontal = 32.dp,
-                    vertical = 16.dp
+//                    vertical = 16.dp
                 )
                 .fillMaxWidth()
                 .height(50.dp),
@@ -134,42 +129,44 @@ fun IntroScreen(
 //            fontSize = 18.sp
 //        )
         // Các thành phần khác
-        SignInText(onSignUpClick = {
-            // Xử lý khi bấm "Sign un"
-            onNavigateSignUp()
-            Log.d("SignUp", "Sign up clicked!")
-            // Hoặc chuyển sang màn hình đăng nhập
-        })
+        SignInText(
+            normalText = R.string.non_account,
+            clickableText = R.string.signup_title,
+            textAnnomation = R.string.signup_annotation,
+            onTextClicked = {
+                onNavigateSignUp()
+            }
+        )
     }
 }
 
-@Composable
-fun SignInText(onSignUpClick: () -> Unit) {
-    val normalText = stringResource(id = R.string.sign)
-    val clickableText = "SignUp"
-
-    val annotatedString = buildAnnotatedString {
-        append(normalText)
-        withStyle(
-            style = SpanStyle(
-                color = colorResource(id = R.color.purple),
-                fontWeight = FontWeight.Bold
-            )
-        ) {
-            pushStringAnnotation(tag = "SignUp", annotation = "sign_up")
-            append(clickableText)
-            pop()
-        }
-    }
-    ClickableText(
-        text = annotatedString,
-        onClick = { offset ->
-            annotatedString.getStringAnnotations(tag = "SignUp", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    onSignUpClick()
-                }
-        },
-        modifier = Modifier.padding(top = 16.dp),
-        style = TextStyle(fontSize = 18.sp, textAlign = TextAlign.Center)
-    )
-}
+//@Composable
+//fun SignInText(onSignUpClick: () -> Unit) {
+//    val normalText = stringResource(id = R.string.sign)
+//    val clickableText = "SignUp"
+//
+//    val annotatedString = buildAnnotatedString {
+//        append(normalText)
+//        withStyle(
+//            style = SpanStyle(
+//                color = colorResource(id = R.color.purple),
+//                fontWeight = FontWeight.Bold
+//            )
+//        ) {
+//            pushStringAnnotation(tag = "SignUp", annotation = "sign_up")
+//            append(clickableText)
+//            pop()
+//        }
+//    }
+//    ClickableText(
+//        text = annotatedString,
+//        onClick = { offset ->
+//            annotatedString.getStringAnnotations(tag = "SignUp", start = offset, end = offset)
+//                .firstOrNull()?.let {
+//                    onSignUpClick()
+//                }
+//        },
+//        modifier = Modifier.padding(top = 16.dp),
+//        style = TextStyle(fontSize = 18.sp, textAlign = TextAlign.Center)
+//    )
+//}

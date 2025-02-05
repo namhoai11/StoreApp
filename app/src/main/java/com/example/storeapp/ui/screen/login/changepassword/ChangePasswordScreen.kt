@@ -1,14 +1,9 @@
-package com.example.storeapp.ui.screen.login
+﻿package com.example.storeapp.ui.screen.login.changepassword
 
-
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,29 +26,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.R
-import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.login.signup.LoginTextField
-import com.example.storeapp.ui.theme.StoreAppTheme
 
-
-object LoginDestination : NavigationDestination {
-    override val route = "login"
-    override val titleRes = R.string.login_title
+object ChangePasswordDestination : NavigationDestination {
+    override val route = "change_password"
+    override val titleRes = R.string.change_password
 }
-
+@Preview
 @Composable
-fun LoginScreen(
-    onNavigateSignUp: () -> Unit,
-    onNavigateForgotPassword: () -> Unit
-) {
+fun ChangePasswordScreen() {
     Column(
         Modifier
             .fillMaxHeight()
@@ -79,7 +67,7 @@ fun LoginScreen(
         ) {
 
             Text(
-                text = "Đăng nhập",
+                text = stringResource(id = R.string.change_password),
                 fontSize = 30.sp,
                 fontStyle = FontStyle.Italic,
                 fontWeight = FontWeight.Bold,
@@ -93,38 +81,37 @@ fun LoginScreen(
 
                 )
         }
-        var user by remember { mutableStateOf("") }
+//        Text(
+//            text = "Welcome to Commerc",
+//            fontSize = 30.sp,
+//            fontStyle = FontStyle.Italic,
+//            fontWeight = FontWeight.Bold,
+//            color = Color(android.graphics.Color.parseColor("#7d32a8"))
+//        )
         var pass by remember { mutableStateOf("") }
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = user,
-            onValueChange = { user = it },
-            placeholder = "Email",
-            isPasswordField = false,
-            leadingIcon = R.drawable.icon_email
+            value = pass,
+            onValueChange = { pass = it },
+            placeholder = "Mật khẩu cũ",
+            isPasswordField = true,
+            leadingIcon = R.drawable.icon_padlock_filled
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             value = pass,
             onValueChange = { pass = it },
-            placeholder = "Mật khẩu",
+            placeholder = "Mật khẩu mới",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
-        val interactionSource = remember { MutableInteractionSource() }
-        Text(
-            text = stringResource(id = R.string.forgot_password),
-            modifier = Modifier
-                .clickable(interactionSource = interactionSource, indication = null) {
-                    onNavigateForgotPassword()
-                }
-                .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
-                .align(Alignment.End),
-            style = TextStyle(
-                color = Color(0xFF7D32A8),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+        LoginTextField(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            value = pass,
+            onValueChange = { pass = it },
+            placeholder = "Nhập lại mật khẩu mới",
+            isPasswordField = true,
+            leadingIcon = R.drawable.icon_padlock_filled
         )
         Button(
             onClick = { /*TODO*/ },
@@ -138,53 +125,41 @@ fun LoginScreen(
             shape = RoundedCornerShape(12)
         ) {
             Text(
-                text = stringResource(id = R.string.login_title),
+                text = stringResource(id = R.string.change_password),
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
 
         }
-        SignInText(
-            normalText = R.string.non_account,
-            clickableText = R.string.signup_title,
-            textAnnomation = R.string.signup_annotation,
-            onTextClicked = {
-                onNavigateSignUp()
-            }
-        )
-        Row() {
-            Image(
-                painter = painterResource(id = R.drawable.google),
-                contentDescription = null,
-                Modifier.padding(8.dp)
-            )
+//        Text(
+//            text = "Don't remember password? Click here",
+//            Modifier.padding(top = 8.dp, bottom = 8.dp),
+//            fontSize = 14.sp,
+//            color = Color(0xFF7D32A8),
+//        )
+//        Row() {
+//            Image(
+//                painter = painterResource(id = R.drawable.google),
+//                contentDescription = null,
+//                Modifier.padding(8.dp)
+//            )
 //            Image(
 //                painter = painterResource(id = R.drawable.twitter),
 //                contentDescription = null,
 //                Modifier.padding(8.dp)
 //            )
-            Image(
-                painter = painterResource(id = R.drawable.facebook),
-                contentDescription = null,
-                Modifier.padding(8.dp)
-            )
-        }
+//            Image(
+//                painter = painterResource(id = R.drawable.facebook),
+//                contentDescription = null,
+//                Modifier.padding(8.dp)
+//            )
+//        }
         Image(
             painter = painterResource(id = R.drawable.bottom_background),
             contentDescription = "",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@Preview("LighTheme", showBackground = true)
-@Preview("DarkTheme", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun PreviewLoginScreen() {
-    StoreAppTheme {
-        LoginScreen(onNavigateSignUp = {},
-            onNavigateForgotPassword = {})
     }
 }

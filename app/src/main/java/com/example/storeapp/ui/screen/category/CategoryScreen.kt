@@ -27,9 +27,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.ui.AppViewModelProvider
-import com.example.storeapp.ui.component.CategoryList
-import com.example.storeapp.ui.component.ListItemsFullSize
-import com.example.storeapp.ui.component.LoadingBox
+import com.example.storeapp.ui.component.user.CategoryList
+import com.example.storeapp.ui.component.user.ListItemsFullSize
+import com.example.storeapp.ui.component.user.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.home.HomeViewModel
 

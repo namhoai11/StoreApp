@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.model.NotificationModel
-import com.example.storeapp.ui.component.NotificationItem
+import com.example.storeapp.ui.component.user.NotificationItem
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 object NotificateDestination : NavigationDestination {

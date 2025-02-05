@@ -27,9 +27,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.model.FavoriteModel
-import com.example.storeapp.model.ProductModel
-import com.example.storeapp.ui.component.FavoriteList
-import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
+import com.example.storeapp.ui.component.user.FavoriteList
+import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import java.util.ArrayList
 

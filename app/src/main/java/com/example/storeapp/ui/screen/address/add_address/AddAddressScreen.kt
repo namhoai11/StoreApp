@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.storeapp.R
-import com.example.storeapp.ui.component.AnimatedShimmerDetailAddress
+import com.example.storeapp.ui.component.user.AnimatedShimmerDetailAddress
 import com.example.storeapp.ui.uistate.AddAddressUiState
 import com.google.maps.android.compose.CameraPositionState
 

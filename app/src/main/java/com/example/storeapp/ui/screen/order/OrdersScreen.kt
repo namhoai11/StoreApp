@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
-import com.example.storeapp.ui.component.FilterOrder
-import com.example.storeapp.ui.component.OrderList
-import com.example.storeapp.ui.component.SearchOrder
-import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
+import com.example.storeapp.ui.component.user.FilterOrder
+import com.example.storeapp.ui.component.user.OrderList
+import com.example.storeapp.ui.component.user.SearchOrder
+import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 

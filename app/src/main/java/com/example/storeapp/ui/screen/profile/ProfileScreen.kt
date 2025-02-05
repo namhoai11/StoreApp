@@ -40,7 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.SettingProfileNavigatonItemProvider
-import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
+import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 

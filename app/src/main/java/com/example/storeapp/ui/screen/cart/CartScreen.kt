@@ -28,13 +28,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.model.CartModel
-import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
-import com.example.storeapp.ui.component.CartList
-import com.example.storeapp.ui.component.CartSummary
+import com.example.storeapp.ui.component.user.CartList
+import com.example.storeapp.ui.component.user.CartSummary
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
-import java.util.ArrayList
 
 object CartDestination : NavigationDestination {
     override val route = "cart"

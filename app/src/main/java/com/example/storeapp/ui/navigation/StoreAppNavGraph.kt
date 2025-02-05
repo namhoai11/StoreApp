@@ -29,6 +29,8 @@ import com.example.storeapp.ui.screen.intro.IntroDestination
 import com.example.storeapp.ui.screen.intro.IntroScreen
 import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.LoginScreen
+import com.example.storeapp.ui.screen.login.forgotpassword.ForgotPasswordDestination
+import com.example.storeapp.ui.screen.login.forgotpassword.ForgotPasswordScreen
 import com.example.storeapp.ui.screen.notification.NotificateDestination
 import com.example.storeapp.ui.screen.notification.NotificationScreen
 import com.example.storeapp.ui.screen.order.OrdersDestination
@@ -37,6 +39,12 @@ import com.example.storeapp.ui.screen.productdetails.ProductDetailsDestination
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsScreen
 import com.example.storeapp.ui.screen.profile.ProfileDestination
 import com.example.storeapp.ui.screen.profile.ProfileScreen
+import com.example.storeapp.ui.screen.login.signup.SignUpDestination
+import com.example.storeapp.ui.screen.login.signup.SignUpScreen
+import com.example.storeapp.ui.screen.login.verify.DoneVerifyDestination
+import com.example.storeapp.ui.screen.login.verify.DoneVerifyScreen
+import com.example.storeapp.ui.screen.login.verify.VerifyAccountDestination
+import com.example.storeapp.ui.screen.login.verify.VerifyScreen
 
 @Composable
 fun StoreAppNavHost(
@@ -57,11 +65,20 @@ fun StoreAppNavHost(
 //                            inclusive = true
                         } // xóa bỏ các màn hình cũ không cần thiết
                     }
+                },
+                onNavigateSignUp = {
+                    navController.navigate(SignUpDestination.route)
                 }
             )
         }
         composable(route = LoginDestination.route) {
-            LoginScreen()
+            LoginScreen(
+                onNavigateSignUp = {
+                    navController.navigate(SignUpDestination.route)
+                },
+                onNavigateForgotPassword = {
+                    navController.navigate(ForgotPasswordDestination.route)
+                })
         }
         composable(route = HomeDestination.route) {
             HomeScreen(
@@ -140,11 +157,35 @@ fun StoreAppNavHost(
                     navController.navigate(ProfileDestination.route)
                 })
         }
-        composable(OrderManagementDestination.route) { 
+        composable(OrderManagementDestination.route) {
             OrderManagementScreen(navController = navController)
         }
-        composable(CategoryManagementDestination.route) { 
+        composable(CategoryManagementDestination.route) {
             CategoryManagementScreen(navController = navController)
+        }
+        composable(SignUpDestination.route) {
+            SignUpScreen(onNavigateSignIn = {
+                navController.navigate(LoginDestination.route)
+            })
+        }
+        composable(ForgotPasswordDestination.route) {
+            ForgotPasswordScreen(
+                navController = navController,
+                onNavigateSignIn = {
+                    navController.navigate(LoginDestination.route)
+                },
+                onNavigateVerify = {
+                    navController.navigate(VerifyAccountDestination.route)
+                })
+        }
+        composable(VerifyAccountDestination.route) {
+            VerifyScreen(navController = navController,
+                onNavigateDoneVerify = {
+                    navController.navigate(DoneVerifyDestination.route)
+                })
+        }
+        composable(DoneVerifyDestination.route) {
+            DoneVerifyScreen()
         }
     }
 }

@@ -17,13 +17,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.ui.AppViewModelProvider
-import com.example.storeapp.ui.component.Banners
-import com.example.storeapp.ui.component.CategoryList
-import com.example.storeapp.ui.component.HomeTopAppBar
-import com.example.storeapp.ui.component.ListItems
-import com.example.storeapp.ui.component.LoadingBox
-import com.example.storeapp.ui.component.SectionTitle
-import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
+import com.example.storeapp.ui.component.user.Banners
+import com.example.storeapp.ui.component.user.CategoryList
+import com.example.storeapp.ui.component.user.HomeTopAppBar
+import com.example.storeapp.ui.component.user.ListItems
+import com.example.storeapp.ui.component.user.LoadingBox
+import com.example.storeapp.ui.component.user.SectionTitle
+import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 object HomeDestination : NavigationDestination {

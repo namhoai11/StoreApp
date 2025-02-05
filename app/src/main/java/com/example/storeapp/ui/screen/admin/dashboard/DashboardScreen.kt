@@ -32,14 +32,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
-import com.example.storeapp.ui.component.OrderStatus
+import com.example.storeapp.ui.component.user.OrderStatus
 import com.example.storeapp.ui.component.admin.AdminBottomNavigationBar
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 import java.text.DecimalFormat
-import java.text.NumberFormat
-import java.util.Locale
 
 object DashboardAdminDestination : NavigationDestination {
     override val route = "dashboard"

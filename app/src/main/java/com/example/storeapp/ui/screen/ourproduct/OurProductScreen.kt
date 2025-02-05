@@ -14,10 +14,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.ui.AppViewModelProvider
-import com.example.storeapp.ui.component.ListItemsFullSize
-import com.example.storeapp.ui.component.LoadingBox
-import com.example.storeapp.ui.component.SearchBar
-import com.example.storeapp.ui.component.StoreAppBottomNavigationBar
+import com.example.storeapp.ui.component.user.ListItemsFullSize
+import com.example.storeapp.ui.component.user.LoadingBox
+import com.example.storeapp.ui.component.user.SearchBar
+import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 object OurProductDestination : NavigationDestination {

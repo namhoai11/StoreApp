@@ -57,7 +57,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.ui.AppViewModelProvider
-import com.example.storeapp.ui.component.LoadingBox
+import com.example.storeapp.ui.component.user.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.google.firebase.Timestamp
 
