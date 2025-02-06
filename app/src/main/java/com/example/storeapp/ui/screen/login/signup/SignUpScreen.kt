@@ -1,6 +1,7 @@
 ﻿package com.example.storeapp.ui.screen.login.signup
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -65,6 +68,7 @@ object SignUpDestination : NavigationDestination {
 @Composable
 fun SignUpScreen(
     onNavigateSignIn: () -> Unit,
+    onNavigateSignInAfterSignUp: () -> Unit,
     viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()  // Lấy trạng thái từ ViewModel
@@ -178,8 +182,18 @@ fun SignUpScreen(
 //                modifier = Modifier.padding(start = 8.dp)
             )
         }
+        val context = LocalContext.current
+        LaunchedEffect(uiState.successMessage) {
+            Log.d("SignUpScreen", "successMessage: ${uiState.successMessage}")
+            if (uiState.successMessage != null) {
+                onNavigateSignInAfterSignUp()
+                viewModel.clearSuccessMessage()
+            }
+        }
         Button(
-            onClick = { viewModel.signUp() },
+            onClick = {
+                viewModel.signUp(context)
+            },
             Modifier
                 .fillMaxWidth()
                 .height(66.dp)
@@ -306,6 +320,6 @@ fun PreviewLoginFields() {
 @Composable
 fun PreviewSignUpScreen() {
     StoreAppTheme {
-        SignUpScreen(onNavigateSignIn = {})
+        SignUpScreen(onNavigateSignIn = {},{})
     }
 }

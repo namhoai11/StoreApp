@@ -1,6 +1,8 @@
 ﻿package com.example.storeapp.ui.screen.login.signup
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseAuthRepository
@@ -112,13 +114,10 @@ class SignUpViewModel(
         }
     }
 
-    fun signUp() {
+    fun signUp(context: Context) {  // Truyền context vào để hiển thị Toast
         if (!validateInputs()) return
 
-        // Cập nhật trạng thái UI cho việc loading và lỗi
-        _uiState.update {
-            it.copy(isLoading = true, errorMessage = null)
-        }
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
         viewModelScope.launch {
             val userModel = UserModel(
@@ -126,24 +125,42 @@ class SignUpViewModel(
                 lastName = _uiState.value.lastName,
                 email = _uiState.value.email,
                 phone = _uiState.value.phone,
-                createdAt = Timestamp(Date()),  // Chuyển đổi từ thời gian hiện tại
-                updatedAt = Timestamp(Date())   // Chuyển đổi từ thời gian hiện tại
+                createdAt = Timestamp(Date()),
+                updatedAt = Timestamp(Date())
             )
 
-            // Đăng ký người dùng qua repository
             val result = firebaseAuthRepository.registerUser(
                 _uiState.value.email,
                 _uiState.value.password,
                 userModel
             )
 
-            result.onSuccess {
-                _uiState.update { it.copy(isLoading = false) }
+            result.onSuccess { authResult ->
+                val user = authResult.user
+                user?.sendEmailVerification()?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.", Toast.LENGTH_LONG).show()
+                        Log.d("SignUpViewModel","Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.")
+                        _uiState.update {
+                            it.copy(isLoading = false, successMessage = "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.")
+                        }
+                    } else {
+                        Toast.makeText(context, "Không thể gửi email xác thực: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                        Log.e("SignUpViewModel","Không thể gửi email xác thực: ${task.exception?.message}")
+                    }
+                }
+
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                Toast.makeText(context, "Đăng ký thất bại: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }
+
+    fun clearSuccessMessage() {
+        _uiState.value = _uiState.value.copy(successMessage = null)
+    }
+
 
     private fun validateInputs(): Boolean {
         return when {

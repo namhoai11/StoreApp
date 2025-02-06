@@ -28,6 +28,8 @@ class FirebaseAuthRepository {
                     "updatedAt" to userModel.updatedAt
                 )
                 firestore.collection("Users").document(user.uid).set(userMap).await()
+//                // Gửi email xác nhận
+//                sendEmailVerification()
             }
             Log.d("FirebaseAuthRepository", "Registration successful: ${user?.uid}")
             Result.success(result)
@@ -37,10 +39,25 @@ class FirebaseAuthRepository {
         }
     }
 
+//    private suspend fun sendEmailVerification(): Result<Unit> {
+//        return try {
+//            auth.currentUser?.sendEmailVerification()?.await()
+//            Log.d("FirebaseAuthRepository", "Email verification sent")
+//            Result.success(Unit)
+//        } catch (e: Exception) {
+//            Log.e("FirebaseAuthRepository", "Failed to send email verification: ${e.message}")
+//            Result.failure(e)
+//        }
+//    }
+
+
     // Đăng nhập
     suspend fun loginUser(email: String, password: String): Result<AuthResult> {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
+            if (auth.currentUser?.isEmailVerified == false) {
+                return Result.failure(Exception("Email chưa được xác nhận. Vui lòng kiểm tra hộp thư."))
+            }
             Result.success(result)
         } catch (e: Exception) {
             Log.e("FirebaseAuthRepository", "Login failed: ${e.message}")

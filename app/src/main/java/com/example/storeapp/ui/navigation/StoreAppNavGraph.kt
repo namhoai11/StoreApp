@@ -164,9 +164,13 @@ fun StoreAppNavHost(
             CategoryManagementScreen(navController = navController)
         }
         composable(SignUpDestination.route) {
-            SignUpScreen(onNavigateSignIn = {
-                navController.navigate(LoginDestination.route)
-            })
+            SignUpScreen(
+                onNavigateSignIn = {
+                    navController.navigate(LoginDestination.route)
+                },
+                onNavigateSignInAfterSignUp = {
+                    navController.navigate(LoginDestination.route)
+                })
         }
         composable(ForgotPasswordDestination.route) {
             ForgotPasswordScreen(
