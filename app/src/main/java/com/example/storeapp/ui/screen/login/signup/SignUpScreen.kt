@@ -68,7 +68,6 @@ object SignUpDestination : NavigationDestination {
 @Composable
 fun SignUpScreen(
     onNavigateSignIn: () -> Unit,
-    onNavigateSignInAfterSignUp: () -> Unit,
     viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()  // Lấy trạng thái từ ViewModel
@@ -186,13 +185,12 @@ fun SignUpScreen(
         LaunchedEffect(uiState.successMessage) {
             Log.d("SignUpScreen", "successMessage: ${uiState.successMessage}")
             if (uiState.successMessage != null) {
-                onNavigateSignInAfterSignUp()
                 viewModel.clearSuccessMessage()
             }
         }
         Button(
             onClick = {
-                viewModel.signUp(context)
+                viewModel.signUp(context, onNavigateSignIn)
             },
             Modifier
                 .fillMaxWidth()
@@ -320,6 +318,6 @@ fun PreviewLoginFields() {
 @Composable
 fun PreviewSignUpScreen() {
     StoreAppTheme {
-        SignUpScreen(onNavigateSignIn = {},{})
+        SignUpScreen(onNavigateSignIn = {})
     }
 }

@@ -27,7 +27,7 @@ class SignUpViewModel(
                     firstName = newValue
                 )
             }
-            Log.d("SignUpViewModel","FirstName: ${_uiState.value.firstName}")
+            Log.d("SignUpViewModel", "FirstName: ${_uiState.value.firstName}")
 
         } catch (_: Exception) {
 
@@ -41,7 +41,7 @@ class SignUpViewModel(
                     lastName = newValue
                 )
             }
-            Log.d("SignUpViewModel","LastName: ${_uiState.value.lastName}")
+            Log.d("SignUpViewModel", "LastName: ${_uiState.value.lastName}")
 
 
         } catch (_: Exception) {
@@ -114,7 +114,10 @@ class SignUpViewModel(
         }
     }
 
-    fun signUp(context: Context) {  // Truyền context vào để hiển thị Toast
+    fun signUp(
+        context: Context,
+        onNavigateSignIn: () -> Unit,
+    ) {  // Truyền context vào để hiển thị Toast
         if (!validateInputs()) return
 
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -139,14 +142,32 @@ class SignUpViewModel(
                 val user = authResult.user
                 user?.sendEmailVerification()?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(context, "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.", Toast.LENGTH_LONG).show()
-                        Log.d("SignUpViewModel","Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.")
+                        Toast.makeText(
+                            context,
+                            "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.d(
+                            "SignUpViewModel",
+                            "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản."
+                        )
                         _uiState.update {
-                            it.copy(isLoading = false, successMessage = "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.")
+                            it.copy(
+                                isLoading = false,
+                                successMessage = "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản."
+                            )
                         }
+                        onNavigateSignIn()
                     } else {
-                        Toast.makeText(context, "Không thể gửi email xác thực: ${task.exception?.message}", Toast.LENGTH_LONG).show()
-                        Log.e("SignUpViewModel","Không thể gửi email xác thực: ${task.exception?.message}")
+                        Toast.makeText(
+                            context,
+                            "Không thể gửi email xác thực: ${task.exception?.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.e(
+                            "SignUpViewModel",
+                            "Không thể gửi email xác thực: ${task.exception?.message}"
+                        )
                     }
                 }
 

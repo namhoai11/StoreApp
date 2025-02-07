@@ -78,7 +78,11 @@ fun StoreAppNavHost(
                 },
                 onNavigateForgotPassword = {
                     navController.navigate(ForgotPasswordDestination.route)
-                })
+                },
+                onNavigateHome = {
+                    navController.navigate(HomeDestination.route)
+                }
+            )
         }
         composable(route = HomeDestination.route) {
             HomeScreen(
@@ -167,10 +171,8 @@ fun StoreAppNavHost(
             SignUpScreen(
                 onNavigateSignIn = {
                     navController.navigate(LoginDestination.route)
-                },
-                onNavigateSignInAfterSignUp = {
-                    navController.navigate(LoginDestination.route)
-                })
+                }
+            )
         }
         composable(ForgotPasswordDestination.route) {
             ForgotPasswordScreen(

@@ -49,8 +49,6 @@ class FirebaseAuthRepository {
 //            Result.failure(e)
 //        }
 //    }
-
-
     // Đăng nhập
     suspend fun loginUser(email: String, password: String): Result<AuthResult> {
         return try {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
+import com.example.storeapp.ui.screen.login.LoginViewModel
 import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
 
@@ -35,6 +36,11 @@ object AppViewModelProvider {
 
         initializer {
             SignUpViewModel(
+                storeAppManagerApplication().container.firebaseAuthRepository
+            )
+        }
+        initializer {
+            LoginViewModel(
                 storeAppManagerApplication().container.firebaseAuthRepository
             )
         }

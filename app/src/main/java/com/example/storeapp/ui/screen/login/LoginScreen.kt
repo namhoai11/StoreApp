@@ -21,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,10 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.storeapp.R
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.login.signup.LoginTextField
+import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 
@@ -52,8 +56,12 @@ object LoginDestination : NavigationDestination {
 @Composable
 fun LoginScreen(
     onNavigateSignUp: () -> Unit,
-    onNavigateForgotPassword: () -> Unit
+    onNavigateForgotPassword: () -> Unit,
+    onNavigateHome: () -> Unit,
+    viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+
+    val uiState by viewModel.uiState.collectAsState()  // Lấy trạng thái từ ViewModel
     Column(
         Modifier
             .fillMaxHeight()
@@ -93,20 +101,19 @@ fun LoginScreen(
 
                 )
         }
-        var user by remember { mutableStateOf("") }
-        var pass by remember { mutableStateOf("") }
+
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = user,
-            onValueChange = { user = it },
+            value = uiState.email,
+            onValueChange = { viewModel.onEmailChange(it) },
             placeholder = "Email",
             isPasswordField = false,
             leadingIcon = R.drawable.icon_email
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.password,
+            onValueChange = { viewModel.onPasswordChange(it) },
             placeholder = "Mật khẩu",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
@@ -127,7 +134,7 @@ fun LoginScreen(
             )
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { viewModel.SignIn(onNavigateHome) },
             Modifier
                 .fillMaxWidth()
                 .height(66.dp)
@@ -185,6 +192,6 @@ fun LoginScreen(
 fun PreviewLoginScreen() {
     StoreAppTheme {
         LoginScreen(onNavigateSignUp = {},
-            onNavigateForgotPassword = {})
+            onNavigateForgotPassword = {},{})
     }
 }
