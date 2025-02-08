@@ -45,7 +45,8 @@ object SettingProfileNavigatonItemProvider {
             title = "Admin",
             description = "Trang quản trị",
             icon = R.drawable.administrator,
-            route = DashboardAdminDestination.route
+            route = DashboardAdminDestination.route,
+            requiredRole = 1,
         ),
     )
 }
@@ -56,5 +57,6 @@ data class SettingProfileNavigaton(
     val description: String,
     @DrawableRes val icon: Int,
     val route: String = "",
+    val requiredRole: Int = 0 // Mặc định ai cũng thấy (0: User, 1: Admin)
 )
 

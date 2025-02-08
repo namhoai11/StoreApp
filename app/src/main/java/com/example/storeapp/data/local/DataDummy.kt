@@ -2,8 +2,10 @@
 
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
+import com.example.storeapp.model.AvailableOptions
 import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
+import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
@@ -12,6 +14,7 @@ import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.ShippingModel
+import com.example.storeapp.model.StockByVariant
 import com.example.storeapp.model.UserLocationModel
 import com.google.firebase.Timestamp
 
@@ -153,11 +156,6 @@ object DataDummy {
                     productName = "Sản phẩm A",
                     productImage = "url_to_image_1",
                     productPrice = 1000000.0,
-                    productOptions = ProductOptions(
-                        listOf("Option1", "Option2"),
-                        listOf("4GB", "8GB"),
-                        listOf("64GB", "128GB")
-                    ),
                     quantity = 2
                 )
             ),
@@ -172,11 +170,6 @@ object DataDummy {
                     productName = "Sản phẩm B",
                     productImage = "url_to_image_2",
                     productPrice = 1500000.0,
-                    productOptions = ProductOptions(
-                        listOf("Option1", "Option2"),
-                        listOf("4GB", "8GB"),
-                        listOf("64GB", "128GB")
-                    ),
                     quantity = 1
                 )
             ),
@@ -201,12 +194,23 @@ object DataDummy {
                     hidden = false,
                     description = "Product A description",
                     rating = 4.5,
-                    availableOptions = ProductOptions(
-                        listOf("Option1", "Option2"),
-                        listOf("4GB", "8GB"),
-                        listOf("64GB", "128GB")
+                    availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
+                        listProductOptions = listOf(
+                            ProductOptions("Option1", 100000.0),
+                            ProductOptions("Option2", 200000.0)
+                        ),
+                        listColorOptions = listOf(
+                            ColorOptions("Red", "url_to_image_red"),
+                            ColorOptions("Blue", "url_to_image_blue")
+                        )
                     ),
                     options = listOf("Option1"),
+                    stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
+                        StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
+                        StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
+                        StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
+                        StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
+                    ),
                     createdAt = Timestamp.now(),
                     updatedAt = Timestamp.now(),
                     brand = BrandModel(
@@ -251,12 +255,23 @@ object DataDummy {
                         hidden = false,
                         description = "Product A description",
                         rating = 4.5,
-                        availableOptions = ProductOptions(
-                            listOf("Option1", "Option2"),
-                            listOf("4GB", "8GB"),
-                            listOf("64GB", "128GB")
+                        availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
+                            listProductOptions = listOf(
+                                ProductOptions("Option1", 100000.0),
+                                ProductOptions("Option2", 200000.0)
+                            ),
+                            listColorOptions = listOf(
+                                ColorOptions("Red", "url_to_image_red"),
+                                ColorOptions("Blue", "url_to_image_blue")
+                            )
                         ),
                         options = listOf("Option1"),
+                        stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
+                            StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
+                            StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
+                            StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
+                            StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
+                        ),
                         createdAt = Timestamp.now(),
                         updatedAt = Timestamp.now(),
                         brand = BrandModel(
@@ -298,12 +313,23 @@ object DataDummy {
                         hidden = false,
                         description = "Product A description",
                         rating = 4.5,
-                        availableOptions = ProductOptions(
-                            listOf("Option1", "Option2"),
-                            listOf("4GB", "8GB"),
-                            listOf("64GB", "128GB")
+                        availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
+                            listProductOptions = listOf(
+                                ProductOptions("Option1", 100000.0),
+                                ProductOptions("Option2", 200000.0)
+                            ),
+                            listColorOptions = listOf(
+                                ColorOptions("Red", "url_to_image_red"),
+                                ColorOptions("Blue", "url_to_image_blue")
+                            )
                         ),
                         options = listOf("Option1"),
+                        stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
+                            StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
+                            StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
+                            StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
+                            StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
+                        ),
                         createdAt = Timestamp.now(),
                         updatedAt = Timestamp.now(),
                         brand = BrandModel(

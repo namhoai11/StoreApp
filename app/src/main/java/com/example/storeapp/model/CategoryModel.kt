@@ -19,4 +19,6 @@ data class CategoryModel(
     val updatedAt: Timestamp
 //    val createdAt: Timestamp,
 //    val updatedAt: Timestamp
-)
+){
+    constructor() : this(0, "", "", "", false, 1, Timestamp.now(), Timestamp.now())
+}

@@ -20,4 +20,22 @@ data class UserModel(
 
     val createdAt: Timestamp,
     val updatedAt: Timestamp
-)
+){
+    constructor() : this(
+        id = "",
+        role = 0,
+        tier = 0,
+        totalSpent = 0L,
+        defaultLocationId = "",
+        fullAddress = "",
+        firstName = "",
+        lastName = "",
+        gender = "",
+        email = "",
+        phone = "",
+        vouchers = emptyList(),
+        wishlist = emptyList(),
+        createdAt = Timestamp.now(),
+        updatedAt = Timestamp.now()
+    )
+}

@@ -1,9 +1,13 @@
 ﻿//package com.example.storeapp.data.migration
 //
 //import android.util.Log
+//import com.example.storeapp.model.AvailableOptions
 //import com.example.storeapp.model.CategoryModel
+//import com.example.storeapp.model.ColorOptions
 //import com.example.storeapp.model.ProductModel
+//import com.example.storeapp.model.ProductOptions
 //import com.example.storeapp.model.SliderModel
+//import com.example.storeapp.model.StockByVariant
 //import com.google.firebase.Timestamp
 //import com.google.firebase.database.DataSnapshot
 //import com.google.firebase.database.DatabaseError
@@ -19,8 +23,35 @@
 //
 //    database.addListenerForSingleValueEvent(object : ValueEventListener {
 //        override fun onDataChange(snapshot: DataSnapshot) {
+//
 //            for (productSnapshot in snapshot.children) {
 //                val productMap = productSnapshot.value as? Map<String, Any> ?: continue
+//
+//                val stockByVariantList =
+//                    (productMap["stockByVariant"] as? List<Map<String, Any>>)?.map {
+//                        StockByVariant(
+//                            colorName = it["colorName"] as? String ?: "",
+//                            optionName = it["optionName"] as? String ?: "",
+//                            quantity = (it["quantity"] as? Number)?.toInt() ?: 0
+//                        )
+//                    } ?: emptyList()
+//
+//                val availableOptionsMap = productMap["availableOptions"] as? Map<String, Any>
+//                val listProductOptions =
+//                    (availableOptionsMap?.get("listProductOptions") as? List<Map<String, Any>>)?.map {
+//                        ProductOptions(
+//                            optionsName = it["optionName"] as? String ?: "",
+//                            priceForOptions = (it["price"] as? Number)?.toDouble() ?: 0.0
+//                        )
+//                    } ?: emptyList()
+//
+//                val listColorOptions =
+//                    (availableOptionsMap?.get("listColorOptions") as? List<Map<String, Any>>)?.map {
+//                        ColorOptions(
+//                            colorName = it["color"] as? String ?: "",
+//                            imagesColor = it["image"] as? String ?: ""
+//                        )
+//                    } ?: emptyList()
 //
 //                val product = ProductModel(
 //                    id = productMap["id"] as? String ?: "",
@@ -28,19 +59,20 @@
 //                    images = productMap["images"] as? List<String> ?: emptyList(),
 //                    price = (productMap["price"] as? Number)?.toDouble() ?: 0.0,
 //                    stockQuantity = (productMap["stockQuantity"] as? Number)?.toInt() ?: 0,
-//                    brandId = productMap["brandId"] as? String,
 //                    categoryId = productMap["categoryId"] as? String ?: "",
 //                    hidden = productMap["hidden"] as? Boolean ?: false,
 //                    showRecommended = productMap["showRecommended"] as? Boolean ?: false,
 //                    description = productMap["description"] as? String ?: "",
 //                    rating = (productMap["rating"] as? Number)?.toDouble() ?: 0.0,
-//                    availableOptions = null, // Bạn có thể parse ProductOptions nếu cần
 //                    options = productMap["options"] as? List<String> ?: emptyList(),
+//                    stockByVariant = stockByVariantList,
+//                    availableOptions = AvailableOptions(
+//                        listProductOptions = listProductOptions,
+//                        listColorOptions = listColorOptions
+//                    ),
 //                    createdAt = convertToTimestamp(productMap["createdAt"]),
-//                    updatedAt = convertToTimestamp(productMap["updatedAt"]),
-//                    brand = null
+//                    updatedAt = convertToTimestamp(productMap["updatedAt"])
 //                )
-//
 //                // Lưu vào Firestore
 //                productsCollection.document(product.id)
 //                    .set(product)
@@ -58,6 +90,7 @@
 //        }
 //    })
 //}
+//
 //suspend fun migrateCategoriesFromRealtimeToFirestore() {
 //    val database = FirebaseDatabase.getInstance().getReference("Category")
 //    val firestore = FirebaseFirestore.getInstance()
@@ -135,7 +168,10 @@
 //
 //fun convertToTimestamp(value: Any?): Timestamp {
 //    return when (value) {
-//        is Long -> Timestamp(value / 1000, ((value % 1000) * 1000000).toInt()) // Chuyển từ milliseconds → seconds + nanoseconds
+//        is Long -> Timestamp(
+//            value / 1000,
+//            ((value % 1000) * 1000000).toInt()
+//        ) // Chuyển từ milliseconds → seconds + nanoseconds
 //        is Double -> Timestamp(value.toLong() / 1000, ((value.toLong() % 1000) * 1000000).toInt())
 //        is Timestamp -> value
 //        else -> Timestamp.now() // Nếu dữ liệu sai, dùng timestamp hiện tại

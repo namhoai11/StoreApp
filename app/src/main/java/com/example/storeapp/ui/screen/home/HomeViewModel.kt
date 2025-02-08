@@ -1,27 +1,47 @@
 package com.example.storeapp.ui.screen.home
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeapp.data.repository.RealtimeDatabaseRepository
+import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val repository: RealtimeDatabaseRepository
+    private val repository: FirebaseFireStoreRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState
 
+    private val _user = MutableLiveData<UserModel?>()
+    val user: LiveData<UserModel?> = _user
+
     init {
+        // Chạy trong Coroutine để tránh block UI
+//        viewModelScope.launch {
+//            migrateDataFromRealtimeToFirestore()
+//        }
         loadData()
 //         Quan sát trạng thái của uiState
         viewModelScope.launch {
             _uiState.collect { state ->
                 Log.d("HomeViewModel", "Current UI State: $state")
             }
+        }
+        loadUser()
+
+    }
+
+    private fun loadUser() {
+        viewModelScope.launch {
+            val userData = repository.getCurrentUser()
+            _user.value = userData
+            Log.d("HomeViewModel", "User loaded: $userData")
         }
     }
 

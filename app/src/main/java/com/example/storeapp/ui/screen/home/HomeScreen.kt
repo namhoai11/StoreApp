@@ -9,6 +9,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,8 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val homeUiState by viewModel.uiState.collectAsState()
-
+    val currentUser by viewModel.user.observeAsState()
+    Log.d("HomeScreen", "user: $currentUser")
     val bannersLog = homeUiState.banners
     val categoryLog = homeUiState.categories
     Log.d("HomeScreen", "banners: $bannersLog")
@@ -57,7 +59,8 @@ fun HomeScreen(
             HomeTopAppBar(
                 scrollBehavior = scrollBehavior,// Truyền scrollBehavior vào đây
                 navigateCartScreen,
-                navigateNotification
+                navigateNotification,
+                userName = "${currentUser?.firstName} ${currentUser?.lastName}"
             )
         },
             bottomBar = {

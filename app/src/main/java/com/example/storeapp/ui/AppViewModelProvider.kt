@@ -16,7 +16,7 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(
-                storeAppManagerApplication().container.realtimeDatabaseRepository
+                storeAppManagerApplication().container.firebaseFireStoreRepository
             )
         }
 

@@ -38,7 +38,8 @@ import com.example.storeapp.R
 fun HomeTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateCartScreen: () -> Unit,
-    navigateNotificateScreen:()->Unit,
+    navigateNotificateScreen: () -> Unit,
+    userName: String = ""
 ) {
     var itemCount by remember { mutableStateOf(1) }
     // Sử dụng scrollBehavior trong TopAppBar
@@ -58,7 +59,7 @@ fun HomeTopAppBar(
                         fontSize = 14.sp
                     )
                     Text(
-                        text = "LaHoaiNam",
+                        text = userName,
                         color = Color.Black,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -118,5 +119,5 @@ fun HomeTopAppBar(
 @Composable
 fun PreviewHomeTopAppBar() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    HomeTopAppBar(scrollBehavior = scrollBehavior, {},{})
+    HomeTopAppBar(scrollBehavior = scrollBehavior, {}, {})
 }
