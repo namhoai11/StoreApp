@@ -1,6 +1,8 @@
 package com.example.storeapp.ui.screen.productdetails
 
+import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductModel
+import com.example.storeapp.model.ProductOptions
 import com.google.firebase.Timestamp
 
 fun defaultItemsModel() = ProductModel(
@@ -27,8 +29,18 @@ fun defaultItemsModel() = ProductModel(
     createdAt = Timestamp.now(),
     updatedAt = Timestamp.now(),
 )
+
 data class ProductDetailsUiState(
     val productDetailsItem: ProductModel = defaultItemsModel(),
+    val currentImage: String = "",
+    val currentPrice: Double = 0.0,
+    val currentQuantity: Int = 0,
+    val listStandardImages: List<String> = emptyList(),
+    val listColorOptions: List<ColorOptions> = emptyList(),
+    val listProductOptions: List<ProductOptions> = emptyList(),
+    val selectedStandardImageUrl: Int = -1,
+    val selectedColorUrl: Int = -1,
+    val selectedOptionIndex: Int = -1,
     val showProductDetailsLoading: Boolean = true,
     val errorMessage: String = ""
 )

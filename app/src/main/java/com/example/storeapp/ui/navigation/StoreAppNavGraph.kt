@@ -111,8 +111,8 @@ fun StoreAppNavHost(
         ) {
             ProductDetailsScreen(
                 navController = navController,
-                onAddToCartClick = {},
-                onCartClick = {}
+//                onAddToCartClick = {},
+//                onCartClick = {}
             )
         }
         composable(

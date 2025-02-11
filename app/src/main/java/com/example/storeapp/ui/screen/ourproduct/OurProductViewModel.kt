@@ -3,14 +3,14 @@ package com.example.storeapp.ui.screen.ourproduct
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeapp.data.repository.RealtimeDatabaseRepository
+import com.example.storeapp.data.repository.FirebaseFireStoreRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class OurProductViewModel(
-    private val repository: RealtimeDatabaseRepository
+    private val repository: FirebaseFireStoreRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(OurProductUiState())
     val uiState: StateFlow<OurProductUiState> = _uiState

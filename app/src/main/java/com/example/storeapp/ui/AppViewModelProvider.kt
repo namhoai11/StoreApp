@@ -23,14 +23,14 @@ object AppViewModelProvider {
         initializer {
             ProductDetailsViewModel(
                 this.createSavedStateHandle(),
-                storeAppManagerApplication().container.realtimeDatabaseRepository
+                storeAppManagerApplication().container.firebaseFireStoreRepository
             )
 
         }
 
         initializer {
             OurProductViewModel(
-                storeAppManagerApplication().container.realtimeDatabaseRepository
+                storeAppManagerApplication().container.firebaseFireStoreRepository
             )
         }
 
