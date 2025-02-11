@@ -3,6 +3,7 @@ package com.example.storeapp.ui.component.user
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,12 +30,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
-import com.example.storeapp.model.FavoriteModel
+import com.example.storeapp.model.WishListModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
 fun FavoriteList(
-    favItems: ArrayList<FavoriteModel>,
+    favItems: List<WishListModel>,
+    onFavIconClick: (String) -> Unit = {},
+    onFavItemClick: (Int) -> Unit = {},
+
 ) {
     LazyColumn(
         Modifier
@@ -45,21 +49,28 @@ fun FavoriteList(
         items(favItems) { item ->
             FavItem(
                 favItem = item,
+                onFavIconClick,
+                onFavItemClick,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
     }
 }
 
+
 @Composable
 fun FavItem(
-    favItem: FavoriteModel,
+    favItem: WishListModel,
+    onFavIconClick: (String) -> Unit = {},
+    onFavItemClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier
+        modifier = modifier.clickable {
+            onFavItemClick(favItem.productId.toInt())
+        }
     ) {
         Row(
             modifier = Modifier
@@ -70,7 +81,7 @@ fun FavItem(
                 painter = rememberAsyncImagePainter(model = favItem.productImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(120.dp)
                     .background(
                         colorResource(id = R.color.lightGrey),
                         shape = RoundedCornerShape(10.dp)
@@ -85,6 +96,11 @@ fun FavItem(
                 )
                 Text(
                     text = favItem.productCategory,
+                    modifier = Modifier
+                        .padding(start = 8.dp, bottom = 8.dp)
+                )
+                Text(
+                    text = "Quantity: ${favItem.productQuantity}",
                     modifier = Modifier
                         .padding(start = 8.dp, bottom = 8.dp)
                 )
@@ -111,6 +127,9 @@ fun FavItem(
 
                                 )
                             .align(Alignment.Bottom)
+                            .clickable {
+                                onFavIconClick(favItem.productId)
+                            }
                     )
                 }
             }
@@ -124,7 +143,7 @@ fun FavItem(
 @Composable
 fun FavItemPreview() {
     StoreAppTheme {
-        val favItem = FavoriteModel(
+        val favItem = WishListModel(
             productId = "1",
             productName = "Business Laptop",
             productCategory = "Electronics",
@@ -142,7 +161,7 @@ fun FavItemPreview() {
 fun FavListPreview() {
     StoreAppTheme {
         val favItems = arrayListOf(
-            FavoriteModel(
+            WishListModel(
                 productId = "1",
                 productName = "Business Laptop",
                 productCategory = "Electronics",
@@ -150,7 +169,7 @@ fun FavListPreview() {
                 productPrice = 550.0,
                 productQuantity = 2
             ),
-            FavoriteModel(
+            WishListModel(
                 productId = "2",
                 productName = "Gaming Laptop",
                 productCategory = "Electronics",

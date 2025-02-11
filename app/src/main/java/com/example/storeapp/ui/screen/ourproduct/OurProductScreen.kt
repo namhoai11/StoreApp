@@ -21,7 +21,7 @@ import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 
 object OurProductDestination : NavigationDestination {
-    override val route = "ourproduct"
+    override val route = "ourProduct"
     override val titleRes = R.string.our_product
 }
 

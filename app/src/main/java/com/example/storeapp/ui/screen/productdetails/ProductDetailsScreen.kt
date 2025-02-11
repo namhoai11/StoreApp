@@ -76,6 +76,7 @@ fun ProductDetailsScreen(
 //    onCartClick: () -> Unit,
     viewModel: ProductDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val productDetailsUiState by viewModel.uiState.collectAsState()
 
 //    var selectedImageUI by remember { mutableStateOf(productDetailsUiState.productDetailsItem.picUrl.firstOrNull()) }
 //    Log.d("ProductDetailsContent","selectdImageUI: $selectedImageUI")
@@ -85,9 +86,6 @@ fun ProductDetailsScreen(
 //        selectedImageUI = productDetailsUiState.productDetailsItem.picUrl.firstOrNull() ?: ""
 //    }
 
-    val isProductFavorited by remember {
-        mutableStateOf(true)
-    }
 
     Scaffold(
         topBar = {
@@ -111,11 +109,14 @@ fun ProductDetailsScreen(
                 actions = {
                     Icon(
                         painter = painterResource(
-                            id = if (isProductFavorited) R.drawable.icon_favourite_filled_red
+                            id = if (productDetailsUiState.isWishListItem) R.drawable.icon_favourite_filled_red
                             else R.drawable.icon_favourite_outlined
                         ),
                         tint = Color.Unspecified,
                         contentDescription = "favourite",
+                        modifier = Modifier.clickable {
+                            viewModel.favoriteClick()
+                        }
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

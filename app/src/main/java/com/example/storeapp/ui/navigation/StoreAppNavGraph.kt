@@ -18,7 +18,7 @@ import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementSc
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
-import com.example.storeapp.ui.screen.favorite.FavoriteScreen
+import com.example.storeapp.ui.screen.favorite.WishListScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
 import com.example.storeapp.ui.screen.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
@@ -134,7 +134,12 @@ fun StoreAppNavHost(
         composable(
             FavoriteDestination.route
         ) {
-            FavoriteScreen(navController = navController)
+            WishListScreen(
+                navController = navController,
+                navigateProductDetails = {
+                    navController.navigate("${ProductDetailsDestination.route}/$it")
+                }
+            )
         }
 
         composable(

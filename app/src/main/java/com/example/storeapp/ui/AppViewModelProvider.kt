@@ -6,6 +6,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
+import com.example.storeapp.ui.screen.favorite.WishListViewModel
 import com.example.storeapp.ui.screen.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
 import com.example.storeapp.ui.screen.login.LoginViewModel
@@ -33,7 +34,11 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.firebaseFireStoreRepository
             )
         }
-
+        initializer {
+            WishListViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository
+            )
+        }
         initializer {
             SignUpViewModel(
                 storeAppManagerApplication().container.firebaseAuthRepository
@@ -44,6 +49,8 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.firebaseAuthRepository
             )
         }
+
+
     }
 
 }

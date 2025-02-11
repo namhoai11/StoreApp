@@ -10,7 +10,7 @@
 //    var productQuantity: Int = 0
 //)
 
-data class FavoriteModel(
+data class WishListModel(
     val productId: String,
     val productName: String,
     val productPrice: Double,
@@ -18,8 +18,10 @@ data class FavoriteModel(
     val productCategory: String,
     val productQuantity: Int
 )
-data class WishlistModel(
-    val id: String,               // ID của danh sách yêu thích
-    val userId: String,           // ID người dùng
-    val products: List<FavoriteModel> // Danh sách các sản phẩm yêu thích
-)
+
+
+//data class WishlistModel(
+//    val id: String,               // ID của danh sách yêu thích
+//    val userId: String,           // ID người dùng
+//    val products: List<String> // Danh sách các sản phẩm yêu thích
+//)

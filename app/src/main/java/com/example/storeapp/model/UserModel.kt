@@ -16,7 +16,7 @@ data class UserModel(
     val email: String = "",
     val phone: String = "",
     val vouchers: List<String> = emptyList(),
-    val wishlist: List<FavoriteModel> = emptyList(),
+    val wishList: List<String> = emptyList(),
 
     val createdAt: Timestamp,
     val updatedAt: Timestamp
@@ -34,7 +34,7 @@ data class UserModel(
         email = "",
         phone = "",
         vouchers = emptyList(),
-        wishlist = emptyList(),
+        wishList = emptyList(),
         createdAt = Timestamp.now(),
         updatedAt = Timestamp.now()
     )

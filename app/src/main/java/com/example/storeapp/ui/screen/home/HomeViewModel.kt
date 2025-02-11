@@ -26,6 +26,8 @@ class HomeViewModel(
 //        viewModelScope.launch {
 //            migrateDataFromRealtimeToFirestore()
 //        }
+        loadUser()
+
         loadData()
 //         Quan sát trạng thái của uiState
         viewModelScope.launch {
@@ -33,7 +35,6 @@ class HomeViewModel(
                 Log.d("HomeViewModel", "Current UI State: $state")
             }
         }
-        loadUser()
 
     }
 

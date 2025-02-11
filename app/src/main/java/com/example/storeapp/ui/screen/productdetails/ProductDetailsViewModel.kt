@@ -1,10 +1,13 @@
 package com.example.storeapp.ui.screen.productdetails
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -17,20 +20,34 @@ class ProductDetailsViewModel(
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState
 
+    private val _user = MutableLiveData<UserModel?>()
+    val user: LiveData<UserModel?> = _user
+
+
     private val productDetailsId: Int =
         checkNotNull(savedStateHandle[ProductDetailsDestination.productDetailsIdArg])
 
 
     init {
-        loadProduct()
+        loadUser()
 //         Quan sát trạng thái của uiState
         viewModelScope.launch {
             _uiState.collect { state ->
                 Log.d("ProductDetailsViewmodel", "Current UI State: $state")
             }
         }
+
     }
 
+    private fun loadUser() {
+        viewModelScope.launch {
+            val userData = repository.getCurrentUser()
+            _user.value = userData
+            Log.d("ProductDetailsViewmodel", "User loaded: $userData")
+            loadProduct()
+
+        }
+    }
 
     private fun loadProduct() = viewModelScope.launch {
         try {
@@ -41,12 +58,23 @@ class ProductDetailsViewModel(
 
             val productDetails = allProducts.find { it.id == productDetailsId.toString() }
             if (productDetails != null) {
+
+                val isWishlistItem =
+                    _user.value?.wishList?.contains(productDetailsId.toString()) ?:false
+                _uiState.update {
+                    it.copy(
+                        isWishListItem = isWishlistItem
+                    )
+                }
+                Log.d("ProductDetailsViewmodel", "Wishlist: ${_user.value?.wishList}")
+
+                Log.d("ProductDetailsViewmodel", "isWishlistItem: $isWishlistItem")
+
                 Log.d("ProductDetailsViewmodel", "Product Item: $productDetails")
                 Log.d("ProductDetailsViewmodel", "PicUrls: ${productDetails.images}")
                 _uiState.update {
                     it.copy(
                         productDetailsItem = productDetails,
-                        showProductDetailsLoading = false
                     )
                 }
                 Log.d(
@@ -112,7 +140,8 @@ class ProductDetailsViewModel(
                 Log.d("ProductDetailsViewmodel", "stockByVariant: $stockByVariant")
                 _uiState.update {
                     it.copy(
-                        currentQuantity = stockByVariant
+                        currentQuantity = stockByVariant,
+                        showProductDetailsLoading = false
                     )
                 }
 
@@ -183,6 +212,19 @@ class ProductDetailsViewModel(
                 currentPrice = price,
                 currentQuantity = stockByVariant.sumOf { stock -> stock.quantity }
             )
+        }
+    }
+
+    fun favoriteClick() {
+        viewModelScope.launch {
+            val isWishListItem = _uiState.value.isWishListItem
+            _uiState.update { it.copy(isWishListItem = !isWishListItem) }
+
+            if (isWishListItem) {
+                repository.removeWishListItem(productDetailsId.toString())
+            } else {
+                repository.addWishListItem(productDetailsId.toString())
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.SliderModel
 import com.example.storeapp.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -72,6 +73,7 @@ class FirebaseFireStoreRepository {
         Log.d("FirestoreRepository", "Loaded Products: $allProducts")
         return allProducts
     }
+
     /** Load thông tin người dùng hiện tại từ Firestore */
     suspend fun getCurrentUser(): UserModel? {
         val currentUser = auth.currentUser ?: return null
@@ -82,6 +84,31 @@ class FirebaseFireStoreRepository {
         } else {
             null
         }
+    }
+
+
+    suspend fun addWishListItem(productId: String) {
+        val currentUser = auth.currentUser ?: return
+        val userRef = firestore.collection("Users").document(currentUser.uid)
+
+        userRef.update("wishList", FieldValue.arrayUnion(productId))  // Thêm productId vào danh sách
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "Product added to wishlist successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreRepository", "Error adding product to wishlist", e)
+            }
+    }
+    suspend fun removeWishListItem(productId: String){
+        val currentUser = auth.currentUser ?: return
+        val userRef = firestore.collection("Users").document(currentUser.uid)
+        userRef.update("wishList", FieldValue.arrayRemove(productId))  // Thêm productId vào danh sách
+            .addOnSuccessListener {
+                Log.d("FirestoreRepository", "Product remove to wishlist successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreRepository", "Error remove product to wishlist", e)
+            }
     }
 
 }

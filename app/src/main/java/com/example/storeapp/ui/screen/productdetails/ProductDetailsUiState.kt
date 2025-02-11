@@ -32,6 +32,7 @@ fun defaultItemsModel() = ProductModel(
 
 data class ProductDetailsUiState(
     val productDetailsItem: ProductModel = defaultItemsModel(),
+    val isWishListItem: Boolean = false,
     val currentImage: String = "",
     val currentPrice: Double = 0.0,
     val currentQuantity: Int = 0,
