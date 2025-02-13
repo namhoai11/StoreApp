@@ -147,35 +147,23 @@ object DataDummy {
     )
 
     // Dữ liệu mẫu cho Cart
-    val cartItems = listOf(
-        CartModel(
-            id = "1",
-            products = listOf(
-                ProductsOnCart(
-                    productId = "101",
-                    productName = "Sản phẩm A",
-                    productImage = "url_to_image_1",
-                    productPrice = 1000000.0,
-                    quantity = 2
-                )
+    val cartItems = CartModel(
+        id = "1",
+        products = listOf(
+            ProductsOnCart(
+                productId = "101",
+                productName = "Sản phẩm A",
+                productImage = "url_to_image_1",
+                quantity = 2
             ),
-            total = 2000000.0,
-            userId = "user123"
+            ProductsOnCart(
+                productId = "101",
+                productName = "Sản phẩm A",
+                productImage = "url_to_image_1",
+                quantity = 2
+            )
         ),
-        CartModel(
-            id = "2",
-            products = listOf(
-                ProductsOnCart(
-                    productId = "102",
-                    productName = "Sản phẩm B",
-                    productImage = "url_to_image_2",
-                    productPrice = 1500000.0,
-                    quantity = 1
-                )
-            ),
-            total = 1500000.0,
-            userId = "user123"
-        )
+        userId = "user123"
     )
     val order = OrderModel(
         id = "1",

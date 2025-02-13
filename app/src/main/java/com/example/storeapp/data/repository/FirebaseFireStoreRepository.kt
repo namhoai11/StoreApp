@@ -1,13 +1,19 @@
 ﻿package com.example.storeapp.data.repository
 
 import android.util.Log
+import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ProductModel
+import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.SliderModel
 import com.example.storeapp.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class FirebaseFireStoreRepository {
@@ -74,6 +80,16 @@ class FirebaseFireStoreRepository {
         return allProducts
     }
 
+    suspend fun getProductById(productId: String): ProductModel? {
+        val documentSnapshot = firestore.collection("Products").document(productId).get().await()
+        val product = documentSnapshot.toObject(ProductModel::class.java)
+
+        Log.d("FirestoreRepository", "Loaded Product with ID $productId: $product")
+
+        return product
+    }
+
+
     /** Load thông tin người dùng hiện tại từ Firestore */
     suspend fun getCurrentUser(): UserModel? {
         val currentUser = auth.currentUser ?: return null
@@ -87,28 +103,144 @@ class FirebaseFireStoreRepository {
     }
 
 
-    suspend fun addWishListItem(productId: String) {
-        val currentUser = auth.currentUser ?: return
-        val userRef = firestore.collection("Users").document(currentUser.uid)
+    suspend fun addWishListItem(currentUserId: String, productId: String) {
+        val userRef = firestore.collection("Users").document(currentUserId)
 
-        userRef.update("wishList", FieldValue.arrayUnion(productId))  // Thêm productId vào danh sách
-            .addOnSuccessListener {
-                Log.d("FirestoreRepository", "Product added to wishlist successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FirestoreRepository", "Error adding product to wishlist", e)
-            }
-    }
-    suspend fun removeWishListItem(productId: String){
-        val currentUser = auth.currentUser ?: return
-        val userRef = firestore.collection("Users").document(currentUser.uid)
-        userRef.update("wishList", FieldValue.arrayRemove(productId))  // Thêm productId vào danh sách
-            .addOnSuccessListener {
-                Log.d("FirestoreRepository", "Product remove to wishlist successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FirestoreRepository", "Error remove product to wishlist", e)
-            }
+//        userRef.update("wishList", FieldValue.arrayUnion(productId))  // Thêm productId vào danh sách
+//            .addOnSuccessListener {
+//                Log.d("FirestoreRepository", "Product added to wishlist successfully!")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("FirestoreRepository", "Error adding product to wishlist", e)
+//            }
+
+        try {
+            userRef.update("wishList", FieldValue.arrayUnion(productId)).await()
+            Log.d("FirestoreRepository", "Product added to wishlist successfully!")
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error adding product to wishlist", e)
+        }
     }
 
+
+    suspend fun removeWishListItem(currentUserId: String, productId: String) {
+        val userRef = firestore.collection("Users").document(currentUserId)
+        try {
+            userRef.update("wishList", FieldValue.arrayRemove(productId)).await()
+            Log.d("FirestoreRepository", "Product added to wishlist successfully!")
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error adding product to wishlist", e)
+        }
+    }
+
+    suspend fun addProductToCart(productOnCart: ProductsOnCart) {
+        val currentUser = getCurrentUser() ?: return
+        val cartRef = firestore.collection("Cart")
+        try {
+            val snapshot = cartRef.whereEqualTo("userId", currentUser.id).get().await()
+
+            if (!snapshot.isEmpty) {
+                val cartDoc = snapshot.documents.first()
+                val cart = cartDoc.toObject(CartModel::class.java)
+                val updatedListProducts = cart?.products?.toMutableList() ?: mutableListOf()
+                val existingProduct =
+                    updatedListProducts.find { it.productId == productOnCart.productId }
+                if (existingProduct != null) {
+                    updatedListProducts[updatedListProducts.indexOf(existingProduct)] =
+                        existingProduct.copy(quantity = existingProduct.quantity + 1)
+                } else {
+                    updatedListProducts.add(productOnCart)
+                }
+//                val totalPrice = updatedListProducts.sumOf { it.productPrice * it.quantity }
+                val updateData = mapOf(
+//                    "products" to updatedListProducts, "total" to totalPrice
+                    "products" to updatedListProducts,
+
+                )
+                cartDoc.reference.update(updateData).await()
+                Log.d("FirestoreRepository", "Updated cart ${cartDoc.id} with new product")
+            } else {
+                val newCart = CartModel(
+                    id = "", // Firestore sẽ tự động cấp ID
+                    userId = currentUser.id,
+                    products = listOf(productOnCart),
+//                    total = productOnCart.productPrice * productOnCart.quantity
+                )
+                val newCartRef = cartRef.add(newCart).await()
+                newCartRef.update("id", newCartRef.id)  // Cập nhật lại ID sau khi tạo
+                Log.d("FirestoreRepository", "Created new cart with ID: ${newCartRef.id}")
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Created new cart erroe: $e")
+        }
+    }
+
+    suspend fun addProductToCartUseSet(
+        currentUserId: String, productOnCart: ProductsOnCart
+    ): Result<Unit> {
+        val cartRef = firestore.collection("Cart")
+        return try {
+            val snapshot = cartRef.whereEqualTo("userId", currentUserId).get().await()
+
+            val updatedListProducts = mutableListOf<ProductsOnCart>()
+            var cartId: String? = null
+
+            if (!snapshot.isEmpty) {
+                val cartDoc = snapshot.documents.first()
+                val cart = cartDoc.toObject(CartModel::class.java)
+                updatedListProducts.addAll(cart?.products ?: emptyList())
+
+                val existingProduct =
+                    updatedListProducts.find {
+                        it.productId == productOnCart.productId &&
+                                it.productOptions?.optionsName == productOnCart.productOptions?.optionsName &&
+                                it.colorOptions?.colorName == productOnCart.colorOptions?.colorName
+                    }
+
+                if (existingProduct != null) {
+                    updatedListProducts[updatedListProducts.indexOf(existingProduct)] =
+                        existingProduct.copy(quantity = existingProduct.quantity + 1)
+                } else {
+                    updatedListProducts.add(productOnCart)
+                }
+                cartId = cartDoc.id
+            } else {
+                updatedListProducts.add(productOnCart)
+            }
+
+//            val totalPrice = updatedListProducts.sumOf { it.productPrice * it.quantity }
+
+            val newCartRef = cartId?.let { cartRef.document(it) } ?: cartRef.document()
+            val newCart = CartModel(
+                id = newCartRef.id,
+                userId = currentUserId,
+                products = updatedListProducts,
+//                total = totalPrice
+            )
+
+            newCartRef.set(newCart, SetOptions.merge()).await()
+            Log.d("FirestoreRepository", "Cart updated successfully with ID: ${newCartRef.id}")
+
+            Result.success(Unit) // Trả về kết quả thành công
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error adding product to cart", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+
+    fun observeProductById(productId: String): Flow<ProductModel?> = callbackFlow {
+        val productRef = firestore.collection("Products").document(productId)
+
+        val listener = productRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error) // Đóng Flow nếu có lỗi
+                return@addSnapshotListener
+            }
+            val product = snapshot?.toObject(ProductModel::class.java)
+            Log.d("Firestore", "Product updated: $product")
+            trySend(product).isSuccess
+        }
+        awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
+    }
 }

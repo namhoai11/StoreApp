@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CartModel
-import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.ui.component.user.CartList
 import com.example.storeapp.ui.component.user.CartSummary
 import com.example.storeapp.ui.navigation.NavigationDestination
@@ -44,38 +44,7 @@ object CartDestination : NavigationDestination {
 fun CartScreen(
     navController: NavController
 ) {
-    val products = arrayListOf(
-        ProductsOnCart(
-            productId = "1",
-            productName = "Business Laptop",
-            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-            productPrice = 550.0,
-            productOptions = null,
-            quantity = 2,
-        ),
-        ProductsOnCart(
-            productId = "1",
-            productName = "Business Laptop",
-            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-            productPrice = 550.0,
-            productOptions = null,
-            quantity = 2,
-        ),
-        ProductsOnCart(
-            productId = "1",
-            productName = "Business Laptop",
-            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-            productPrice = 550.0,
-            productOptions = null,
-            quantity = 2,
-        )
-    )
-    val cart = CartModel(
-        id = "2",
-        products = products,
-        total = 234.0,
-        userId = "12"
-    )
+    val cart = DataDummy.cartItems
     Scaffold(
 //        snackbarHost = {
 //            SnackbarHost(hostState = snackbarHostState) {
@@ -157,38 +126,7 @@ fun CartContent(
 @Composable
 fun CartContentPreview() {
     StoreAppTheme {
-        val products = arrayListOf(
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            )
-        )
-        val cart = CartModel(
-            id = "2",
-            products = products,
-            total = 234.0,
-            userId = "12"
-        )
+val cart = DataDummy.cartItems
         CartContent(
             PaddingValues(0.dp),
             cart

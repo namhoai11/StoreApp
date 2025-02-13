@@ -92,7 +92,8 @@ fun CartItem(
                         .padding(start = 8.dp)
                 )
                 Text(
-                    text = "$${cartItem.productPrice}",
+//                    text = "$${cartItem.productPrice}",
+                    text = "ProductPrice",
                     color = colorResource(id = R.color.purple),
                     modifier = Modifier
                         .padding(start = 8.dp)
@@ -104,7 +105,8 @@ fun CartItem(
                         .padding(bottom = 8.dp)
                 ) {
                     Text(
-                        text = "$${cartItem.productPrice}",
+//                        text = "$${cartItem.productPrice}",
+                        text = "ProductPrice",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -253,7 +255,7 @@ fun CartMiniList(
             CartItemMini(
                 productName = item.productName,
                 imageId = item.productImage,
-                price = item.productPrice,
+                price = 0.0,
                 orderCount = item.quantity,
                 totalOrder = 0,
                 onDetailOrder = {}
@@ -296,32 +298,11 @@ fun NumberInCartPreview() {
 @Composable
 fun CartItemPreview() {
     StoreAppTheme {
-//        val item = ProductModel(
-//            id = 1,
-//            title = "Business Laptop",
-//            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
-//            picUrl = arrayListOf(
-//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
-//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
-//                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
-//            ),
-//            model = arrayListOf(
-//                "core i3",
-//                "core i5",
-//                "core i7"
-//            ),
-//            price = 550.0,
-//            rating = 4.7,
-//            showRecommended = true,
-//            categoryId = "0"
-//        )
         val item2 = ProductsOnCart(
             productId = "1",
             productName = "Business Laptop",
             productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-            productPrice = 550.0,
+//            productPrice = 550.0,
             productOptions = null,
             quantity = 2,
         )
@@ -341,7 +322,7 @@ fun CartListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             ),
@@ -349,7 +330,7 @@ fun CartListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             ),
@@ -357,7 +338,7 @@ fun CartListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             )
@@ -365,7 +346,7 @@ fun CartListPreview() {
         val cart = CartModel(
             id = "2",
             products = products,
-            total = 234.0,
+//            total = 234.0,
             userId = "12"
         )
         CartList(
@@ -384,7 +365,7 @@ fun CartMiniListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             ),
@@ -392,7 +373,7 @@ fun CartMiniListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             ),
@@ -400,7 +381,7 @@ fun CartMiniListPreview() {
                 productId = "1",
                 productName = "Business Laptop",
                 productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-                productPrice = 550.0,
+//                productPrice = 550.0,
                 productOptions = null,
                 quantity = 2,
             )
@@ -408,7 +389,7 @@ fun CartMiniListPreview() {
         val cart = CartModel(
             id = "2",
             products = products,
-            total = 234.0,
+//            total = 234.0,
             userId = "12"
         )
 

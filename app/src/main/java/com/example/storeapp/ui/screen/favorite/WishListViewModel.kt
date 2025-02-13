@@ -97,7 +97,7 @@ class WishListViewModel(
 
     fun favoriteClick(productId: String) {
         viewModelScope.launch {
-            repository.removeWishListItem(productId)
+            _user.value?.let { repository.removeWishListItem(it.id,productId) }
             _uiState.update { currentState ->
                 currentState.copy(
                     listItems = currentState.listItems.filterNot { it.productId == productId }

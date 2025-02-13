@@ -4,9 +4,16 @@ import android.util.Log
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.SliderModel
+import com.example.storeapp.model.Stock
 import com.google.firebase.Timestamp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
@@ -15,108 +22,40 @@ class RealtimeDatabaseRepository {
 
     private val firebaseDatabase = FirebaseDatabase.getInstance()
 
-    suspend fun loadBanner(): List<SliderModel> {
-        val ref = firebaseDatabase.getReference("Banner")
-        val snapshot = ref.get().await()
-        val banners = snapshot.children.mapNotNull { it.getValue(SliderModel::class.java) }
-        Log.d("FirebaseStoreAppRepository", "Loaded banners: $banners")
-        return banners
-    }
+    suspend fun loadStockByProductId(productId: String): Stock? {
+        return try {
+            val stockSnapshot = firebaseDatabase.getReference("stocks/$productId").get().await()
 
-    //    override suspend fun loadCategory(): List<CategoryModel> {
-//        val ref = firebaseDatabase.getReference("Category")
-//        val snapshot = ref.get().await()
-//        val categories = snapshot.children.mapNotNull { it.getValue(CategoryModel::class.java) }
-//        Log.d("FirebaseStoreAppRepository", "Loaded Categories: $categories")
-//        return categories
-//    }
-    suspend fun loadCategory(): List<CategoryModel> {
-        val ref = firebaseDatabase.getReference("Category")
-        val snapshot = ref.get().await()
+            // Kiểm tra dữ liệu trả về từ Firebase
+            Log.d("FirebaseStoreAppRepository", "Snapshot: ${stockSnapshot.value}")
 
-        val categories = snapshot.children.mapNotNull { dataSnapshot ->
-            val id = dataSnapshot.child("id").getValue(Int::class.java) ?: 0
-            val name = dataSnapshot.child("name").getValue(String::class.java) ?: ""
-            val imageUrl = dataSnapshot.child("imageUrl").getValue(String::class.java) ?: ""
-            val description = dataSnapshot.child("description").getValue(String::class.java) ?: ""
-            val hidden = dataSnapshot.child("hidden").getValue(Boolean::class.java) ?: false
-            val productCount = dataSnapshot.child("productCount").getValue(Int::class.java) ?: 1
-            val createdAtLong = dataSnapshot.child("createdAt").getValue(Long::class.java) ?: 0L
-            val updatedAtLong = dataSnapshot.child("updatedAt").getValue(Long::class.java) ?: 0L
+            val stock = stockSnapshot.getValue(Stock::class.java)
 
-            // Chuyển Long thành Date và sau đó tạo Timestamp
-            val createdAt = Timestamp(Date(createdAtLong))
-            val updatedAt = Timestamp(Date(updatedAtLong))
+            // Kiểm tra sau khi parse về Stock
+            Log.d("FirebaseStoreAppRepository", "Stock parsed: $stock")
 
-            // Tạo đối tượng CategoryModel
-            CategoryModel(
-                id = id,
-                name = name,
-                imageUrl = imageUrl,
-                description = description,
-                hidden = hidden,
-                productCount = productCount,
-                createdAt = createdAt,
-                updatedAt = updatedAt
-            )
+            stock
+        } catch (e: Exception) {
+            Log.e("FirebaseStoreAppRepository", "Lỗi khi load stock", e)
+            null
         }
-
-        Log.d("FirebaseStoreAppRepository", "Loaded Categories: $categories")
-        return categories
     }
 
+    fun observeStockByProductId(productId: String): Flow<Stock?> = callbackFlow {
+        val stockRef = firebaseDatabase.reference.child("stocks").child(productId)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val stock = snapshot.getValue(Stock::class.java)
+                trySend(stock).isSuccess
+            }
 
-    //    override suspend fun loadAllItems(): List<ProductModel> {
-//        val ref = firebaseDatabase.getReference("Products")
-//        val snapshot = ref.get().await()
-//        val allItems = snapshot.children.mapNotNull { it.getValue(ProductModel::class.java) }
-//        Log.d("FirebaseStoreAppRepository", "Loaded allItems:$allItems")
-//        return allItems
-//    }
-    suspend fun loadAllProducts(): List<ProductModel> {
-        val ref = firebaseDatabase.getReference("Products")
-        val snapshot = ref.get().await()
-        val allProducts = snapshot.children.mapNotNull { dataSnapshot ->
-            val id = dataSnapshot.child("id").getValue(String::class.java) ?: ""
-            val name = dataSnapshot.child("name").getValue(String::class.java) ?: ""
-            val images = dataSnapshot.child("images")
-                .getValue(object : GenericTypeIndicator<MutableList<String>>() {})
-                ?: mutableListOf()
-            val price = dataSnapshot.child("price").getValue(Int::class.java)?.toDouble() ?: 0.0
-            val stockQuantity = dataSnapshot.child("stockQuantity").getValue(Int::class.java) ?: 0
-            val categoryId = dataSnapshot.child("categoryId").getValue(String::class.java) ?: ""
-            val hidden = dataSnapshot.child("hidden").getValue(Boolean::class.java) ?: false
-            val showRecommended =
-                dataSnapshot.child("showRecommended").getValue(Boolean::class.java) ?: false
-            val description = dataSnapshot.child("description").getValue(String::class.java) ?: ""
-            val rating = dataSnapshot.child("rating").getValue(Double::class.java) ?: 0.0
-            val options = dataSnapshot.child("options")
-                .getValue(object : GenericTypeIndicator<MutableList<String>>() {})
-                ?: mutableListOf()
-            val createdAtLong = dataSnapshot.child("createdAt").getValue(Long::class.java) ?: 0L
-            val updatedAtLong = dataSnapshot.child("updatedAt").getValue(Long::class.java) ?: 0L
-
-            // Chuyển Long thành Date và sau đó tạo Timestamp
-            val createdAt = Timestamp(Date(createdAtLong))
-            val updatedAt = Timestamp(Date(updatedAtLong))
-
-            ProductModel(
-                id = id,
-                name = name,
-                images = images,
-                price = price,
-                stockQuantity = stockQuantity,
-                categoryId = categoryId,
-                hidden = hidden,
-                showRecommended = showRecommended,
-                description = description,
-                rating = rating,
-                options = options,
-                createdAt = createdAt,
-                updatedAt = updatedAt
-            )
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException()) // Đóng Flow khi có lỗi
+            }
         }
-        Log.d("FirebaseStoreAppRepository", "Loaded Categories: $allProducts")
-        return allProducts
+        stockRef.addValueEventListener(listener)
+
+        awaitClose { stockRef.removeEventListener(listener) } // Xóa listener khi không còn sử dụng
     }
+
 }

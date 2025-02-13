@@ -41,7 +41,44 @@ data class ProductModel(
         Timestamp.now(),
         null
     )
+    constructor(
+        id: String,
+        name: String,
+        images: List<String>,
+        price: Double,
+        brandId: String?,
+        categoryId: String,
+        hidden: Boolean,
+        showRecommended: Boolean,
+        description: String,
+        rating: Double,
+        availableOptions: AvailableOptions?,
+        options: List<String>,
+        stockByVariant: List<StockByVariant>,
+        createdAt: Timestamp,
+        updatedAt: Timestamp,
+        brand: BrandModel?
+    ) : this(
+        id,
+        name,
+        images,
+        price,
+        stockByVariant.sumOf { it.quantity }, // Tự động tính tổng số lượng
+        brandId,
+        categoryId,
+        hidden,
+        showRecommended,
+        description,
+        rating,
+        availableOptions,
+        options,
+        stockByVariant,
+        createdAt,
+        updatedAt,
+        brand
+    )
 }
+
 
 data class StockByVariant(
     val colorName: String = "",
@@ -73,5 +110,13 @@ data class ColorOptions(
 ) {
     constructor() : this("", "")
     constructor(colorName: String) : this(colorName, "")
+}
+
+data class Stock(
+    val ProductId: String,
+    val stockQuantity: Int,
+    val stockByVariant: List<StockByVariant> = emptyList(),
+){
+    constructor() : this("", 0, emptyList()) // Constructor không tham số
 }
 

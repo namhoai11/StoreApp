@@ -3,10 +3,11 @@ package com.example.storeapp.ui.screen.productdetails
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
+import com.example.storeapp.model.Stock
 import com.google.firebase.Timestamp
 
 fun defaultItemsModel() = ProductModel(
-    id = "1",
+    id = "-1",
     name = "Business Laptop",
     description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
     images = arrayListOf(
@@ -36,6 +37,7 @@ data class ProductDetailsUiState(
     val currentImage: String = "",
     val currentPrice: Double = 0.0,
     val currentQuantity: Int = 0,
+//    val stock: Stock? = null,
     val listStandardImages: List<String> = emptyList(),
     val listColorOptions: List<ColorOptions> = emptyList(),
     val listProductOptions: List<ProductOptions> = emptyList(),
@@ -43,5 +45,7 @@ data class ProductDetailsUiState(
     val selectedColorUrl: Int = -1,
     val selectedOptionIndex: Int = -1,
     val showProductDetailsLoading: Boolean = true,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
+    val successMessage: String = "",
+    val isAddCartLoading: Boolean = false,
 )
