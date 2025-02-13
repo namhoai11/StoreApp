@@ -146,6 +146,13 @@ object DataDummy {
         )
     )
 
+    val productsOnCart = ProductsOnCart(
+        productId = "101",
+        productName = "Sản phẩm A",
+        productImage = "url_to_image_1",
+        quantity = 2
+    )
+
     // Dữ liệu mẫu cho Cart
     val cartItems = CartModel(
         id = "1",

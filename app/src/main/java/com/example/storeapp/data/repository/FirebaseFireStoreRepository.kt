@@ -193,8 +193,8 @@ class FirebaseFireStoreRepository {
                 val existingProduct =
                     updatedListProducts.find {
                         it.productId == productOnCart.productId &&
-                                it.productOptions?.optionsName == productOnCart.productOptions?.optionsName &&
-                                it.colorOptions?.colorName == productOnCart.colorOptions?.colorName
+                                it.productOptions == productOnCart.productOptions &&
+                                it.colorOptions == productOnCart.colorOptions
                     }
 
                 if (existingProduct != null) {

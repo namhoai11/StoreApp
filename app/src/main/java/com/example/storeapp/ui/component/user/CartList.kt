@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.ui.theme.StoreAppTheme
@@ -298,14 +299,7 @@ fun NumberInCartPreview() {
 @Composable
 fun CartItemPreview() {
     StoreAppTheme {
-        val item2 = ProductsOnCart(
-            productId = "1",
-            productName = "Business Laptop",
-            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//            productPrice = 550.0,
-            productOptions = null,
-            quantity = 2,
-        )
+        val item2 = DataDummy.productsOnCart
         CartItem(
             item2
         )
@@ -317,38 +311,7 @@ fun CartItemPreview() {
 @Composable
 fun CartListPreview() {
     StoreAppTheme {
-        val products = arrayListOf(
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            )
-        )
-        val cart = CartModel(
-            id = "2",
-            products = products,
-//            total = 234.0,
-            userId = "12"
-        )
+        val cart = DataDummy.cartItems
         CartList(
             cart
         )
@@ -360,39 +323,7 @@ fun CartListPreview() {
 @Composable
 fun CartMiniListPreview() {
     StoreAppTheme {
-        val products = arrayListOf(
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            ),
-            ProductsOnCart(
-                productId = "1",
-                productName = "Business Laptop",
-                productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//                productPrice = 550.0,
-                productOptions = null,
-                quantity = 2,
-            )
-        )
-        val cart = CartModel(
-            id = "2",
-            products = products,
-//            total = 234.0,
-            userId = "12"
-        )
-
+        val cart = DataDummy.cartItems
         CartMiniList(cartItems = cart)
     }
 }

@@ -210,33 +210,51 @@ class ProductDetailsViewModel(
     fun selectColorImages(
         selectedIndex: Int,
     ) {
-        val stockByVariant =
-            _uiState.value.productDetailsItem.stockByVariant.filter { it.colorName == _uiState.value.listColorOptions[selectedIndex].colorName }
-        val currentImage = _uiState.value.listColorOptions[selectedIndex].imagesColor
-        _uiState.update { it ->
-            it.copy(
-                selectedColorUrl = selectedIndex,
-                selectedStandardImageUrl = -1,
-                currentImage = currentImage,
-                currentQuantity = stockByVariant.sumOf { stock -> stock.quantity }
-            )
+        if (selectedIndex == _uiState.value.selectedColorUrl) {
+            _uiState.update {
+                it.copy(
+                    selectedColorUrl = -1,
+                )
+            }
+        } else {
+            val stockByVariant =
+                _uiState.value.productDetailsItem.stockByVariant.filter { it.colorName == _uiState.value.listColorOptions[selectedIndex].colorName }
+            val currentImage = _uiState.value.listColorOptions[selectedIndex].imagesColor
+            _uiState.update { it ->
+                it.copy(
+                    selectedColorUrl = selectedIndex,
+                    selectedStandardImageUrl = -1,
+                    currentImage = currentImage,
+                    currentQuantity = stockByVariant.sumOf { stock -> stock.quantity }
+                )
+            }
         }
+
     }
 
     fun selectedOptions(
         selectedIndex: Int
     ) {
-        val stockByVariant =
-            _uiState.value.productDetailsItem.stockByVariant.filter { it.optionName == _uiState.value.listProductOptions[selectedIndex].optionsName }
+        if (selectedIndex == _uiState.value.selectedOptionIndex) {
+            _uiState.update {
+                it.copy(
+                    selectedOptionIndex = -1
+                )
+            }
+        } else {
+            val stockByVariant =
+                _uiState.value.productDetailsItem.stockByVariant.filter { it.optionName == _uiState.value.listProductOptions[selectedIndex].optionsName }
 
-        val price = _uiState.value.listProductOptions[selectedIndex].priceForOptions
-        _uiState.update {
-            it.copy(
-                selectedOptionIndex = selectedIndex,
-                currentPrice = price,
-                currentQuantity = stockByVariant.sumOf { stock -> stock.quantity }
-            )
+            val price = _uiState.value.listProductOptions[selectedIndex].priceForOptions
+            _uiState.update {
+                it.copy(
+                    selectedOptionIndex = selectedIndex,
+                    currentPrice = price,
+                    currentQuantity = stockByVariant.sumOf { stock -> stock.quantity }
+                )
+            }
         }
+
     }
 
     fun favoriteClick() {
@@ -257,7 +275,7 @@ class ProductDetailsViewModel(
     }
 
     fun buyClick() {
-        Log.d("ProductDetailsViewModel","buyClick")
+        Log.d("ProductDetailsViewModel", "buyClick")
 
         if (!validateCartInputs()) return
         _uiState.update { it.copy(isAddCartLoading = true, errorMessage = "") }
@@ -266,18 +284,18 @@ class ProductDetailsViewModel(
             val selectedProductOption = if (_uiState.value.listProductOptions.isNotEmpty() &&
                 _uiState.value.selectedOptionIndex in _uiState.value.listProductOptions.indices
             ) {
-                _uiState.value.listProductOptions[_uiState.value.selectedOptionIndex]
+                _uiState.value.listProductOptions[_uiState.value.selectedOptionIndex].optionsName
             } else {
-                null
+                ""
             }
 
 
             val selectedColorOption = if (_uiState.value.listColorOptions.isNotEmpty() &&
                 _uiState.value.selectedColorUrl in _uiState.value.listColorOptions.indices
             ) {
-                _uiState.value.listColorOptions[_uiState.value.selectedColorUrl]
+                _uiState.value.listColorOptions[_uiState.value.selectedColorUrl].colorName
             } else {
-                null
+                ""
             }
 
             val productsOnCart = ProductsOnCart(
@@ -285,18 +303,30 @@ class ProductDetailsViewModel(
                 productName = _uiState.value.productDetailsItem.name,
                 productImage = _uiState.value.currentImage,
 //                productPrice = _uiState.value.currentPrice,
-                productOptions = selectedProductOption,
+                productOptions = selectedProductOption ?: "",
                 colorOptions = selectedColorOption,
                 quantity = 1
             )
-            val result = _user.value?.let { repository.addProductToCartUseSet(it.id, productsOnCart) }
+            val result =
+                _user.value?.let { repository.addProductToCartUseSet(it.id, productsOnCart) }
 
             if (result != null) {
                 if (result.isSuccess) {
-                    _uiState.update { it.copy(isAddCartLoading = false, successMessage = "Thêm vào giỏ hàng thành công!") }
+                    _uiState.update {
+                        it.copy(
+                            isAddCartLoading = false,
+                            successMessage = "Thêm vào giỏ hàng thành công!",
+                            isShowConfirmDialog = true
+                        )
+                    }
 
                 } else {
-                    _uiState.update { it.copy(isAddCartLoading = false, errorMessage = result.exceptionOrNull()?.message ?: "Có lỗi xảy ra") }
+                    _uiState.update {
+                        it.copy(
+                            isAddCartLoading = false,
+                            errorMessage = result.exceptionOrNull()?.message ?: "Có lỗi xảy ra"
+                        )
+                    }
                 }
             }
 
@@ -320,7 +350,12 @@ class ProductDetailsViewModel(
             // Chỉ kiểm tra selectedOptionIndex nếu danh sách có phần tử
             _uiState.value.listProductOptions.isNotEmpty() &&
                     (_uiState.value.selectedOptionIndex !in _uiState.value.listProductOptions.indices) -> {
-                _uiState.update { it.copy(errorMessage = "Vui lòng chọn một tùy chọn sản phẩm") }
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "Vui lòng chọn một tùy chọn sản phẩm",
+                        isShowAlertDialog = true
+                    )
+                }
                 Log.e("ProductDetailsViewModel", _uiState.value.errorMessage)
                 false
             }
@@ -328,7 +363,12 @@ class ProductDetailsViewModel(
             // Chỉ kiểm tra selectedColorUrl nếu danh sách có phần tử
             _uiState.value.listColorOptions.isNotEmpty() &&
                     (_uiState.value.selectedColorUrl !in _uiState.value.listColorOptions.indices) -> {
-                _uiState.update { it.copy(errorMessage = "Vui lòng chọn một màu sắc") }
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "Vui lòng chọn một màu sắc",
+                        isShowAlertDialog = true
+                    )
+                }
                 Log.e("ProductDetailsViewModel", _uiState.value.errorMessage)
 
                 false
@@ -336,6 +376,22 @@ class ProductDetailsViewModel(
 
 
             else -> true
+        }
+    }
+
+    fun exitDialog() {
+        _uiState.update {
+            it.copy(
+                isShowConfirmDialog = false
+            )
+        }
+    }
+
+    fun conFirmAlertDialog() {
+        _uiState.update {
+            it.copy(
+                isShowAlertDialog = false
+            )
         }
     }
 

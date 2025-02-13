@@ -22,19 +22,23 @@ data class ProductsOnCart(
     val productName: String,
     val productImage: String,
 //    val productPrice: Double,
-    val productOptions: ProductOptions? = null,
-    val colorOptions: ColorOptions? = null,
+//    val productOptions: ProductOptions? = null,
+//    val colorOptions: ColorOptions? = null,
+    val productOptions: String = "",
+    val colorOptions: String = "",
     val quantity: Int
 ) {
     // Constructor mặc định (nếu cần)
-    constructor() : this("", "", "", null, null, 0)
+    constructor() : this("", "", "", "", "", 0)
 
-    // Constructor không có `productOptions` và `colorOptions`
-    constructor(
-        productId: String,
-        productName: String,
-        productImage: String,
-        quantity: Int
-    ) : this(productId, productName, productImage, null, null, quantity)
+//    // Constructor không có `productOptions` và `colorOptions`
+//    constructor(
+//        productId: String,
+//        productName: String,
+//        productImage: String,
+//        productOptions: String,
+//        colorOptions: String,
+//        quantity: Int
+//    ) : this(productId, productName, productImage,productOptions , colorOptions, quantity)
 }
 

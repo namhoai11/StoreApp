@@ -48,4 +48,6 @@ data class ProductDetailsUiState(
     val errorMessage: String = "",
     val successMessage: String = "",
     val isAddCartLoading: Boolean = false,
+    val isShowAlertDialog: Boolean = false,
+    val isShowConfirmDialog: Boolean = false
 )

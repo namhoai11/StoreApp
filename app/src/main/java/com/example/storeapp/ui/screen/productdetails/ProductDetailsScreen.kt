@@ -54,6 +54,8 @@ import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.user.AlertDialog
+import com.example.storeapp.ui.component.user.ConfirmAddToCartDialog
 import com.example.storeapp.ui.component.user.LoadingBox
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
@@ -287,6 +289,19 @@ fun ProductDetailsContent(
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
+        }
+        if (productDetailsUiState.isShowConfirmDialog) {
+            ConfirmAddToCartDialog(
+                onDismiss = { viewModel.exitDialog() },
+                message = productDetailsUiState.successMessage,
+                navigateToCart = { onCartClick() })
+        }
+        if (productDetailsUiState.isShowAlertDialog) {
+            AlertDialog(
+                onDismiss = { viewModel.conFirmAlertDialog() },
+                title = "",
+                message = productDetailsUiState.errorMessage
+            )
         }
     }
 }
