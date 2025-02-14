@@ -49,25 +49,6 @@ fun WishListScreen(
     LaunchedEffect(Unit) {
         viewModel.loadUser() // Load lại dữ liệu khi quay lại màn hình
     }
-
-//    val favItems = arrayListOf(
-//        WishListModel(
-//            productId = "1",
-//            productName = "Business Laptop",
-//            productCategory = "Electronics",
-//            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
-//            productPrice = 550.0,
-//            productQuantity = 2
-//        ),
-//        WishListModel(
-//            productId = "2",
-//            productName = "Gaming Laptop",
-//            productCategory = "Electronics",
-//            productImage = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
-//            productPrice = 1200.0,
-//            productQuantity = 2
-//        )
-//    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(

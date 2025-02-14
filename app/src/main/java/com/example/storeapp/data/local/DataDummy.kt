@@ -16,6 +16,7 @@ import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.StockByVariant
 import com.example.storeapp.model.UserLocationModel
+import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.google.firebase.Timestamp
 
 object DataDummy {
@@ -151,6 +152,18 @@ object DataDummy {
         productName = "Sản phẩm A",
         productImage = "url_to_image_1",
         quantity = 2
+    )
+
+    val productsOnCartToShow = ProductsOnCartToShow(
+        productId = "101",
+        productName = "Sản phẩm A",
+        productImage = "url_to_image_1",
+        productPrice = 50000.0,
+        productOptions = "Size L",
+        colorOptions = "Đỏ",
+        quantity = 2,
+        notExist = "",
+        notEnough = ""
     )
 
     // Dữ liệu mẫu cho Cart

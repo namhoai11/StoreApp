@@ -72,8 +72,7 @@ object ProductDetailsDestination : NavigationDestination {
 @Composable
 fun ProductDetailsScreen(
     navController: NavController,
-//    onAddToCartClick: () -> Unit,
-//    onCartClick: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: ProductDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val productDetailsUiState by viewModel.uiState.collectAsState()
@@ -127,9 +126,10 @@ fun ProductDetailsScreen(
     ) { innerPadding ->
 
         ProductDetailsContent(
+
             onAddToCartClick = { viewModel.buyClick() },
+            onCartClick = { onNavigateToCart() },
             innerPadding = innerPadding,
-//                item = productDetailsUiState.productDetailsItem,
             viewModel = viewModel
         )
 
@@ -139,8 +139,6 @@ fun ProductDetailsScreen(
 
 @Composable
 fun ProductDetailsContent(
-//    item: ProductModel,
-////    modifier: Modifier,
     onAddToCartClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     innerPadding: PaddingValues,
@@ -150,10 +148,6 @@ fun ProductDetailsContent(
     if (productDetailsUiState.showProductDetailsLoading) {
         LoadingBox(height = 200.dp)
     } else {
-        //    var selectedImageUrl by remember { mutableStateOf(productDetailsUiState.listStandardImages.firstOrNull()) }
-//    LaunchedEffect(productDetailsUiState.listStandardImages) {
-//        selectedImageUrl = productDetailsUiState.listStandardImages.firstOrNull() ?: ""
-//    }
 
         Column(
             modifier = Modifier

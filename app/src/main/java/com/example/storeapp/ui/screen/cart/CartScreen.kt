@@ -18,6 +18,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -25,12 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.CartModel
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.CartList
 import com.example.storeapp.ui.component.user.CartSummary
+import com.example.storeapp.ui.component.user.ConfirmRemovedDialog
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -42,21 +46,13 @@ object CartDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val cart = DataDummy.cartItems
+//    val cart = DataDummy.cartItems
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
-//        snackbarHost = {
-//            SnackbarHost(hostState = snackbarHostState) {
-//                Snackbar(
-//                    modifier = Modifier.padding(16.dp)
-//                ) {
-//                    Text(
-//                        text = it.visuals.message,
-//                    )
-//                }
-//            }
-//        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -82,14 +78,31 @@ fun CartScreen(
             )
         }
     ) { innerPadding ->
-        CartContent(innerPadding = innerPadding, cartItems = cart)
+        CartContent(
+            increaseClick = {viewModel.increaseClicked(it)},
+            decreaseClick = {viewModel.decreaseClicked(it)},
+            removeClick = {viewModel.onRemoveClick(it)},
+            innerPadding = innerPadding,
+            cartItems = uiState.listProductOnCart,
+            totalPrice = uiState.totalPrice
+        )
+        if(uiState.isShowConfirmRemovedDialog){
+            ConfirmRemovedDialog(
+                onDismiss = { viewModel.dismissRemoveDialog() },
+                message = "Xác nhận xóa sản phẩm",
+                confirmRemove = { viewModel.confirmRemoveClicked() })
+        }
     }
 }
 
 @Composable
 fun CartContent(
+    increaseClick: (ProductsOnCartToShow) -> Unit,
+    decreaseClick: (ProductsOnCartToShow) -> Unit,
+    removeClick: (ProductsOnCartToShow) -> Unit,
     innerPadding: PaddingValues,
-    cartItems: CartModel,
+    cartItems: List<ProductsOnCartToShow>,
+    totalPrice: Double = 0.0,
 ) {
     LazyColumn(
         contentPadding = innerPadding,
@@ -97,7 +110,7 @@ fun CartContent(
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        if (cartItems.products.isEmpty()) {
+        if (cartItems.isEmpty()) {
             item {
                 Box(
                     modifier = Modifier
@@ -112,10 +125,15 @@ fun CartContent(
             }
         } else {
             item {
-                CartList(cartItems = cartItems)
+                CartList(
+                    increaseClick = { increaseClick(it) },
+                    decreaseClick = { decreaseClick(it) },
+                    removeClick= {removeClick(it)},
+                    cartItems = cartItems
+                )
             }
             item {
-                CartSummary(465.0, 12.9, 10.0)
+                CartSummary(totalPrice)
             }
         }
     }
@@ -126,8 +144,9 @@ fun CartContent(
 @Composable
 fun CartContentPreview() {
     StoreAppTheme {
-val cart = DataDummy.cartItems
+        val cart = listOf(DataDummy.productsOnCartToShow)
         CartContent(
+            {}, {},{},
             PaddingValues(0.dp),
             cart
         )

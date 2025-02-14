@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
-import com.example.storeapp.data.repository.RealtimeDatabaseRepository
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,6 @@ import kotlinx.coroutines.launch
 class ProductDetailsViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: FirebaseFireStoreRepository,
-    private val realtimeDatabase: RealtimeDatabaseRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductDetailsUiState())
     val uiState: StateFlow<ProductDetailsUiState> = _uiState
@@ -145,21 +143,21 @@ class ProductDetailsViewModel(
         }
     }
 
-    private fun observeStockChanges() {
-        viewModelScope.launch {
-            realtimeDatabase.observeStockByProductId(productDetailsId.toString()).collect { stock ->
-                if (stock != null) {
-                    _uiState.update {
-                        it.copy(
-                            currentQuantity = stock.stockByVariant.sumOf { stock -> stock.quantity },
-//                            stock = stock
-                        )
-                    }
-                    Log.d("ProductDetailsViewmodel", "Updated stock: ${stock.stockQuantity}")
-                }
-            }
-        }
-    }
+//    private fun observeStockChanges() {
+//        viewModelScope.launch {
+//            realtimeDatabase.observeStockByProductId(productDetailsId.toString()).collect { stock ->
+//                if (stock != null) {
+//                    _uiState.update {
+//                        it.copy(
+//                            currentQuantity = stock.stockByVariant.sumOf { stock -> stock.quantity },
+////                            stock = stock
+//                        )
+//                    }
+//                    Log.d("ProductDetailsViewmodel", "Updated stock: ${stock.stockQuantity}")
+//                }
+//            }
+//        }
+//    }
 
     private fun observeProductChanges() {
         viewModelScope.launch {

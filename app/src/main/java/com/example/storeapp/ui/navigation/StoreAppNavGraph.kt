@@ -111,8 +111,7 @@ fun StoreAppNavHost(
         ) {
             ProductDetailsScreen(
                 navController = navController,
-//                onAddToCartClick = {},
-//                onCartClick = {}
+                onNavigateToCart = { navController.navigate(CartDestination.route) }
             )
         }
         composable(

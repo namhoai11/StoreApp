@@ -7,6 +7,7 @@ import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.SliderModel
 import com.example.storeapp.model.UserModel
+import com.example.storeapp.ui.screen.cart.CartAction
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,7 +81,7 @@ class FirebaseFireStoreRepository {
         return allProducts
     }
 
-    suspend fun getProductById(productId: String): ProductModel? {
+    suspend fun     getProductById(productId: String): ProductModel? {
         val documentSnapshot = firestore.collection("Products").document(productId).get().await()
         val product = documentSnapshot.toObject(ProductModel::class.java)
 
@@ -227,6 +228,133 @@ class FirebaseFireStoreRepository {
             Result.failure(e) // Trả về lỗi
         }
     }
+
+    suspend fun getPCartByUser(userId: String): CartModel? {
+        return try {
+            val querySnapshot = firestore.collection("Cart")
+                .whereEqualTo("userId", userId) // Lọc theo userId
+                .limit(1) // Chỉ lấy 1 kết quả
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val cart = querySnapshot.documents.first().toObject(CartModel::class.java)
+                Log.d("FirestoreRepository", "Loaded Cart for userID $userId: $cart")
+                cart
+            } else {
+                Log.w("FirestoreRepository", "Cart not found for userID: $userId")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading cart for userID: $userId", e)
+            null
+        }
+    }
+
+//    suspend fun increaseProductQuantity(
+//        currentUserId: String, productOnCart: ProductsOnCart
+//    ): Result<Unit> {
+//        return updateProductQuantity(currentUserId, productOnCart, isIncreasing = true)
+//    }
+//
+//    suspend fun decreaseProductQuantity(
+//        currentUserId: String, productOnCart: ProductsOnCart
+//    ): Result<Unit> {
+//        return updateProductQuantity(currentUserId, productOnCart, isIncreasing = false)
+//    }
+
+    suspend fun updateProductQuantityInCart(
+        currentUserId: String,
+        productOnCart: ProductsOnCart,
+        action: CartAction
+    ): Result<Unit> {
+        val cartRef = firestore.collection("Cart")
+        return try {
+            val snapshot = cartRef.whereEqualTo("userId", currentUserId).get().await()
+
+            val updatedListProducts = mutableListOf<ProductsOnCart>()
+            var cartId: String? = null
+
+            if (!snapshot.isEmpty) {
+                val cartDoc = snapshot.documents.first()
+                val cart = cartDoc.toObject(CartModel::class.java)
+                updatedListProducts.addAll(cart?.products ?: emptyList())
+
+                val existingProductIndex = updatedListProducts.indexOfFirst {
+                    it.productId == productOnCart.productId &&
+                            it.productOptions == productOnCart.productOptions &&
+                            it.colorOptions == productOnCart.colorOptions
+                }
+
+                if (existingProductIndex != -1) {
+                    when (action) {
+                        is CartAction.Increase -> {
+                            val existingProduct = updatedListProducts[existingProductIndex]
+                            updatedListProducts[existingProductIndex] =
+                                existingProduct.copy(quantity = existingProduct.quantity + 1)
+                        }
+
+                        is CartAction.Decrease -> {
+                            val existingProduct = updatedListProducts[existingProductIndex]
+                            if (existingProduct.quantity > 1) {
+                                updatedListProducts[existingProductIndex] =
+                                    existingProduct.copy(quantity = existingProduct.quantity - 1)
+                            } else {
+                                updatedListProducts.removeAt(existingProductIndex)
+                            }
+                        }
+
+                        is CartAction.Remove -> {
+                            updatedListProducts.removeAt(existingProductIndex)
+                        }
+                    }
+                }
+                cartId = cartDoc.id
+            }
+
+            val newCartRef = cartId?.let { cartRef.document(it) } ?: cartRef.document()
+            val newCart = CartModel(
+                id = newCartRef.id,
+                userId = currentUserId,
+                products = updatedListProducts
+            )
+
+            newCartRef.set(newCart, SetOptions.merge()).await()
+            Log.d("FirestoreRepository", "Cart updated successfully with ID: ${newCartRef.id}")
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error updating product in cart", e)
+            Result.failure(e)
+        }
+    }
+
+
+
+
+    fun updateCartWhenProductChanges(productId: String) {
+        firestore.collection("Cart")
+            .whereArrayContains("items.productId", productId) // Tìm giỏ hàng chứa sản phẩm
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    val cart = document.toObject(CartModel::class.java)
+                    cart?.let {
+                        // Cập nhật giá mới từ Product vào Cart
+//                        val updatedItems = it.items.map { item ->
+//                            if (item.productId == productId) {
+////                                item.copy(price = getProductPrice(productId)) // Lấy giá mới
+//                            } else item
+//                        }
+                        firestore.collection("Cart").document(document.id)
+//                            .update("items", updatedItems)
+                    }
+                }
+            }
+    }
+
+
+
 
 
     fun observeProductById(productId: String): Flow<ProductModel?> = callbackFlow {

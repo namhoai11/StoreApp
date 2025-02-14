@@ -13,7 +13,8 @@ data class HomeUiState(
     val currentCategoryId: Int? = -2,
     val showBannerLoading: Boolean = true,
     val showCategoryLoading: Boolean = true,
-    val showRecommendedLoading: Boolean = true
+    val showRecommendedLoading: Boolean = true,
+    val cartQuantity: Int = 0,
 ) {
     val currentListItems: List<ProductModel>
         get() = when (currentCategoryId) {

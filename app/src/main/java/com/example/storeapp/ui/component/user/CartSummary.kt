@@ -24,52 +24,55 @@ import com.example.storeapp.R
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
-fun CartSummary(itemTotal: Double, tax: Double, delivery: Double) {
-    val total = itemTotal + tax + delivery
+fun CartSummary(
+    itemTotal: Double,
+//    tax: Double, delivery: Double
+) {
+//    val total = itemTotal + tax + delivery
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text(
-                text = "Item Total:",
-                Modifier.weight(1f),
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.grey)
-            )
-            Text(text = "$$itemTotal")
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text(
-                text = "Tax:",
-                Modifier.weight(1f),
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.grey)
-            )
-            Text(text = "$$tax")
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp)
-        ) {
-            Text(
-                text = "Delivery:",
-                Modifier.weight(1f),
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.grey)
-            )
-            Text(text = "$$delivery")
-        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 16.dp)
+//        ) {
+//            Text(
+//                text = "Item Total:",
+//                Modifier.weight(1f),
+//                fontWeight = FontWeight.Bold,
+//                color = colorResource(id = R.color.grey)
+//            )
+//            Text(text = "$$itemTotal")
+//        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 16.dp)
+//        ) {
+//            Text(
+//                text = "Tax:",
+//                Modifier.weight(1f),
+//                fontWeight = FontWeight.Bold,
+//                color = colorResource(id = R.color.grey)
+//            )
+//            Text(text = "$$tax")
+//        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 16.dp, bottom = 16.dp)
+//        ) {
+//            Text(
+//                text = "Delivery:",
+//                Modifier.weight(1f),
+//                fontWeight = FontWeight.Bold,
+//                color = colorResource(id = R.color.grey)
+//            )
+//            Text(text = "$$delivery")
+//        }
 
         Box(
             modifier = Modifier
@@ -89,7 +92,7 @@ fun CartSummary(itemTotal: Double, tax: Double, delivery: Double) {
                 fontWeight = FontWeight.Bold,
                 color = colorResource(id = R.color.grey)
             )
-            Text(text = "$$total")
+            Text(text = "$$itemTotal")
         }
         Button(
             onClick = { /*TODO*/ },
@@ -119,7 +122,7 @@ fun CartSummary(itemTotal: Double, tax: Double, delivery: Double) {
 fun CartSummaryPreview() {
     StoreAppTheme {
         CartSummary(
-            465.0, 12.9, 10.0
+            465.0
         )
     }
 
