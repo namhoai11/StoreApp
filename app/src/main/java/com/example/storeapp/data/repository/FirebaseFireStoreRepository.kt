@@ -371,4 +371,43 @@ class FirebaseFireStoreRepository {
         }
         awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
     }
+
+    fun observeAllProducts(): Flow<List<ProductModel>> = callbackFlow {
+        val productsRef = firestore.collection("Products")
+        val listener = productsRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error) // Đóng Flow nếu có lỗi
+                return@addSnapshotListener
+            }
+
+            val productList = snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) } ?: emptyList()
+            Log.d("Firestore", "Products updated: $productList")
+            trySend(productList).isSuccess
+        }
+
+        awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
+    }
+    fun observeProductsByListId(productIds: List<String>): Flow<List<ProductModel>> = callbackFlow {
+        if (productIds.isEmpty()) {
+            trySend(emptyList()).isSuccess
+            close()
+            return@callbackFlow
+        }
+
+        val productsRef = firestore.collection("Products").whereIn("id", productIds)
+
+        val listener = productsRef.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error) // Đóng Flow nếu có lỗi
+                return@addSnapshotListener
+            }
+
+            val productList = snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) } ?: emptyList()
+            Log.d("Firestore", "Products in cart updated: $productList")
+            trySend(productList).isSuccess
+        }
+
+        awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
+    }
+
 }
