@@ -162,6 +162,7 @@ object DataDummy {
         productOptions = "Size L",
         colorOptions = "Đỏ",
         quantity = 2,
+        remainingStock = 5,
         notExist = "",
         notEnough = ""
     )

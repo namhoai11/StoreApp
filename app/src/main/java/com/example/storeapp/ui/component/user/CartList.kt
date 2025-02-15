@@ -48,12 +48,13 @@ fun CartList(
     increaseClick: (ProductsOnCartToShow) -> Unit,
     decreaseClick: (ProductsOnCartToShow) -> Unit,
     removeClick: (ProductsOnCartToShow) -> Unit,
+    onCartItemClicked: (String) -> Unit = {},
     cartItems: List<ProductsOnCartToShow>,
 ) {
     LazyColumn(
         Modifier
             .padding(top = 8.dp)
-            .heightIn(max = 500.dp) // Đặt chiều cao tối đa
+            .heightIn(max = 600.dp) // Đặt chiều cao tối đa
     )
     {
         items(cartItems) { item ->
@@ -61,6 +62,7 @@ fun CartList(
                 increaseClick = { increaseClick(item) },
                 decreaseClick = { decreaseClick(item) },
                 removeClick = { removeClick(item) },
+                onCartItemClicked = { onCartItemClicked(item.productId) },
                 cartItem = item,
                 modifier = Modifier.padding(top = 16.dp)
             )
@@ -70,28 +72,34 @@ fun CartList(
 
 @Composable
 fun CartItem(
+    modifier: Modifier = Modifier,
     increaseClick: (ProductsOnCartToShow) -> Unit,
     decreaseClick: (ProductsOnCartToShow) -> Unit,
     removeClick: (ProductsOnCartToShow) -> Unit,
+    onCartItemClicked: (String) -> Unit = {},
     cartItem: ProductsOnCartToShow,
-    modifier: Modifier = Modifier,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier
+        modifier = modifier.clickable {
+            if (cartItem.notExist == "") {
+                onCartItemClicked(cartItem.productId)
+            }
+        }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(90.dp)
-//                .padding(top = 8.dp, bottom = 8.dp)
+                .height(120.dp),
+//                .padding(top = 8.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = rememberAsyncImagePainter(model = cartItem.productImage),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(100.dp)
                     .background(
                         colorResource(id = R.color.lightGrey),
                         shape = RoundedCornerShape(10.dp)
@@ -109,11 +117,27 @@ fun CartItem(
                                 .padding(start = 8.dp)
                         )
                         Text(
-                            text = "${cartItem.productOptions} - ${cartItem.productPrice}",
+                            text = if (cartItem.productOptions != "") "${cartItem.productOptions} - ${cartItem.productPrice}" else "${cartItem.productPrice}",
                             color = colorResource(id = R.color.purple),
                             modifier = Modifier
                                 .padding(start = 8.dp)
                         )
+                        if (cartItem.notExist == ""&&cartItem.notEnough=="") {
+                            Text(
+                                text = "Sản phẩm còn lại: ${cartItem.remainingStock}",
+                                color = colorResource(id = R.color.grey),
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                            )
+                        }else{
+                            Text(
+                                text = cartItem.notEnough,
+                                color = Color.Red,
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                            )
+                        }
+
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     Box(
@@ -143,21 +167,50 @@ fun CartItem(
                         .fillMaxWidth() // Đảm bảo Row chiếm toàn bộ chiều rộng
                         .padding(bottom = 8.dp)
                 ) {
-                    Text(
-                        text = "${cartItem.productTotalPrice}",
+                    if (cartItem.notExist != "") {
+                        Text(
+                            text = cartItem.notExist,
 //                        text = "ProductPrice",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(start = 8.dp, top = 4.dp)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    NumberInCart(
-                        increaseClick = { increaseClick(cartItem) },
-                        decreaseClick = { decreaseClick(cartItem) },
-                        numberInCart = cartItem.quantity,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Red,
+                            modifier = Modifier
+                                .padding(start = 8.dp, top = 4.dp)
+                        )
+                    } else if (cartItem.notEnough != "") {
+                        Text(
+                            text = "",
+                            color = Color.Red,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        NumberInCart(
+                            increaseClick = { increaseClick(cartItem) },
+                            decreaseClick = { decreaseClick(cartItem) },
+                            numberInCart = cartItem.quantity,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+
+                    } else {
+
+                        Text(
+                            text = "${cartItem.productTotalPrice}",
+//                        text = "ProductPrice",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(start = 8.dp, top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        NumberInCart(
+                            increaseClick = { increaseClick(cartItem) },
+                            decreaseClick = { decreaseClick(cartItem) },
+                            numberInCart = cartItem.quantity,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
+
                 }
             }
         }
@@ -352,7 +405,8 @@ fun CartItemPreview() {
     StoreAppTheme {
         val item2 = DataDummy.productsOnCartToShow
         CartItem(
-            {}, {}, {},
+            modifier = Modifier,
+            {}, {}, {}, {},
             item2
         )
     }
@@ -365,7 +419,7 @@ fun CartListPreview() {
     StoreAppTheme {
         val cart = listOf(DataDummy.productsOnCartToShow)
         CartList(
-            {}, {},{},
+            {}, {}, {}, {},
             cart
         )
     }

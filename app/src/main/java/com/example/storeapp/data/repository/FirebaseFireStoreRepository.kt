@@ -81,13 +81,24 @@ class FirebaseFireStoreRepository {
         return allProducts
     }
 
-    suspend fun     getProductById(productId: String): ProductModel? {
+    suspend fun getProductById(productId: String): ProductModel? {
         val documentSnapshot = firestore.collection("Products").document(productId).get().await()
         val product = documentSnapshot.toObject(ProductModel::class.java)
 
         Log.d("FirestoreRepository", "Loaded Product with ID $productId: $product")
 
         return product
+    }
+
+    suspend fun getProductByListId(productIds: List<String>): List<ProductModel> {
+        if (productIds.isEmpty()) return emptyList()
+
+        return firestore.collection("Products")
+            .whereIn("id", productIds)
+            .get()
+            .await()
+            .documents
+            .mapNotNull { it.toObject(ProductModel::class.java) }
     }
 
 
@@ -157,7 +168,7 @@ class FirebaseFireStoreRepository {
 //                    "products" to updatedListProducts, "total" to totalPrice
                     "products" to updatedListProducts,
 
-                )
+                    )
                 cartDoc.reference.update(updateData).await()
                 Log.d("FirestoreRepository", "Updated cart ${cartDoc.id} with new product")
             } else {
@@ -330,8 +341,6 @@ class FirebaseFireStoreRepository {
     }
 
 
-
-
     fun updateCartWhenProductChanges(productId: String) {
         firestore.collection("Cart")
             .whereArrayContains("items.productId", productId) // Tìm giỏ hàng chứa sản phẩm
@@ -352,9 +361,6 @@ class FirebaseFireStoreRepository {
                 }
             }
     }
-
-
-
 
 
     fun observeProductById(productId: String): Flow<ProductModel?> = callbackFlow {
@@ -380,13 +386,16 @@ class FirebaseFireStoreRepository {
                 return@addSnapshotListener
             }
 
-            val productList = snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) } ?: emptyList()
+            val productList =
+                snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) }
+                    ?: emptyList()
             Log.d("Firestore", "Products updated: $productList")
             trySend(productList).isSuccess
         }
 
         awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
     }
+
     fun observeProductsByListId(productIds: List<String>): Flow<List<ProductModel>> = callbackFlow {
         if (productIds.isEmpty()) {
             trySend(emptyList()).isSuccess
@@ -402,7 +411,9 @@ class FirebaseFireStoreRepository {
                 return@addSnapshotListener
             }
 
-            val productList = snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) } ?: emptyList()
+            val productList =
+                snapshot?.documents?.mapNotNull { it.toObject(ProductModel::class.java) }
+                    ?: emptyList()
             Log.d("Firestore", "Products in cart updated: $productList")
             trySend(productList).isSuccess
         }

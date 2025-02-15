@@ -47,6 +47,7 @@ object CartDestination : NavigationDestination {
 @Composable
 fun CartScreen(
     navController: NavController,
+    onNavigateProductDetails: (String) -> Unit,
     viewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
 //    val cart = DataDummy.cartItems
@@ -79,14 +80,15 @@ fun CartScreen(
         }
     ) { innerPadding ->
         CartContent(
-            increaseClick = {viewModel.increaseClicked(it)},
-            decreaseClick = {viewModel.decreaseClicked(it)},
-            removeClick = {viewModel.onRemoveClick(it)},
+            increaseClick = { viewModel.increaseClicked(it) },
+            decreaseClick = { viewModel.decreaseClicked(it) },
+            removeClick = { viewModel.onRemoveClick(it) },
+            onCartItemClicked = { onNavigateProductDetails(it) },
             innerPadding = innerPadding,
             cartItems = uiState.listProductOnCart,
             totalPrice = uiState.totalPrice
         )
-        if(uiState.isShowConfirmRemovedDialog){
+        if (uiState.isShowConfirmRemovedDialog) {
             ConfirmRemovedDialog(
                 onDismiss = { viewModel.dismissRemoveDialog() },
                 message = "Xác nhận xóa sản phẩm",
@@ -100,6 +102,7 @@ fun CartContent(
     increaseClick: (ProductsOnCartToShow) -> Unit,
     decreaseClick: (ProductsOnCartToShow) -> Unit,
     removeClick: (ProductsOnCartToShow) -> Unit,
+    onCartItemClicked: (String) -> Unit = {},
     innerPadding: PaddingValues,
     cartItems: List<ProductsOnCartToShow>,
     totalPrice: Double = 0.0,
@@ -128,7 +131,8 @@ fun CartContent(
                 CartList(
                     increaseClick = { increaseClick(it) },
                     decreaseClick = { decreaseClick(it) },
-                    removeClick= {removeClick(it)},
+                    removeClick = { removeClick(it) },
+                    onCartItemClicked = { onCartItemClicked(it) },
                     cartItems = cartItems
                 )
             }
@@ -144,9 +148,15 @@ fun CartContent(
 @Composable
 fun CartContentPreview() {
     StoreAppTheme {
-        val cart = listOf(DataDummy.productsOnCartToShow)
+        val cart = listOf(
+            DataDummy.productsOnCartToShow,
+            DataDummy.productsOnCartToShow,
+            DataDummy.productsOnCartToShow,
+            DataDummy.productsOnCartToShow,
+            DataDummy.productsOnCartToShow
+        )
         CartContent(
-            {}, {},{},
+            {}, {}, {}, {},
             PaddingValues(0.dp),
             cart
         )

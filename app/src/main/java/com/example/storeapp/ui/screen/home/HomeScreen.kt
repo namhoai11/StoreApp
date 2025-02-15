@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -26,6 +27,7 @@ import com.example.storeapp.ui.component.user.LoadingBox
 import com.example.storeapp.ui.component.user.SectionTitle
 import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.cart.CartViewModel
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -41,10 +43,17 @@ fun HomeScreen(
     navigateProductDetails: (Int) -> Unit,
     navigateNotification: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    cartViewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavController,
 ) {
+    LaunchedEffect(Unit) {
+        cartViewModel.resetCartUiState()
+    }
+
     val homeUiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.user.observeAsState()
+
+    val cartUiState by cartViewModel.uiState.collectAsState()
     Log.d("HomeScreen", "user: $currentUser")
     val bannersLog = homeUiState.banners
     val categoryLog = homeUiState.categories
@@ -60,7 +69,8 @@ fun HomeScreen(
                 scrollBehavior = scrollBehavior,// Truyền scrollBehavior vào đây
                 navigateCartScreen,
                 navigateNotification,
-                userName = "${currentUser?.firstName} ${currentUser?.lastName}"
+                userName = "${currentUser?.firstName} ${currentUser?.lastName}",
+                cartQuantity = cartUiState.listProductOnCart.size
             )
         },
             bottomBar = {

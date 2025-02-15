@@ -1,6 +1,8 @@
 ﻿package com.example.storeapp.ui.screen.cart
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,83 +46,93 @@ class CartViewModel(
         }
     }
 
+    //Dùng cho HomeScreen
+    fun resetCartUiState() {
+        _uiState.value = CartUiState() // Reset về trạng thái mặc định
+        loadCart() // Gọi lại hàm load giỏ hàng
+    }
+
+
     private fun loadCart() = viewModelScope.launch {
         try {
             _uiState.update { it.copy(showCartLoading = true) }
-            val cart = _user.value?.let { repository.getPCartByUser(it.id) }
-            Log.d("CartViewmodel", "cart: $cart")
-            if (cart != null) {
-                val listProductToShow = mutableListOf<ProductsOnCartToShow>()
-                cart.products.forEach { productOnCart ->
-                    val product = repository.getProductById(productOnCart.productId)
-                    if (product != null) {
-                        val selectedOption = product.availableOptions?.listProductOptions
-                            ?.find { it.optionsName == productOnCart.productOptions }
-                        val price = selectedOption?.priceForOptions ?: product.price
 
-                        Log.d("CartViewModel", "productOnCartPrice:$price")
-//                        val selectedColor = product.availableOptions?.listColorOptions
-//                            ?.find { it.colorName == productOnCart.colorOptions }
-//                        val color = selectedColor?.colorName ?: ""
-                        val remainingStock = product.stockByVariant.find {
-                            it.colorName == productOnCart.colorOptions && it.optionName == productOnCart.productOptions
-                        }?.quantity ?: 0
-                        Log.d("CartViewModel", "remainingStock :$remainingStock")
-                        val notEnough =
-                            if (productOnCart.quantity > remainingStock) "sản phẩm trong kho không đủ" else ""
-                        val productOnCartToShow = ProductsOnCartToShow(
-                            productId = productOnCart.productId,
-                            productName = productOnCart.productName,
-                            productImage = productOnCart.productImage,
-                            productPrice = price,
-                            productOptions = productOnCart.productOptions,
-                            colorOptions = productOnCart.colorOptions,
-                            quantity = productOnCart.quantity,
-                            notExist = "",
-                            notEnough = notEnough
-                        )
-                        Log.d("CartViewModel", "productOnCartToShow :$productOnCartToShow")
+            val currentUser = _user.value
+            if (currentUser == null) {
+                _uiState.update { it.copy(showCartLoading = false, errorMessage = "Không thể xác định người dùng") }
+                return@launch
+            }
+            val cart = repository.getPCartByUser(currentUser.id)
+            Log.d("CartViewModel", "cart: $cart")
 
-                        listProductToShow.add(productOnCartToShow)
-                    } else {
-                        val productOnCartToShow = ProductsOnCartToShow(
-                            productId = productOnCart.productId,
-                            productName = productOnCart.productName,
-                            productImage = productOnCart.productImage,
-                            productPrice = 0.0,
-                            productOptions = productOnCart.productOptions,
-                            colorOptions = productOnCart.colorOptions,
-                            quantity = productOnCart.quantity,
-                            notExist = "Sản phẩm ngừng kinh doanh",
-                            notEnough = "",
-                        )
-                        listProductToShow.add(productOnCartToShow)
-                    }
-
-                }
-                Log.d("CartViewModel", "listProductToShow :$listProductToShow")
-                val totalPrice = listProductToShow.sumOf { it.productTotalPrice }
+            if (cart == null) {
+                Log.e("CartViewModel", "Cart not found for UserId: ${currentUser.id}")
                 _uiState.update {
                     it.copy(
-                        listProductOnCart = listProductToShow,
-                        totalPrice = totalPrice,
                         showCartLoading = false,
+                        errorMessage = "Cart not found for UserId: ${currentUser.id}"
                     )
                 }
-            } else {
-                Log.e("CartViewmodel", "Cart not found for UserId: ${_user.value?.id}")
-                // Cập nhật trạng thái lỗi vào UI State
-                _uiState.update {
-                    it.copy(
-                        showCartLoading = false,
-                        errorMessage = "Cart not found for UserId: ${_user.value?.id}"
+                return@launch
+            }
+
+            val productIds = cart.products.map { it.productId }
+            val products = repository.getProductByListId(productIds).associateBy { it.id }
+
+            val listProductToShow = cart.products.map { productOnCart ->
+                val product = products[productOnCart.productId]
+
+                if (product != null) {
+                    val selectedOption = product.availableOptions?.listProductOptions
+                        ?.find { it.optionsName == productOnCart.productOptions }
+                    val price = selectedOption?.priceForOptions ?: product.price
+
+                    val remainingStock = product.stockByVariant.find {
+                        it.colorName == productOnCart.colorOptions && it.optionName == productOnCart.productOptions
+                    }?.quantity ?: 0
+
+                    val notEnough =
+                        if (productOnCart.quantity > remainingStock) "sản phẩm trong kho không đủ" else ""
+
+                    ProductsOnCartToShow(
+                        productId = productOnCart.productId,
+                        productName = productOnCart.productName,
+                        productImage = productOnCart.productImage,
+                        productPrice = price,
+                        productOptions = productOnCart.productOptions,
+                        colorOptions = productOnCart.colorOptions,
+                        quantity = productOnCart.quantity,
+                        remainingStock=remainingStock,
+                        notExist = "",
+                        notEnough = notEnough
+                    )
+                } else {
+                    ProductsOnCartToShow(
+                        productId = productOnCart.productId,
+                        productName = productOnCart.productName,
+                        productImage = productOnCart.productImage,
+                        productPrice = 0.0,
+                        productOptions = productOnCart.productOptions,
+                        colorOptions = productOnCart.colorOptions,
+                        quantity = productOnCart.quantity,
+                        remainingStock = 0,
+                        notExist = "Sản phẩm ngừng kinh doanh",
+                        notEnough = "",
                     )
                 }
             }
+
+            val totalPrice = listProductToShow.sumOf { it.productTotalPrice }
+
+            _uiState.update {
+                it.copy(
+                    listProductOnCart = listProductToShow,
+                    totalPrice = totalPrice,
+                    showCartLoading = false,
+                )
+            }
         } catch (e: Exception) {
-            // Xử lý lỗi nếu cần (thêm trạng thái lỗi vào UiState hoặc log)
-            Log.e("CartViewmodel", "Error Cart: ${e.message}")
-            // Xử lý lỗi chung, cập nhật trạng thái lỗi
+            Log.e("CartViewModel", "Error loading Cart: ${e.message}")
             _uiState.update {
                 it.copy(
                     showCartLoading = false,
@@ -130,6 +142,7 @@ class CartViewModel(
         }
     }
 
+
     fun increaseClicked(productsOnCartToShow: ProductsOnCartToShow) {
         viewModelScope.launch {
             val currentUserId = _user.value?.id
@@ -137,30 +150,6 @@ class CartViewModel(
                 _uiState.update { it.copy(errorMessage = "Không thể xác định người dùng") }
                 return@launch
             }
-//            _uiState.update { currentState ->
-//                val updatedList = currentState.listProductOnCart.map {
-//                    if (it.productId == productsOnCartToShow.productId &&
-//                        it.productOptions == productsOnCartToShow.productOptions &&
-//                        it.colorOptions == productsOnCartToShow.colorOptions
-//                    ) {
-//                        it.copy(quantity = it.quantity + 1)
-//                    } else it
-//                }
-//                currentState.copy(listProductOnCart = updatedList)
-//            }
-//            val productOnCart = ProductsOnCart(
-//                productId = productsOnCartToShow.productId,
-//                productName = productsOnCartToShow.productName,
-//                productImage = productsOnCartToShow.productImage,
-//                productOptions = productsOnCartToShow.productOptions,
-//                colorOptions = productsOnCartToShow.colorOptions,
-//                quantity = productsOnCartToShow.quantity
-//            )
-//            val result = repository.updateProductQuantityInCart(
-//                currentUserId,
-//                productOnCart,
-//                CartAction.Increase
-//            )
 
             // Lưu trạng thái cũ để rollback nếu lỗi
             var oldList = emptyList<ProductsOnCartToShow>()
@@ -172,8 +161,14 @@ class CartViewModel(
 
                 val updatedList = currentState.listProductOnCart.map {
                     if (it.matches(productsOnCartToShow)) {
-                        val updatedProduct = it.copy(quantity = it.quantity + 1)
-                        updatedProduct.copy(productTotalPrice = updatedProduct.productPrice * updatedProduct.quantity)
+                        val newQuantity = it.quantity + 1
+                        val isOverStock = newQuantity > it.remainingStock
+                        val updatedProduct = it.copy(
+                            quantity = newQuantity,
+                            productTotalPrice = it.productPrice * newQuantity,
+                            notEnough = if (isOverStock) "Sản phẩm không đủ" else ""
+                        )
+                        updatedProduct
                     } else it
                 }
 
@@ -186,28 +181,15 @@ class CartViewModel(
                 )
             }
 
+            // Nếu số lượng vượt quá tồn kho, không gọi API
+            if (productsOnCartToShow.quantity + 1 > productsOnCartToShow.remainingStock) {
+                return@launch
+            }
+
             // Gọi API tăng số lượng
             val result = repository.updateProductQuantityInCart(
                 currentUserId, productsOnCartToShow.toProductsOnCart(), CartAction.Increase
             )
-
-//            if (result.isSuccess) {
-//                _uiState.update {
-//                    it.copy(
-//                        successMessage = "Đã tăng số lượng sản phẩm",
-//                        showCartLoading = false
-//                    )
-//                }
-//                loadCart() // Cập nhật giỏ hàng sau khi thay đổi
-//            } else {
-//                _uiState.update {
-//                    it.copy(
-//                        errorMessage = "Lỗi khi cập nhật giỏ hàng: ${result.exceptionOrNull()?.message}",
-//                        showCartLoading = false
-//                    )
-//                }
-//
-//            }
 
             if (result.isFailure) {
                 // Rollback nếu lỗi
@@ -215,16 +197,18 @@ class CartViewModel(
                     it.copy(
                         listProductOnCart = oldList,
                         totalPrice = oldTotalPrice,
-                        errorMessage = "Lỗi khi giảm số lượng sản phẩm: ${result.exceptionOrNull()?.message}"
+                        errorMessage = "Lỗi khi tăng số lượng sản phẩm: ${result.exceptionOrNull()?.message}"
                     )
                 }
                 Log.e(
                     "CartViewModel",
-                    "Lỗi khi giảm số lượng sản phẩm: ${result.exceptionOrNull()?.message}"
+                    "Lỗi khi tăng số lượng sản phẩm: ${result.exceptionOrNull()?.message}"
                 )
             }
         }
     }
+
+
 
     fun decreaseClicked(productsOnCartToShow: ProductsOnCartToShow) {
         viewModelScope.launch {
@@ -408,7 +392,7 @@ class CartViewModel(
                             }?.quantity ?: 0
 
                             val notEnough =
-                                if (cartItem.quantity > remainingStock) "Sản phẩm trong kho không đủ" else ""
+                                if (cartItem.quantity > remainingStock) "Sản phẩm không đủ" else ""
                             Log.d("CartViewModel", "newPriceOnObserveProduct: $newPrice")
                             Log.d(
                                 "CartViewModel",
@@ -418,11 +402,13 @@ class CartViewModel(
                             cartItem.copy(
                                 productPrice = newPrice,
                                 productTotalPrice = newPrice * cartItem.quantity,
+                                remainingStock = remainingStock,
                                 notEnough = notEnough
                             )
                         } else {
                             cartItem.copy(
                                 productPrice = 0.0,
+                                remainingStock = 0,
                                 notExist = "Sản phẩm ngừng kinh doanh"
                             )
                         }

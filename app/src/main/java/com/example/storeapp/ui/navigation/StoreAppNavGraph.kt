@@ -127,7 +127,9 @@ fun StoreAppNavHost(
         composable(
             CartDestination.route
         ) {
-            CartScreen(navController = navController)
+            CartScreen(navController = navController,
+                onNavigateProductDetails = { navController.navigate("${ProductDetailsDestination.route}/$it") }
+            )
         }
 
         composable(

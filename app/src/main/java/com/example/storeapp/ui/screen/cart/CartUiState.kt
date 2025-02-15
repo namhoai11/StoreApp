@@ -25,12 +25,13 @@ data class ProductsOnCartToShow(
     val productOptions: String = "",
     val colorOptions: String = "",
     val quantity: Int,
+    val remainingStock: Int,
     val productTotalPrice: Double = 0.0,
     val notExist: String = "",
     val notEnough: String = "",
 ) {
     // Constructor mặc định (nếu cần)
-    constructor() : this("", "", "", 0.0, "", "", 0, 0.0, "", "")
+    constructor() : this("", "", "", 0.0, "", "", 0, 0, 0.0, "", "")
 
     // Constructor không có `productOptions` và `colorOptions`
     constructor(
@@ -41,6 +42,7 @@ data class ProductsOnCartToShow(
         productOptions: String,
         colorOptions: String,
         quantity: Int,
+        remainingStock: Int,
         notExist: String,
         notEnough: String
     ) : this(
@@ -51,6 +53,7 @@ data class ProductsOnCartToShow(
         productOptions,
         colorOptions,
         quantity,
+        remainingStock,
         productPrice * quantity,
         notExist,
         notEnough

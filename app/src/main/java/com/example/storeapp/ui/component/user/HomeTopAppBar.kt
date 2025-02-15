@@ -39,6 +39,7 @@ fun HomeTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     navigateCartScreen: () -> Unit,
     navigateNotificateScreen: () -> Unit,
+    cartQuantity: Int = 0,
     userName: String = ""
 ) {
     var itemCount by remember { mutableStateOf(1) }
@@ -92,7 +93,7 @@ fun HomeTopAppBar(
                                 containerColor = Color.Red,
                                 contentColor = Color.White
                             ) {
-                                Text("$itemCount")
+                                Text("$cartQuantity")
                             }
                         }
                     }
