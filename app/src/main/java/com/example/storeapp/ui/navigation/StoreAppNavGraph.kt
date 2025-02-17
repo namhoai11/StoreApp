@@ -1,5 +1,6 @@
 package com.example.storeapp.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,6 +24,7 @@ import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
 import com.example.storeapp.ui.screen.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
+import com.example.storeapp.ui.screen.checkout.CheckoutDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.home.HomeScreen
 import com.example.storeapp.ui.screen.intro.IntroDestination
@@ -60,12 +62,12 @@ fun StoreAppNavHost(
             IntroScreen(
                 onNavigateSignIn = { navController.navigate(LoginDestination.route) },
                 onNavigateHome = {
+                    Log.d("NavStack", "Navigating to ${HomeDestination.route}")
                     navController.navigate(HomeDestination.route) {
-                        popUpTo(IntroDestination.route) {
-//                            inclusive = true
-                        } // xóa bỏ các màn hình cũ không cần thiết
+                        popUpTo(IntroDestination.route) { inclusive = true }
                     }
-                },
+                }
+                ,
                 onNavigateSignUp = {
                     navController.navigate(SignUpDestination.route)
                 }
@@ -128,7 +130,8 @@ fun StoreAppNavHost(
             CartDestination.route
         ) {
             CartScreen(navController = navController,
-                onNavigateProductDetails = { navController.navigate("${ProductDetailsDestination.route}/$it") }
+                onNavigateProductDetails = { navController.navigate("${ProductDetailsDestination.route}/$it") },
+                onNavigateToCheckout = {navController.navigate(CheckoutDestination.route)}
             )
         }
 

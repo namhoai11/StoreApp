@@ -171,7 +171,7 @@ fun ProfileScreenContent(
                     icon = item.icon, title = item.title, descript = item.description,
                     onItemClicked = {
                         navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) {
+                            popUpTo(ProfileDestination.route) { // Giữ lại Profile trong stack
                                 saveState = true
                             }
                             launchSingleTop = true

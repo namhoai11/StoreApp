@@ -26,6 +26,7 @@ import com.example.storeapp.ui.theme.StoreAppTheme
 @Composable
 fun CartSummary(
     itemTotal: Double,
+    checkoutClick: () -> Unit,
 //    tax: Double, delivery: Double
 ) {
 //    val total = itemTotal + tax + delivery
@@ -95,7 +96,7 @@ fun CartSummary(
             Text(text = "$$itemTotal")
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { checkoutClick() },
             shape = RoundedCornerShape(10.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.purple)
@@ -122,7 +123,8 @@ fun CartSummary(
 fun CartSummaryPreview() {
     StoreAppTheme {
         CartSummary(
-            465.0
+            465.0,
+            {}
         )
     }
 

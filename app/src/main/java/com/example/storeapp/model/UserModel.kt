@@ -9,7 +9,7 @@ data class UserModel(
     val tier: Int = 0,
     val totalSpent: Long = 0L,
     val defaultLocationId: String = "", // ID địa chỉ mặc định
-    val fullAddress: String = "",
+//    val fullAddress: String = "",
     val firstName: String = "",
     val lastName: String = "",
     val gender: String = "",
@@ -27,7 +27,7 @@ data class UserModel(
         tier = 0,
         totalSpent = 0L,
         defaultLocationId = "",
-        fullAddress = "",
+//        fullAddress = "",
         firstName = "",
         lastName = "",
         gender = "",

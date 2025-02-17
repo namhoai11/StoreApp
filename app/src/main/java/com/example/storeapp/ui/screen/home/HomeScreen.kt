@@ -50,6 +50,13 @@ fun HomeScreen(
         cartViewModel.resetCartUiState()
     }
 
+//    LaunchedEffect(navController) {
+//        navController.currentBackStackEntryFlow.collect { backStackEntry ->
+//            Log.d("NavStack", "Current destination: ${backStackEntry.destination.route}")
+//        }
+//    }
+
+
     val homeUiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.user.observeAsState()
 

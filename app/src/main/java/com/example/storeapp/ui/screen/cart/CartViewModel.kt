@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.UserModel
+import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -427,4 +428,10 @@ class CartViewModel(
         }
     }
 
+    fun proceedToCheckout(navigateToCheckout: () -> Unit, checkoutViewModel: CheckoutViewModel) {
+        val cartProducts = _uiState.value.listProductOnCart
+
+        checkoutViewModel.proceedToCheckout(cartProducts) // Gửi danh sách sản phẩm qua CheckoutViewModel
+        navigateToCheckout() // Điều hướng sang màn hình Checkout
+    }
 }

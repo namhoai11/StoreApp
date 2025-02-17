@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.cart.CartViewModel
+import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.screen.favorite.WishListViewModel
 import com.example.storeapp.ui.screen.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
@@ -32,6 +33,13 @@ object AppViewModelProvider {
 
         initializer {
             CartViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+
+        }
+
+        initializer {
+            CheckoutViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
 

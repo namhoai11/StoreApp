@@ -1,14 +1,15 @@
 ﻿package com.example.storeapp.model
 
+import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.google.firebase.Timestamp
 
 
 data class OrderModel(
-    val id: String,
-    val userId: String,
     val orderCode: String,
-    val products: List<ProductDataForOrderModel>,
+    val userId: String,
+    val products: List<ProductsOnCartToShow>,
     val totalPrice: Double,
+    val note: String = "",
     val status: String,
     val paymentMethod: String,
     val addressId: String,
@@ -16,6 +17,7 @@ data class OrderModel(
     val updatedAt: Timestamp,   // Sửa từ `String` thành `Timestamp`
     val deletedAt: Timestamp? = null
 )
+
 data class ProductDataForOrderModel(
     val id: String,
     val product: ProductModel,

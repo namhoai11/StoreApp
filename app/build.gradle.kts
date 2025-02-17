@@ -2,8 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Thêm plugin KSP
-    kotlin("plugin.serialization") version "1.9.0"
+//    kotlin("plugin.serialization") version "1.9.0"
     alias(libs.plugins.google.gms.google.services)
+
+    alias(libs.plugins.jetbrains.kotlin.serialization) // Gọi plugin Kotlin Serialization
+
 }
 
 android {

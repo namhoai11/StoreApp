@@ -3,6 +3,8 @@
 import androidx.annotation.DrawableRes
 import com.example.storeapp.R
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
+import com.example.storeapp.ui.screen.cart.CartDestination
+import com.example.storeapp.ui.screen.order.OrdersDestination
 
 object SettingProfileNavigatonItemProvider {
     val navigationItemList = listOf(
@@ -14,11 +16,13 @@ object SettingProfileNavigatonItemProvider {
         SettingProfileNavigaton(
             title = "Giỏ hàng",
             description = "Ghé thăm giỏ hàng hiện tại",
+            route = CartDestination.route,
             icon = R.drawable.icon_cart_outlined
         ),
         SettingProfileNavigaton(
             title = "Đơn hàng",
             description = "Thông tin đơn hàng đã thực hiện",
+            route = OrdersDestination.route,
             icon = R.drawable.icon_order
         ),
         SettingProfileNavigaton(

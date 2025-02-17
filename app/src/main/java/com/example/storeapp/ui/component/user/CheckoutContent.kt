@@ -124,9 +124,9 @@ fun CheckoutContent(
             }
             state?.products?.firstOrNull()?.let { item ->
                 CartItemMini(
-                    productName = item.product.name,
-                    imageId = item.product.images.firstOrNull().toString(),
-                    price = item.product.price,
+                    productName = item.productName,
+                    imageId = item.productImage,
+                    price = item.productPrice,
                     orderCount = item.quantity,
                     totalOrder = item.quantity,
                     onDetailOrder = { onShowDialog() }
@@ -344,11 +344,12 @@ private fun CheckoutContentPreview() {
             onChooseShipping = {},
             selectedLocation = UserLocationModel(
                 id = "1",
+                userName = "La Hoai Nam",
                 street = "Jl. Durian No. 123",
                 province = "Jawa Tengah",
                 district = "Kab. Semarang",
                 ward = "Banyubiru",
-                isDefault = true,
+//                isDefault = true,
                 userId = "user123",
                 provinceId = "province01",
                 districtId = "district01",

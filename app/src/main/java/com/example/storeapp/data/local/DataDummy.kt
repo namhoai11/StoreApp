@@ -24,11 +24,12 @@ object DataDummy {
     val dummyUserLocation = listOf(
         UserLocationModel(
             id = "1",
+            userName = "La Hoai Nam",
             street = "Jl. Durian No. 123",
             province = "Jawa Tengah",
             district = "Kab. Semarang",
             ward = "Banyubiru",
-            isDefault = true,
+//            isDefault = true,
             userId = "user123",
             provinceId = "province01",
             districtId = "district01",
@@ -40,11 +41,12 @@ object DataDummy {
         ),
         UserLocationModel(
             id = "2",
+            userName = "La Hoai Nam",
             street = "Jl. Durian No. 124",
             province = "Jawa Tengah",
             district = "Kab. Semarang",
             ward = "Banyubiru",
-            isDefault = false,
+//            isDefault = false,
             userId = "user123",
             provinceId = "province01",
             districtId = "district01",
@@ -59,19 +61,19 @@ object DataDummy {
     // Dữ liệu mẫu cho phương thức vận chuyển
     val dummyShipping = listOf(
         ShippingModel(
-            name = "REG",
+            name = "Nhanh",
             price = 13.00,
-            description = "Estimated time of arrival 2 - 3 days"
+            description = "Thời gian dự kiến đến: 2 - 3 ngày"
         ),
         ShippingModel(
-            name = "OKE",
+            name = "Hỏa tốc",
             price = 15.00,
-            description = "Estimated time of arrival 1 - 2 days"
+            description = "Thời gian dự kiến đến: 1 - 2 ngày"
         ),
         ShippingModel(
-            name = "YES",
+            name = "Tiết kiệm",
             price = 10.00,
-            description = "Estimated time of arrival 1 - 2 days"
+            description = "Thời gian dự kiến đến: 1 - 2 ngày"
         )
     )
 
@@ -187,53 +189,19 @@ object DataDummy {
         userId = "user123"
     )
     val order = OrderModel(
-        id = "1",
         userId = "user123",
         products = listOf(
-            ProductDataForOrderModel(
-                id = "101",
-                product = ProductModel(
-                    id = "101",
-                    name = "Sản phẩm A",
-                    images = listOf("url_to_image_1"),
-                    price = 1000000.0,
-                    stockQuantity = 50,
-                    brandId = "brand01",
-                    categoryId = "category01",
-                    hidden = false,
-                    description = "Product A description",
-                    rating = 4.5,
-                    availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
-                        listProductOptions = listOf(
-                            ProductOptions("Option1", 100000.0),
-                            ProductOptions("Option2", 200000.0)
-                        ),
-                        listColorOptions = listOf(
-                            ColorOptions("Red", "url_to_image_red"),
-                            ColorOptions("Blue", "url_to_image_blue")
-                        )
-                    ),
-                    options = listOf("Option1"),
-                    stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
-                        StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
-                        StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
-                        StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
-                        StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
-                    ),
-                    createdAt = Timestamp.now(),
-                    updatedAt = Timestamp.now(),
-                    brand = BrandModel(
-                        id = "brand01",
-                        name = "Brand A",
-                        imageUrl = "",
-                        description = "Brand A",
-                        hidden = false,
-                        createdAt = Timestamp.now(),
-                        updatedAt = Timestamp.now()
-                    )
-                ),
-                orderId = "ORD12345",
-                quantity = 2
+            ProductsOnCartToShow(
+                productId = "101",
+                productName = "Sản phẩm A",
+                productImage = "url_to_image_1",
+                productPrice = 50000.0,
+                productOptions = "Size L",
+                colorOptions = "Đỏ",
+                quantity = 2,
+                remainingStock = 5,
+                notExist = "",
+                notEnough = ""
             )
         ),
         totalPrice = 3500000.0,
@@ -248,53 +216,19 @@ object DataDummy {
     // Dữ liệu mẫu cho Order
     val listOrder = listOf(
         OrderModel(
-            id = "1",
             userId = "user123",
             products = listOf(
-                ProductDataForOrderModel(
-                    id = "101",
-                    product = ProductModel(
-                        id = "101",
-                        name = "Sản phẩm A",
-                        images = listOf("url_to_image_1"),
-                        price = 1000000.0,
-                        stockQuantity = 50,
-                        brandId = "brand01",
-                        categoryId = "category01",
-                        hidden = false,
-                        description = "Product A description",
-                        rating = 4.5,
-                        availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
-                            listProductOptions = listOf(
-                                ProductOptions("Option1", 100000.0),
-                                ProductOptions("Option2", 200000.0)
-                            ),
-                            listColorOptions = listOf(
-                                ColorOptions("Red", "url_to_image_red"),
-                                ColorOptions("Blue", "url_to_image_blue")
-                            )
-                        ),
-                        options = listOf("Option1"),
-                        stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
-                            StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
-                            StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
-                            StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
-                            StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
-                        ),
-                        createdAt = Timestamp.now(),
-                        updatedAt = Timestamp.now(),
-                        brand = BrandModel(
-                            id = "brand01",
-                            name = "Brand A",
-                            imageUrl = "",
-                            description = "Brand A",
-                            hidden = false,
-                            createdAt = Timestamp.now(),
-                            updatedAt = Timestamp.now()
-                        )
-                    ),
-                    orderId = "ORD12345",
-                    quantity = 2
+                ProductsOnCartToShow(
+                    productId = "101",
+                    productName = "Sản phẩm A",
+                    productImage = "url_to_image_1",
+                    productPrice = 50000.0,
+                    productOptions = "Size L",
+                    colorOptions = "Đỏ",
+                    quantity = 2,
+                    remainingStock = 5,
+                    notExist = "",
+                    notEnough = ""
                 )
             ),
             totalPrice = 3500000.0,
@@ -306,53 +240,19 @@ object DataDummy {
             updatedAt = Timestamp.now()
         ),
         OrderModel(
-            id = "1",
             userId = "user123",
             products = listOf(
-                ProductDataForOrderModel(
-                    id = "101",
-                    product = ProductModel(
-                        id = "101",
-                        name = "Sản phẩm A",
-                        images = listOf("url_to_image_1"),
-                        price = 1000000.0,
-                        stockQuantity = 50,
-                        brandId = "brand01",
-                        categoryId = "category01",
-                        hidden = false,
-                        description = "Product A description",
-                        rating = 4.5,
-                        availableOptions = AvailableOptions( // ✅ Sửa đúng kiểu dữ liệu
-                            listProductOptions = listOf(
-                                ProductOptions("Option1", 100000.0),
-                                ProductOptions("Option2", 200000.0)
-                            ),
-                            listColorOptions = listOf(
-                                ColorOptions("Red", "url_to_image_red"),
-                                ColorOptions("Blue", "url_to_image_blue")
-                            )
-                        ),
-                        options = listOf("Option1"),
-                        stockByVariant = listOf( // ✅ Thêm danh sách tồn kho theo biến thể
-                            StockByVariant(colorName = "Red", optionName = "64GB", quantity = 20),
-                            StockByVariant(colorName = "Red", optionName = "128GB", quantity = 15),
-                            StockByVariant(colorName = "Blue", optionName = "64GB", quantity = 10),
-                            StockByVariant(colorName = "Blue", optionName = "128GB", quantity = 5)
-                        ),
-                        createdAt = Timestamp.now(),
-                        updatedAt = Timestamp.now(),
-                        brand = BrandModel(
-                            id = "brand01",
-                            name = "Brand A",
-                            imageUrl = "",
-                            description = "Brand A",
-                            hidden = false,
-                            createdAt = Timestamp.now(),
-                            updatedAt = Timestamp.now()
-                        )
-                    ),
-                    orderId = "ORD12345",
-                    quantity = 2
+                ProductsOnCartToShow(
+                    productId = "101",
+                    productName = "Sản phẩm A",
+                    productImage = "url_to_image_1",
+                    productPrice = 50000.0,
+                    productOptions = "Size L",
+                    colorOptions = "Đỏ",
+                    quantity = 2,
+                    remainingStock = 5,
+                    notExist = "",
+                    notEnough = ""
                 )
             ),
             totalPrice = 3500000.0,

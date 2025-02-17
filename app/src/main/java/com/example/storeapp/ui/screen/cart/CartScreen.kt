@@ -36,6 +36,7 @@ import com.example.storeapp.ui.component.user.CartList
 import com.example.storeapp.ui.component.user.CartSummary
 import com.example.storeapp.ui.component.user.ConfirmRemovedDialog
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 object CartDestination : NavigationDestination {
@@ -48,7 +49,9 @@ object CartDestination : NavigationDestination {
 fun CartScreen(
     navController: NavController,
     onNavigateProductDetails: (String) -> Unit,
-    viewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    onNavigateToCheckout: () -> Unit,
+    viewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    checkoutViewModel: CheckoutViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
 //    val cart = DataDummy.cartItems
     val uiState by viewModel.uiState.collectAsState()
@@ -86,7 +89,10 @@ fun CartScreen(
             onCartItemClicked = { onNavigateProductDetails(it) },
             innerPadding = innerPadding,
             cartItems = uiState.listProductOnCart,
-            totalPrice = uiState.totalPrice
+            totalPrice = uiState.totalPrice,
+            checkoutClick = {
+                viewModel.proceedToCheckout(onNavigateToCheckout, checkoutViewModel)
+            }
         )
         if (uiState.isShowConfirmRemovedDialog) {
             ConfirmRemovedDialog(
@@ -106,6 +112,7 @@ fun CartContent(
     innerPadding: PaddingValues,
     cartItems: List<ProductsOnCartToShow>,
     totalPrice: Double = 0.0,
+    checkoutClick: () -> Unit = {},
 ) {
     LazyColumn(
         contentPadding = innerPadding,
@@ -137,7 +144,7 @@ fun CartContent(
                 )
             }
             item {
-                CartSummary(totalPrice)
+                CartSummary(totalPrice, checkoutClick)
             }
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
+import com.example.storeapp.model.OrderStatusModel
 import com.example.storeapp.ui.component.user.FilterOrder
 import com.example.storeapp.ui.component.user.OrderList
 import com.example.storeapp.ui.component.user.SearchOrder
@@ -97,7 +98,13 @@ fun OrderContent(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    val options = listOf("Tất cả", "Đang giao", "Hoàn thành", "Đã hủy")
+    val options = listOf(
+        OrderStatusModel.All,
+        OrderStatusModel.Shipping,
+        OrderStatusModel.Completed,
+        OrderStatusModel.Canceled
+    )
+
     LazyColumn(
         contentPadding = innerPadding,
         modifier = modifier
