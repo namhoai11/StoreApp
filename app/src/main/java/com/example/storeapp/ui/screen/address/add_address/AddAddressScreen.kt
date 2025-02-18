@@ -1,232 +1,452 @@
 ﻿package com.example.storeapp.ui.screen.address.add_address
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.storeapp.R
-import com.example.storeapp.ui.component.user.AnimatedShimmerDetailAddress
-import com.example.storeapp.ui.uistate.AddAddressUiState
-import com.google.maps.android.compose.CameraPositionState
+import com.example.storeapp.model.District
+import com.example.storeapp.model.Province
+import com.example.storeapp.model.Ward
+import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.theme.StoreAppTheme
 
-class AddAddressScreen {
+
+object AddAddressDestination : NavigationDestination {
+    override val route = "addaddress"
+    override val titleRes = R.string.add_address_title
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheetContent(
-    locationName: String,
+fun AddAddressScreen(
+    navController: NavController,
+    viewModel: AddAddressViewModel = viewModel(factory = AppViewModelProvider.Factory),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Address",
+//                        fontFamily = poppinsFontFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "back",
+                        modifier = Modifier
+                            .clickable { navController.navigateUp() }
+                            .padding(horizontal = 16.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
+    ) { innerPadding ->
+        AddAddressContent(
+            innerPadding = innerPadding,
+            uiState = uiState,
+            onProvinceSelected = viewModel::onProvinceSelected,
+            onDistrictSelected = viewModel::onDistrictSelected,
+            onWardSelected = viewModel::onWardSelected,
+            onStreetInput = viewModel::onStreetInput,
+            onConfirm = viewModel::onConfirm
+        )
+    }
+
+}
+
+
+@Composable
+fun AddAddressContent(
+    innerPadding: PaddingValues,
     uiState: AddAddressUiState,
-//    viewModel: AddAddressViewModel,
-    cameraPositionState: CameraPositionState,
-    recipientName: String,
-    onRecipientNameChange: (String) -> Unit,
+    onProvinceSelected: (Province) -> Unit,
+    onDistrictSelected: (District) -> Unit,
+    onWardSelected: (Ward) -> Unit,
+    onStreetInput: (String) -> Unit,
     onConfirm: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .height(265.dp)
-            .fillMaxWidth()
-            .padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 8.dp
-            )
-    ) {
-        if (uiState.locatonLoading) {
-            Text(
-                text = "Recipient Name",
-//                    fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            BasicTextField(
-                value = recipientName,
-                onValueChange = onRecipientNameChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .drawBehind {
-                        val strokeWidth = 2.dp.toPx()
-                        val y = size.height - strokeWidth / 2
-                        drawLine(
-                            color = Color(0xFFCAC8C8),
-                            start = Offset(0f, y),
-                            end = Offset(size.width, y),
-                            strokeWidth = strokeWidth
-                        )
-                    },
-                textStyle = TextStyle(
-//                        fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black,
-                ),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                    ) {
-                        if (recipientName.isEmpty()) {
-                            Text(
-                                text = "Enter recipient's name",
-                                style = TextStyle(
-//                                        fontFamily = poppinsFontFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Gray
-                                )
-                            )
-                        }
-                        innerTextField()
-                    }
+    Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Chọn Tỉnh
+            FilterLocation2(
+                label = "Tỉnh/Thành phố",
+                options = uiState.provinces.map { it.name },
+//            selectedOption = uiState.selectedProvince?.name,
+                onOptionSelected = { name ->
+                    val province = uiState.provinces.find { it.name == name }
+                    province?.let { onProvinceSelected(it) }
                 }
             )
-            Text(
-                text = "Detail Address",
-//                    fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Row {
-                Icon(
-                    painter = painterResource(R.drawable.icon_circle_dot_filled),
-                    contentDescription = "",
-                    tint = Color("#FF9100".toColorInt()),
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-                Box(modifier = Modifier.fillMaxSize()) {
-                    AnimatedShimmerDetailAddress()
 
-                    val currentLatLng = cameraPositionState.position.target
-//                        viewModel.getInitialLocationName(currentLatLng)
-                }
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(55.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-//                        fontFamily = poppinsFontFamily,
-                    text = "Confirmation",
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
-            }
-        } else {
-            Text(
-                text = "Recipient Name",
-//                    fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(bottom = 8.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Chọn Huyện
+            FilterLocation2(
+                label = "Quận/Huyện",
+                options = uiState.districts.map { it.name },
+//            selectedOption = uiState.selectedDistrict?.name,
+                onOptionSelected = { name ->
+                    val district = uiState.districts.find { it.name == name }
+                    district?.let { onDistrictSelected(it) }
+                },
+                enabled = uiState.selectedProvince != null
             )
-            BasicTextField(
-                value = recipientName,
-                onValueChange = onRecipientNameChange,
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Chọn Xã
+            FilterLocation2(
+                label = "Phường/Xã",
+                options = uiState.wards.map { it.name },
+//            selectedOption = uiState.selectedWard?.name,
+                onOptionSelected = { name ->
+                    val ward = uiState.wards.find { it.name == name }
+                    ward?.let { onWardSelected(it) }
+                },
+                enabled = uiState.selectedDistrict != null
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Nhập tên đường
+            InputStreet(label = "Nhập đường", onInput = onStreetInput)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Nút Xác nhận
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = uiState.selectedProvince != null && uiState.selectedDistrict != null && uiState.selectedWard != null && uiState.street.isNotEmpty()
+            ) {
+                Text("Xác nhận")
+            }
+        }
+
+    }
+}
+
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun FilterLocation(
+//    label: String,
+//    options: List<String>,
+//    selectedOption: String?,
+//    onOptionSelected: (String) -> Unit,
+//    enabled: Boolean = true
+//) {
+//    var expanded by remember { mutableStateOf(false) }
+//
+//    Column {
+//        Text(text = label, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+//
+//        ExposedDropdownMenuBox(
+//            expanded = expanded,
+//            onExpandedChange = { if (enabled) expanded = !expanded }
+//        ) {
+//            TextField(
+//                value = selectedOption ?: "Chọn $label",
+//                onValueChange = {},
+//                readOnly = true,
+//                trailingIcon = { Icon(Icons.Default.ArrowDropDown, contentDescription = null) },
+//                modifier = Modifier
+//                    .menuAnchor()
+//                    .fillMaxWidth()
+//                    .border(
+//                        width = 1.dp,
+//                        color = if (enabled) Color.Gray else Color.LightGray,
+//                        shape = RoundedCornerShape(8.dp)
+//                    ),
+//                enabled = enabled,
+//                colors = TextFieldDefaults.colors(
+//                    unfocusedContainerColor = Color.White,
+//                    focusedContainerColor = Color.White,
+//                    disabledContainerColor = Color(0xFFF0F0F0),
+//                    focusedIndicatorColor = Color.Transparent,
+//                    unfocusedIndicatorColor = Color.Transparent
+//                )
+//            )
+//
+//            ExposedDropdownMenu(
+//                expanded = expanded,
+//                onDismissRequest = { expanded = false }
+//            ) {
+//                options.forEach { option ->
+//                    DropdownMenuItem(
+//                        text = { Text(option) },
+//                        onClick = {
+//                            onOptionSelected(option)
+//                            expanded = false
+//                        }
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterLocation2(
+    label: String,
+    options: List<String>,
+    onOptionSelected: (String) -> Unit,
+    enabled: Boolean = true
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
+
+    // Lọc danh sách theo chữ đã nhập
+    val filteredOptions = options.filter { it.contains(searchText, ignoreCase = true) }
+
+    Column {
+        Text(text = label, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { if (enabled) expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                readOnly = false, // Cho phép nhập chữ để tìm kiếm
+                trailingIcon = {
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                },
                 modifier = Modifier
+                    .menuAnchor()
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-                    .drawBehind {
-                        val strokeWidth = 2.dp.toPx()
-                        val y = size.height - strokeWidth / 2
-                        drawLine(
-                            color = Color(0xFFCAC8C8),
-                            start = Offset(0f, y),
-                            end = Offset(size.width, y),
-                            strokeWidth = strokeWidth
-                        )
-                    },
-                textStyle = TextStyle(
-//                        fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Black,
-                ),
-                singleLine = true,
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                    ) {
-                        if (recipientName.isEmpty()) {
-                            Text(
-                                text = "Enter recipient's name",
-                                style = TextStyle(
-//                                        fontFamily = poppinsFontFamily,
-                                    fontWeight = FontWeight.Normal,
-                                    color = Color.Gray
-                                )
-                            )
-                        }
-                        innerTextField()
-                    }
-                }
+                    .border(
+                        width = 1.dp,
+                        color = if (enabled) Color.Gray else Color.LightGray,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                enabled = enabled,
+                placeholder = { Text(text = "Nhập $label") },
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    disabledContainerColor = Color(0xFFF0F0F0),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
             )
-            Text(
-                text = "Detail Address",
-//                    fontFamily = poppinsFontFamily,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Row {
-                Icon(
-                    painter = painterResource(R.drawable.icon_circle_dot_filled),
-                    contentDescription = "",
-                    tint = Color("#FF9100".toColorInt()),
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-                Text(
-                    modifier = Modifier.height(60.dp),
-                    text = locationName,
-                    maxLines = 3,
-//                        fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-            Button(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .height(55.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+
+            ExposedDropdownMenu(
+                expanded = expanded && filteredOptions.isNotEmpty(),
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+                    .background(Color.White),
             ) {
-                Text(
-//                        fontFamily = poppinsFontFamily,
-                    text = "Confirmation",
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
+                filteredOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            searchText = option // Gán chữ đã chọn vào TextField
+                            onOptionSelected(option)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
 }
+
+
+@Composable
+fun InputStreet(
+    modifier: Modifier = Modifier,
+    onInput: (String) -> Unit = {},
+    label: String,
+) {
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    Column {
+        Text(text = label, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
+
+
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { text ->
+                searchQuery = text
+                onInput(text)
+            },
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.icon_pinlocation),
+                    contentDescription = "Street",
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .scale(1f)
+                        .height(50.dp),
+                    tint = MaterialTheme.colorScheme.outline,
+                )
+            },
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                disabledContainerColor = Color(0xFFF0F0F0),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            placeholder = {
+                Text(
+                    text = "Nhập tên đường",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier
+                        .offset(y = (-1.4).dp)
+                )
+            },
+            modifier = modifier
+                .border(
+                    width = 3.dp,
+                    color = Color("#D1D5DB".toColorInt()),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .fillMaxWidth()
+//            .height(50.dp)
+        )
+    }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchPreview() {
+    StoreAppTheme(dynamicColor = false) {
+        InputStreet(
+            label = "Nhập đường",
+            modifier = Modifier
+                .padding(16.dp)
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun AddAddressContentPreview() {
+    val uiState = AddAddressUiState(
+        provinces = listOf(
+            Province(1, "Thành phố Hà Nội"),
+            Province(2, "Tỉnh Hà Giang")
+        ),
+        districts = listOf(
+            District(1, "Quận Ba Đình"),
+            District(2, "Huyện Gia Lâm")
+        ),
+        wards = listOf(
+            Ward(1, "Phường Quảng An"),
+            Ward(2, "Phường Giang Biên")
+        ),
+        selectedProvince = Province(1, "Thành phố Hà Nội"),
+        selectedDistrict = District(1, "Quận Ba Đình"),
+        selectedWard = Ward(1, "Phường Quảng An"),
+        street = "Hồ Tây",
+        isLoading = false,
+        errorMessage = null
+    )
+
+    AddAddressContent(
+        innerPadding = PaddingValues(0.dp),
+        uiState = uiState,
+        onProvinceSelected = {},
+        onDistrictSelected = {},
+        onWardSelected = {},
+        onStreetInput = {},
+        onConfirm = {}
+    )
+}
+
+//@Preview("Light Theme", showBackground = true)
+//@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+//@Composable
+//fun FilterLocationPreview() {
+//    StoreAppTheme {
+//        Column(modifier = Modifier.padding(16.dp)) {
+//            val sampleProvinces = listOf("Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng")
+//            var selectedProvince by remember { mutableStateOf<String?>(null) }
+//
+//            FilterLocation(
+//                label = "Tỉnh/Thành phố",
+//                options = sampleProvinces,
+//                selectedOption = selectedProvince,
+//                onOptionSelected = { selectedProvince = it }
+//            )
+//        }
+//    }
+//}
+
+@Preview("Light Theme", showBackground = true)
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Composable
+fun FilterLocation2Preview() {
+    StoreAppTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            val sampleProvinces = listOf("Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Hải Phòng")
+            var selectedProvince by remember { mutableStateOf<String?>(null) }
+
+            FilterLocation2(
+                label = "Tỉnh/Thành phố",
+                options = sampleProvinces,
+                onOptionSelected = { selectedProvince = it }
+            )
+        }
+    }
+}
+

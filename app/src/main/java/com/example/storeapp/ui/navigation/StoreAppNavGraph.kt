@@ -8,6 +8,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.storeapp.ui.screen.address.AddressDestination
+import com.example.storeapp.ui.screen.address.AddressScreen
+import com.example.storeapp.ui.screen.address.add_address.AddAddressDestination
+import com.example.storeapp.ui.screen.address.add_address.AddAddressScreen
 import com.example.storeapp.ui.screen.cart.CartDestination
 import com.example.storeapp.ui.screen.cart.CartScreen
 import com.example.storeapp.ui.screen.admin.dashboard.DashBoardScreen
@@ -66,8 +70,7 @@ fun StoreAppNavHost(
                     navController.navigate(HomeDestination.route) {
                         popUpTo(IntroDestination.route) { inclusive = true }
                     }
-                }
-                ,
+                },
                 onNavigateSignUp = {
                     navController.navigate(SignUpDestination.route)
                 }
@@ -131,10 +134,23 @@ fun StoreAppNavHost(
         ) {
             CartScreen(navController = navController,
                 onNavigateProductDetails = { navController.navigate("${ProductDetailsDestination.route}/$it") },
-                onNavigateToCheckout = {navController.navigate(CheckoutDestination.route)}
+                onNavigateToCheckout = { navController.navigate(CheckoutDestination.route) }
             )
         }
 
+        composable(AddressDestination.route) {
+            AddressScreen(navController = navController,
+                onNavigateToAddAddress = {
+                    navController.navigate(AddAddressDestination.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(ProfileDestination.route)
+                }
+            )
+        }
+        composable(AddAddressDestination.route) {
+            AddAddressScreen(navController = navController)
+        }
         composable(
             FavoriteDestination.route
         ) {

@@ -34,6 +34,7 @@
     <string name="cart_title">Your Cart</string>
     <string name="checkout_title">Checkout</string>
     <string name="address_title">Address</string>
+    <string name="add_address_title">Add Address</string>
 
 
     <string name="dashboard_title">Dashboard</string>

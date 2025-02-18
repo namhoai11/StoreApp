@@ -6,6 +6,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
+import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.screen.favorite.WishListViewModel
@@ -44,6 +45,17 @@ object AppViewModelProvider {
             )
 
         }
+
+
+
+        initializer {
+            AddAddressViewModel(
+                storeAppManagerApplication().container.locationApiService
+            )
+
+        }
+
+
 
         initializer {
             OurProductViewModel(

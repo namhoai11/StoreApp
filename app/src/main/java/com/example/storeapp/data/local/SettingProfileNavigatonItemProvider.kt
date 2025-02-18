@@ -2,6 +2,7 @@
 
 import androidx.annotation.DrawableRes
 import com.example.storeapp.R
+import com.example.storeapp.ui.screen.address.AddressDestination
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.cart.CartDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
@@ -11,6 +12,7 @@ object SettingProfileNavigatonItemProvider {
         SettingProfileNavigaton(
             title = "Địa chỉ",
             description = "Cập nhật địa chỉ nhận hàng",
+            route = AddressDestination.route,
             icon = R.drawable.icon_pinlocation
         ),
         SettingProfileNavigaton(

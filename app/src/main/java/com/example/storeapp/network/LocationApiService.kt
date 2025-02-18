@@ -2,6 +2,7 @@
 
 import com.example.storeapp.model.District
 import com.example.storeapp.model.Province
+import com.example.storeapp.model.Ward
 import retrofit2.http.GET
 import retrofit2.http.Path
 
