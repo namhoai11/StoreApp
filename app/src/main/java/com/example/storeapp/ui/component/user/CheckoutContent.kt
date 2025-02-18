@@ -354,10 +354,10 @@ private fun CheckoutContentPreview() {
                 provinceId = "province01",
                 districtId = "district01",
                 wardId = "ward01",
-                latitude = -7.123456,
-                longitude = 110.123456,
-                createdAt = Timestamp.now(),
-                updatedAt = Timestamp.now()
+//                latitude = -7.123456,
+//                longitude = 110.123456,
+//                createdAt = Timestamp.now(),
+//                updatedAt = Timestamp.now()
             ),
             selectedLocationId = -1,
             selectedShippingId = 2,

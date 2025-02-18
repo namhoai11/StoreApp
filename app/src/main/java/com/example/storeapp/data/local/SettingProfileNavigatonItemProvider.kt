@@ -12,7 +12,7 @@ object SettingProfileNavigatonItemProvider {
         SettingProfileNavigaton(
             title = "Địa chỉ",
             description = "Cập nhật địa chỉ nhận hàng",
-            route = AddressDestination.route,
+            route = AddressDestination.routeWithSetupRole.replace("{addressSetupRole}", "0"),
             icon = R.drawable.icon_pinlocation
         ),
         SettingProfileNavigaton(

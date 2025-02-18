@@ -279,6 +279,12 @@ class ProductDetailsViewModel(
         _uiState.update { it.copy(isAddCartLoading = true, errorMessage = "") }
 
         viewModelScope.launch {
+            val currentUserId = _user.value?.id
+            if (currentUserId == null) {
+                _uiState.update { it.copy(errorMessage = "Không thể xác định sản phẩm hoặc người dùng") }
+                return@launch
+            }
+
             val selectedProductOption = if (_uiState.value.listProductOptions.isNotEmpty() &&
                 _uiState.value.selectedOptionIndex in _uiState.value.listProductOptions.indices
             ) {
@@ -305,26 +311,23 @@ class ProductDetailsViewModel(
                 colorOptions = selectedColorOption,
                 quantity = 1
             )
-            val result =
-                _user.value?.let { repository.addProductToCartUseSet(it.id, productsOnCart) }
+            val result =repository.addProductToCartUseSet(currentUserId, productsOnCart)
 
-            if (result != null) {
-                if (result.isSuccess) {
-                    _uiState.update {
-                        it.copy(
-                            isAddCartLoading = false,
-                            successMessage = "Thêm vào giỏ hàng thành công!",
-                            isShowConfirmDialog = true
-                        )
-                    }
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        isAddCartLoading = false,
+                        successMessage = "Thêm vào giỏ hàng thành công!",
+                        isShowConfirmDialog = true
+                    )
+                }
 
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            isAddCartLoading = false,
-                            errorMessage = result.exceptionOrNull()?.message ?: "Có lỗi xảy ra"
-                        )
-                    }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isAddCartLoading = false,
+                        errorMessage = result.exceptionOrNull()?.message ?: "Có lỗi xảy ra"
+                    )
                 }
             }
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
+import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
@@ -46,13 +47,20 @@ object AppViewModelProvider {
 
         }
 
+        initializer {
+            AddressViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository
+                )
+
+        }
 
 
         initializer {
             AddAddressViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
                 storeAppManagerApplication().container.locationApiService
             )
-
         }
 
 

@@ -1,8 +1,6 @@
 ﻿package com.example.storeapp.ui.screen.cart
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -63,7 +61,7 @@ class CartViewModel(
                 _uiState.update { it.copy(showCartLoading = false, errorMessage = "Không thể xác định người dùng") }
                 return@launch
             }
-            val cart = repository.getPCartByUser(currentUser.id)
+            val cart = repository.getCartByUser(currentUser.id)
             Log.d("CartViewModel", "cart: $cart")
 
             if (cart == null) {
@@ -76,6 +74,7 @@ class CartViewModel(
                 }
                 return@launch
             }
+
 
             val productIds = cart.products.map { it.productId }
             val products = repository.getProductByListId(productIds).associateBy { it.id }

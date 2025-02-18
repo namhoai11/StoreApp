@@ -145,7 +145,7 @@ fun AddressItemScreen2(
         modifier = modifier
             .clickable { onChooseClick() }
             .fillMaxWidth()
-            .height(125.dp)
+            .height(150.dp)
     ) {
         Row(
             modifier = Modifier
@@ -169,7 +169,7 @@ fun AddressItemScreen2(
                 )
             }
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxHeight()

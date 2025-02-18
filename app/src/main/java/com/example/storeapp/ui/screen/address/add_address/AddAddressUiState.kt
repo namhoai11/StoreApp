@@ -14,5 +14,6 @@ data class AddAddressUiState(
     val selectedWard: Ward? = null,
     val street: String = "",
     val isLoading: Boolean = false,  // Xử lý trạng thái tải API
-    val errorMessage: String? = null // Xử lý lỗi nếu có
+    val errorMessage: String? = null, // Xử lý lỗi nếu có
+    val successMessage: String = "",
 )

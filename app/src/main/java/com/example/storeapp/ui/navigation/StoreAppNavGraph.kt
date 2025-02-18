@@ -138,7 +138,12 @@ fun StoreAppNavHost(
             )
         }
 
-        composable(AddressDestination.route) {
+        composable(
+            AddressDestination.routeWithSetupRole,
+            arguments = listOf(navArgument(AddressDestination.addressSetupRole) {
+                type = NavType.IntType
+            })
+        ) {
             AddressScreen(navController = navController,
                 onNavigateToAddAddress = {
                     navController.navigate(AddAddressDestination.route)

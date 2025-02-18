@@ -48,6 +48,7 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.District
 import com.example.storeapp.model.Province
 import com.example.storeapp.model.Ward
@@ -97,11 +98,14 @@ fun AddAddressScreen(
         AddAddressContent(
             innerPadding = innerPadding,
             uiState = uiState,
-            onProvinceSelected = viewModel::onProvinceSelected,
-            onDistrictSelected = viewModel::onDistrictSelected,
-            onWardSelected = viewModel::onWardSelected,
-            onStreetInput = viewModel::onStreetInput,
-            onConfirm = viewModel::onConfirm
+            onProvinceSelected = { viewModel.onProvinceSelected(it) },
+            onDistrictSelected = { viewModel.onDistrictSelected(it) },
+            onWardSelected = { viewModel.onWardSelected(it) },
+            onStreetInput = { viewModel.onStreetInput(it) },
+            onConfirm = {
+                viewModel.onConfirm()
+                navController.navigateUp()
+            }
         )
     }
 
@@ -289,7 +293,8 @@ fun FilterLocation2(
             ExposedDropdownMenu(
                 expanded = expanded && filteredOptions.isNotEmpty(),
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Color.White),
             ) {
                 filteredOptions.forEach { option ->
@@ -381,27 +386,7 @@ private fun SearchPreview() {
 @Composable
 @Preview(showBackground = true)
 fun AddAddressContentPreview() {
-    val uiState = AddAddressUiState(
-        provinces = listOf(
-            Province(1, "Thành phố Hà Nội"),
-            Province(2, "Tỉnh Hà Giang")
-        ),
-        districts = listOf(
-            District(1, "Quận Ba Đình"),
-            District(2, "Huyện Gia Lâm")
-        ),
-        wards = listOf(
-            Ward(1, "Phường Quảng An"),
-            Ward(2, "Phường Giang Biên")
-        ),
-        selectedProvince = Province(1, "Thành phố Hà Nội"),
-        selectedDistrict = District(1, "Quận Ba Đình"),
-        selectedWard = Ward(1, "Phường Quảng An"),
-        street = "Hồ Tây",
-        isLoading = false,
-        errorMessage = null
-    )
-
+    val uiState = DataDummy.addAddressUiState
     AddAddressContent(
         innerPadding = PaddingValues(0.dp),
         uiState = uiState,

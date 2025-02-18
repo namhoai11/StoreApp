@@ -7,15 +7,20 @@ import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.District
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
 import com.example.storeapp.model.ProductDataForOrderModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.ProductsOnCart
+import com.example.storeapp.model.Province
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.StockByVariant
 import com.example.storeapp.model.UserLocationModel
+import com.example.storeapp.model.Ward
+import com.example.storeapp.ui.screen.address.AddressUiState
+import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.google.firebase.Timestamp
 
@@ -34,10 +39,10 @@ object DataDummy {
             provinceId = "province01",
             districtId = "district01",
             wardId = "ward01",
-            latitude = -7.123456,
-            longitude = 110.123456,
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now()
+//            latitude = -7.123456,
+//            longitude = 110.123456,
+//            createdAt = Timestamp.now(),
+//            updatedAt = Timestamp.now()
         ),
         UserLocationModel(
             id = "2",
@@ -51,11 +56,35 @@ object DataDummy {
             provinceId = "province01",
             districtId = "district01",
             wardId = "ward01",
-            latitude = -7.654321,
-            longitude = 110.654321,
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now()
+//            latitude = -7.654321,
+//            longitude = 110.654321,
+//            createdAt = Timestamp.now(),
+//            updatedAt = Timestamp.now()
         ),
+    )
+    val addressUiState = AddressUiState(
+        addressList = dummyUserLocation,
+        selectedItemId = "2",
+    )
+    val addAddressUiState = AddAddressUiState(
+        provinces = listOf(
+            Province(1, "Thành phố Hà Nội"),
+            Province(2, "Tỉnh Hà Giang")
+        ),
+        districts = listOf(
+            District(1, "Quận Ba Đình"),
+            District(2, "Huyện Gia Lâm")
+        ),
+        wards = listOf(
+            Ward(1, "Phường Quảng An"),
+            Ward(2, "Phường Giang Biên")
+        ),
+        selectedProvince = Province(1, "Thành phố Hà Nội"),
+        selectedDistrict = District(1, "Quận Ba Đình"),
+        selectedWard = Ward(1, "Phường Quảng An"),
+        street = "Hồ Tây",
+        isLoading = false,
+        errorMessage = null
     )
 
     // Dữ liệu mẫu cho phương thức vận chuyển

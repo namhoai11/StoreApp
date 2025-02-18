@@ -33,7 +33,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,19 +43,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.UserLocationModel
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.AddressItemScreen2
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
-import kotlinx.coroutines.CoroutineScope
 
 
 object AddressDestination : NavigationDestination {
     override val route = "address"
     override val titleRes = R.string.address_title
+    const val addressSetupRole = "addressSetupRole"
+    val routeWithSetupRole = "$route/{$addressSetupRole}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +66,13 @@ object AddressDestination : NavigationDestination {
 fun AddressScreen(
     navController: NavController,
     onNavigateToAddAddress: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    viewModel: AddressViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.loadAddress()
+    }
+    val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -90,12 +100,16 @@ fun AddressScreen(
         }
     ) { innerPadding ->
         AddressContent(
+            uiState = uiState,
             innerPadding = innerPadding,
-            state = DataDummy.dummyUserLocation,
-            selectedItemId = "2",
-            onSelectedItem = {},
-            onDeletedItem = {},
-            onConfirmationClick = { onNavigateToProfile() },
+//            state = DataDummy.dummyUserLocation,
+//            selectedItemId = "2",
+            onSelectedItem = { viewModel.onAddressItemSelected(it) },
+            onDeletedItem = {viewModel.confirmDeleteLocationClicked(it)},
+            onConfirmationClick = {
+                viewModel.onSetDefaultLocationClicked()
+                onNavigateToProfile()
+            },
             onAddNewAddressClick = { onNavigateToAddAddress() },
         )
 
@@ -107,9 +121,10 @@ fun AddressScreen(
 @Composable
 fun AddressContent(
     modifier: Modifier = Modifier,
+    uiState: AddressUiState,
     innerPadding: PaddingValues,
-    state: List<UserLocationModel>,
-    selectedItemId: String?,
+//    state: List<UserLocationModel>,
+//    selectedItemId: String?,
     onSelectedItem: (String) -> Unit,
     onDeletedItem: (String) -> Unit,
     onConfirmationClick: () -> Unit,
@@ -126,7 +141,7 @@ fun AddressContent(
                 .weight(1f)
                 .padding(16.dp)
         ) {
-            if (state.isEmpty()) {
+            if (uiState.addressList.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.background)
@@ -140,13 +155,13 @@ fun AddressContent(
                 }
             } else {
                 LazyColumn {
-                    items(items = state, key = { it.id }) { userLocation ->
+                    items(items = uiState.addressList, key = { it.id }) { userLocation ->
                         val address =
-                            userLocation.ward + userLocation.province + userLocation.district
+                            userLocation.street + " - " + userLocation.ward + " - " + userLocation.district + " - " + userLocation.province
                         AddressItemScreen2(
                             name = userLocation.userName,
                             address = address,
-                            isSelected = selectedItemId == userLocation.id,
+                            isSelected = uiState.selectedItemId == userLocation.id,
                             onChooseClick = { onSelectedItem(userLocation.id) },
                             onDeleteClick = { onDeletedItem(userLocation.id) },
                             modifier = Modifier.animateItem(
@@ -161,7 +176,7 @@ fun AddressContent(
             }
         }
 
-        Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
+        Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
             Card(
                 border = BorderStroke(
                     width = 1.dp,
@@ -195,7 +210,7 @@ fun AddressContent(
             Spacer(modifier = Modifier.size(16.dp))
 
             Button(
-                enabled = selectedItemId != null,
+                enabled = uiState.selectedItemId != null,
                 modifier = Modifier
                     .height(55.dp)
                     .fillMaxWidth(),
@@ -221,10 +236,11 @@ fun AddressContent(
 private fun AddressContentPreview() {
     StoreAppTheme(dynamicColor = false) {
         AddressContent(
+            uiState = DataDummy.addressUiState,
             innerPadding = PaddingValues(0.dp),
-            state = DataDummy.dummyUserLocation,
+//            state = DataDummy.dummyUserLocation,
 //            scope = rememberCoroutineScope(),
-            selectedItemId = "2",
+//            selectedItemId = "2",
             onSelectedItem = {},
             onDeletedItem = {},
             onConfirmationClick = {},

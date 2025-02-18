@@ -6,6 +6,7 @@ import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.SliderModel
+import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.CartAction
 import com.google.firebase.auth.FirebaseAuth
@@ -240,7 +241,85 @@ class FirebaseFireStoreRepository {
         }
     }
 
-    suspend fun getPCartByUser(userId: String): CartModel? {
+    suspend fun addAddressToFireStore(
+        userLocationModel: UserLocationModel
+    ): Result<Unit> {
+        val userLocationRef = firestore.collection("UserLocation")
+
+        return try {
+            // Thêm dữ liệu vào collection, sử dụng ID từ model (hoặc generate tự động nếu cần)
+            val newUserLocationRef = userLocationRef.document()
+            val newUserLocation = UserLocationModel(
+                id = newUserLocationRef.id,
+                userName = userLocationModel.userName,
+                street = userLocationModel.street,
+                province = userLocationModel.province,
+                district = userLocationModel.district,
+                ward = userLocationModel.ward,
+                userId = userLocationModel.userId,
+                provinceId = userLocationModel.provinceId,
+                districtId = userLocationModel.districtId,
+                wardId = userLocationModel.wardId,
+//                latitude = userLocationModel.latitude,
+//                longitude = userLocationModel.longitude,
+//                createdAt = userLocationModel.createdAt,
+//                updatedAt = userLocationModel.updatedAt
+            )
+            newUserLocationRef.set(newUserLocation).await()
+            // Thành công
+            Log.d("Firestore", "User location added successfully")
+            Result.success(Unit) // Trả về kết quả thành công
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error adding Location", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+    suspend fun getListAddressByUser(userId: String): Result<List<UserLocationModel>> {
+        val userLocationRef = firestore.collection("UserLocation")
+
+        return try {
+            val snapshot = userLocationRef.whereEqualTo("userId", userId).get().await()
+            val addressList = snapshot.documents.mapNotNull { it.toObject(UserLocationModel::class.java) }
+
+            Log.d("FirestoreRepository", "Fetched ${addressList.size} addresses for user $userId")
+            Result.success(addressList)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error fetching user addresses", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateDefaultLocation(userId: String, newDefaultLocationId: String): Result<Unit> {
+        return try {
+            val userRef = firestore.collection("Users").document(userId)
+
+            // Cập nhật trường defaultLocationId
+            userRef.update("defaultLocationId", newDefaultLocationId).await()
+//            userRef.set(mapOf("defaultLocationId" to newDefaultLocationId), SetOptions.merge()).await()
+            Log.d("FirestoreRepository", "Updated defaultLocationId successfully")
+            Result.success(Unit) // Trả về kết quả thành công
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error updating defaultLocationId", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+    suspend fun deleteAddressById(addressId: String): Result<Unit> {
+        val userLocationRef = firestore.collection("UserLocation").document(addressId)
+        return try {
+            userLocationRef.delete().await()
+            Log.d("Firestore", "User location deleted successfully: $addressId")
+            Result.success(Unit) // Xóa thành công
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error deleting location: $addressId", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+
+
+    suspend fun getCartByUser(userId: String): CartModel? {
         return try {
             val querySnapshot = firestore.collection("Cart")
                 .whereEqualTo("userId", userId) // Lọc theo userId
@@ -261,6 +340,8 @@ class FirebaseFireStoreRepository {
             null
         }
     }
+
+
 
 //    suspend fun increaseProductQuantity(
 //        currentUserId: String, productOnCart: ProductsOnCart
@@ -341,26 +422,26 @@ class FirebaseFireStoreRepository {
     }
 
 
-    fun updateCartWhenProductChanges(productId: String) {
-        firestore.collection("Cart")
-            .whereArrayContains("items.productId", productId) // Tìm giỏ hàng chứa sản phẩm
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot.documents) {
-                    val cart = document.toObject(CartModel::class.java)
-                    cart?.let {
-                        // Cập nhật giá mới từ Product vào Cart
-//                        val updatedItems = it.items.map { item ->
-//                            if (item.productId == productId) {
-////                                item.copy(price = getProductPrice(productId)) // Lấy giá mới
-//                            } else item
-//                        }
-                        firestore.collection("Cart").document(document.id)
-//                            .update("items", updatedItems)
-                    }
-                }
-            }
-    }
+//    fun updateCartWhenProductChanges(productId: String) {
+//        firestore.collection("Cart")
+//            .whereArrayContains("items.productId", productId) // Tìm giỏ hàng chứa sản phẩm
+//            .get()
+//            .addOnSuccessListener { querySnapshot ->
+//                for (document in querySnapshot.documents) {
+//                    val cart = document.toObject(CartModel::class.java)
+//                    cart?.let {
+//                        // Cập nhật giá mới từ Product vào Cart
+////                        val updatedItems = it.items.map { item ->
+////                            if (item.productId == productId) {
+//////                                item.copy(price = getProductPrice(productId)) // Lấy giá mới
+////                            } else item
+////                        }
+//                        firestore.collection("Cart").document(document.id)
+////                            .update("items", updatedItems)
+//                    }
+//                }
+//            }
+//    }
 
 
     fun observeProductById(productId: String): Flow<ProductModel?> = callbackFlow {

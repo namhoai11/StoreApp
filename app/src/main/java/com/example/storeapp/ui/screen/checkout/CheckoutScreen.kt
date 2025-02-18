@@ -10,6 +10,6 @@ object CheckoutDestination : NavigationDestination {
 }
 
 @Composable
-fun Checkout(){
+fun CheckoutScreen(){
 
 }
