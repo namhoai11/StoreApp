@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -39,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,15 +51,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CouponType
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.function.timestampToDateOnlyString
 import com.example.storeapp.ui.navigation.NavigationDestination
@@ -71,8 +77,10 @@ object AddCouponManagementDestination : NavigationDestination {
 
 @Composable
 fun AddCouponScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: AddCouponViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -91,8 +99,19 @@ fun AddCouponScreen(
 //            )
 //        }
     ) { innerPadding ->
-        AddCouponContent(innerPadding = innerPadding, uiState = DataDummy.addCouponUiState)
-
+        AddCouponContent(
+            innerPadding = innerPadding, uiState = uiState,
+            onNameChange = { viewModel.onNameChange(it) },
+            onQuantityChange = { viewModel.onQuantityChange(it) },
+            onTypeSelected = { viewModel.onTypeSelected(it) },
+            onValueChange = { viewModel.onValueChange(it) },
+            onStartDateChange = { viewModel.onStartDateChange(it) },
+            onEndDateChange = { viewModel.onEndDateChange(it) },
+            onDescriptionChange = { viewModel.onDescriptionChange(it) },
+            onConfirm = {
+                viewModel.addCoupon { navController.navigateUp() }
+            }
+        )
     }
 }
 
@@ -107,15 +126,13 @@ fun AddCouponContent(
     onValueChange: (String) -> Unit = {},
     onStartDateChange: (String) -> Unit = {},
     onEndDateChange: (String) -> Unit = {},
+    onDescriptionChange: (String) -> Unit = {},
     onConfirm: () -> Unit = {} // Hàm xử lý khi bấm "Xác nhận"
 ) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(innerPadding)
-//    ) {
+
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(innerPadding)
     ) {
         Column(
@@ -171,8 +188,9 @@ fun AddCouponContent(
             )
             AddTextField(
                 title = "Số lượng",
-                valueInput = "${uiState.couponDetailsItem.quantity}",
-                onValueChange = onQuantityChange
+                valueInput = uiState.quantityInput,
+                onValueChange = onQuantityChange,
+                isNumberInput = true
             )
 
             AddTypeField(
@@ -183,8 +201,9 @@ fun AddCouponContent(
 
             AddTextField(
                 title = "Giá trị",
-                valueInput = "${uiState.couponDetailsItem.value}",
-                onValueChange = onValueChange
+                valueInput = uiState.valueInput,
+                onValueChange = onValueChange,
+                isNumberInput = true,
             )
 
             AddDateField(
@@ -197,32 +216,11 @@ fun AddCouponContent(
                 dateInput = timestampToDateOnlyString(uiState.couponDetailsItem.endDate),
                 onDateChange = onEndDateChange
             )
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                // Circle at the bottom
-                Box(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .background(Color.Gray, shape = CircleShape)
-//                        .align(Alignment.BottomStart) // Đặt chấm tròn ở dưới cùng
-                )
-                Text(
-                    text = "Mô tả",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = uiState.couponDetailsItem.description,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(8.dp)
-                )
-            }
+            AddLargeTextField(
+                title = "Mô tả",
+                valueInput = uiState.couponDetailsItem.description,
+                onValueChange = onDescriptionChange
+            )
         }
         // Nút xác nhận cố định dưới cùng
         Box(
@@ -252,7 +250,6 @@ fun AddCouponContent(
         }
     }
 }
-//}
 
 @Composable
 fun AddTextField(
@@ -260,6 +257,7 @@ fun AddTextField(
     title: String,
     valueInput: String = "",
     onValueChange: (String) -> Unit,
+    isNumberInput: Boolean = false // Mặc định là false (nhập text)
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -291,6 +289,11 @@ fun AddTextField(
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(4.dp),
+            keyboardOptions = if (isNumberInput) {
+                KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            } else {
+                KeyboardOptions.Default
+            },
             textStyle = TextStyle(
                 textAlign = TextAlign.Start,
                 color = Color(0xFF7D32A8),
@@ -310,6 +313,72 @@ fun AddTextField(
         thickness = 1.dp,
         modifier = Modifier.padding(16.dp)
     )
+}
+
+@Composable
+fun AddLargeTextField(
+    modifier: Modifier = Modifier,
+    title: String,
+    valueInput: String = "",
+    onValueChange: (String) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Tiêu đề (Title)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(18.dp)
+                    .background(Color.Gray, shape = CircleShape)
+            )
+            Text(
+                text = title,
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
+        // TextField nhập mô tả
+        TextField(
+            value = valueInput,
+            onValueChange = onValueChange,
+            modifier = modifier
+                .fillMaxWidth()
+                .height(150.dp) // Cao hơn để nhập mô tả dài
+                .border(
+                    1.dp, Color(0xFF7D32A8),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(4.dp),
+            textStyle = TextStyle(
+                textAlign = TextAlign.Start,
+                color = Color(0xFF7D32A8),
+                fontSize = 16.sp
+            ),
+            maxLines = Int.MAX_VALUE, // Cho phép nhập nhiều dòng
+            keyboardOptions = KeyboardOptions.Default.copy(
+                capitalization = KeyboardCapitalization.Sentences
+            ),
+            visualTransformation = VisualTransformation.None,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            )
+        )
+
+        // Thanh phân cách
+        HorizontalDivider(
+            thickness = 1.dp,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Composable
@@ -367,40 +436,43 @@ fun DatePickerField(
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    OutlinedTextField(
-        value = selectedDate,
-        onValueChange = {},
-        readOnly = true,
+    Box(
         modifier = modifier
             .width(250.dp)
             .height(66.dp)
+            .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp))
             .clickable { datePickerDialog.show() }
-            .border(
-                1.dp, Color(0xFF7D32A8),
-                shape = RoundedCornerShape(12.dp)
+            .padding(4.dp)
+    ) {
+        OutlinedTextField(
+            value = selectedDate,
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxSize(),
+            trailingIcon = {
+                Icon(
+                    Icons.Default.DateRange, contentDescription = "Chọn ngày",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable { datePickerDialog.show() }
+                )
+            },
+            textStyle = TextStyle(
+                textAlign = TextAlign.Start,
+                color = Color(0xFF7D32A8),
+                fontSize = 16.sp
+            ),
+            visualTransformation = VisualTransformation.None,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
             )
-            .padding(4.dp),
-//        label = { Text("Chọn ngày") },
-        trailingIcon = {
-            Icon(
-                Icons.Default.DateRange, contentDescription = "Chọn ngày",
-                modifier = Modifier.size(32.dp)
-            )
-        },
-        textStyle = TextStyle(
-            textAlign = TextAlign.Start,
-            color = Color(0xFF7D32A8),
-            fontSize = 16.sp
-        ),
-        visualTransformation = VisualTransformation.None,
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
         )
-    )
+    }
+
 }
 
 @Composable

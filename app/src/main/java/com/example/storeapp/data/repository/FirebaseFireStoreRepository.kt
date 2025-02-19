@@ -3,6 +3,7 @@
 import android.util.Log
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CategoryModel
+import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.SliderModel
@@ -280,7 +281,8 @@ class FirebaseFireStoreRepository {
 
         return try {
             val snapshot = userLocationRef.whereEqualTo("userId", userId).get().await()
-            val addressList = snapshot.documents.mapNotNull { it.toObject(UserLocationModel::class.java) }
+            val addressList =
+                snapshot.documents.mapNotNull { it.toObject(UserLocationModel::class.java) }
 
             Log.d("FirestoreRepository", "Fetched ${addressList.size} addresses for user $userId")
             Result.success(addressList)
@@ -318,7 +320,6 @@ class FirebaseFireStoreRepository {
     }
 
 
-
     suspend fun getCartByUser(userId: String): CartModel? {
         return try {
             val querySnapshot = firestore.collection("Cart")
@@ -340,7 +341,6 @@ class FirebaseFireStoreRepository {
             null
         }
     }
-
 
 
 //    suspend fun increaseProductQuantity(
@@ -502,4 +502,27 @@ class FirebaseFireStoreRepository {
         awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
     }
 
+    suspend fun addCouponToFireStore(coupon: CouponModel): Result<Unit> {
+        val couponRef = firestore.collection("Coupons") // Collection lưu coupon
+
+        return try {
+            // Tạo document mới với ID tự động
+            val newCouponRef = couponRef.document()
+
+            // Cập nhật model với ID mới
+            val newCoupon = coupon.copy(
+                id = newCouponRef.id,
+                code = newCouponRef.id
+            )
+
+            // Lưu coupon vào Firestore
+            newCouponRef.set(newCoupon).await()
+
+            Log.d("Firestore", "Coupon added successfully")
+            Result.success(Unit) // Thành công
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error adding Coupon", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
 }

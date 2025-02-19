@@ -12,7 +12,7 @@ data class CouponModel(
     val value: Double = 0.0,                 // Giá trị giảm mặc định là 0.0
     val maxDiscount: Double? = null,         // Mức giảm tối đa có thể null
     val minOrderValue: Double? = null,       // Giá trị đơn hàng tối thiểu có thể null
-    val quantity: Int = 1,                   // Số lượng mặc định là 1
+    val quantity: Int = 0,                   // Số lượng mặc định là 1
     val active: Boolean = true,              // Mặc định coupon còn hoạt động
     val startDate: Timestamp = Timestamp.now(), // Ngày bắt đầu mặc định là thời điểm hiện tại
     val endDate: Timestamp = Timestamp.now(),   // Ngày hết hạn mặc định là thời điểm hiện tại
