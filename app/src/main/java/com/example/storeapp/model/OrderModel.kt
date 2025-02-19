@@ -25,8 +25,24 @@ data class ProductDataForOrderModel(
     val quantity: Int
 )
 
-enum class OrderStatus {
-    PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELED, RETURNED
+enum class OrderStatus() {
+    ALL,
+    PENDING,
+    CONFIRMED,
+    SHIPPED,
+    COMPLETED,
+    CANCELED;
+
+    override fun toString(): String {
+        return when (this) {
+            ALL -> "Tất cả"
+            PENDING -> "Chờ Xác nhận"
+            CONFIRMED -> "Đã Xác nhận"
+            SHIPPED -> "Đang giao"
+            COMPLETED -> "Hoàn Thành"
+            CANCELED -> "Đã Hủy"
+        }
+    }
 }
 
 //data class OrderModel(

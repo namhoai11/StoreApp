@@ -3,6 +3,7 @@
 import com.example.storeapp.R
 import com.example.storeapp.ui.navigation.NavigationItem
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
@@ -43,10 +44,10 @@ object ManagementNavigationItems {
             route = ProfileDestination.route
         ),
         NavigationItem(
-            title = R.string.profile_title,
+            title = R.string.couponmanage_title,
             icon = R.drawable.admin_iconcoupon,
             iconActive = R.drawable.admin_iconcoupon,
-            route = ProfileDestination.route
+            route = CouponManagementDestination.route
         )
     )
 }

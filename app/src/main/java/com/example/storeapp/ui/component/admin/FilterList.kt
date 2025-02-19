@@ -35,7 +35,7 @@ fun FilterList(
     onFilterSelected: (String) -> Unit,
 ) {
     var selectedIndex by remember {
-        mutableStateOf(0)
+        mutableStateOf(1)
     }
     LazyRow(
         modifier = modifier

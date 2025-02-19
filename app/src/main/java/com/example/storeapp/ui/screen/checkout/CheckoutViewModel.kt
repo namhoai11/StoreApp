@@ -21,18 +21,18 @@ class CheckoutViewModel(
 
         val totalPrice = cartProducts.sumOf { it.productTotalPrice }
 
-        _checkoutUiState.update {
-            it.copy(
-                products = cartProducts,
-                totalPrice = totalPrice,
-                oldTotalPrice = totalPrice,  // Lưu giá trước khi áp dụng giảm giá
-                shippingCost = 0.0,          // Ban đầu chưa có phí ship
-                shippingDescription = "",
-                voucherId = "",
-                note = "",
-                selectedPaymentMethod = "",
-                selectedAddressId = ""
-            )
-        }
+//        _checkoutUiState.update {
+//            it.copy(
+//                products = cartProducts,
+//                totalPrice = totalPrice,
+//                oldTotalPrice = totalPrice,  // Lưu giá trước khi áp dụng giảm giá
+//                shippingCost = 0.0,          // Ban đầu chưa có phí ship
+//                shippingDescription = "",
+//                voucherId = "",
+//                note = "",
+//                selectedPaymentMethod = "",
+//                selectedLocation = null
+//            )
+//        }
     }
 }

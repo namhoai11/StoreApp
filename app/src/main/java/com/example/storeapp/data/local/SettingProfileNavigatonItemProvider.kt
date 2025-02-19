@@ -5,6 +5,7 @@ import com.example.storeapp.R
 import com.example.storeapp.ui.screen.address.AddressDestination
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.cart.CartDestination
+import com.example.storeapp.ui.screen.notification.NotificateDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
 
 object SettingProfileNavigatonItemProvider {
@@ -40,6 +41,7 @@ object SettingProfileNavigatonItemProvider {
         SettingProfileNavigaton(
             title = "Thông báo",
             description = "Thông báo mới nhất",
+            route = NotificateDestination.route,
             icon = R.drawable.icon_notification_outlined
         ),
         SettingProfileNavigaton(

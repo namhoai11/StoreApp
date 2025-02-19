@@ -40,6 +40,10 @@
     <string name="dashboard_title">Dashboard</string>
     <string name="manage_title">Quản lý</string>
     <string name="ordermanage_title">Quản lý đơn hàng</string>
+    <string name="couponmanage_title">Khuyến mãi</string>
+    <string name="addcouponmanage_title">Điều chỉnh khuyến mãi</string>
+
+
     <string name="categorymanage_title">Quản lý Danh mục</string>
 
     <string name="notificate_title">Notification</string>

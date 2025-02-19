@@ -23,13 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.OrderModel
+import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.user.OrderStatus
 import com.example.storeapp.ui.theme.StoreAppTheme
-import java.text.DecimalFormat
 
 @Composable
 fun OrderManagementList(
-    modifier: Modifier = Modifier,
+//    modifier: Modifier = Modifier,
     listOrder: List<OrderModel>
 ) {
     LazyColumn(
@@ -148,10 +148,7 @@ fun PreviewOrderManagementItem() {
     }
 }
 
-fun formatCurrency2(amount: Double): String {
-    val formatter = DecimalFormat("#,###")
-    return formatter.format(amount) + " ₫"
-}
+
 
 fun getTotalProductCount(order: OrderModel): Int {
     return order.products.sumOf { it.quantity }

@@ -221,7 +221,7 @@ fun AddressContent(
                 )
             ) {
                 Text(
-                    text = "Confirmation",
+                    text = "Xác nhận",
                     fontSize = 14.sp,
                     color = Color.White
                 )

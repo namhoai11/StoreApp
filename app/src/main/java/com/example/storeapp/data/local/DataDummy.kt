@@ -6,7 +6,9 @@ import com.example.storeapp.model.AvailableOptions
 import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.ColorOptions
+import com.example.storeapp.model.CouponActive
 import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.CouponType
 import com.example.storeapp.model.District
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
@@ -21,7 +23,10 @@ import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.Ward
 import com.example.storeapp.ui.screen.address.AddressUiState
 import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
+import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiState
+import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
+import com.example.storeapp.ui.screen.checkout.CheckoutUiState
 import com.google.firebase.Timestamp
 
 object DataDummy {
@@ -126,6 +131,24 @@ object DataDummy {
         ),
     )
 
+
+    val coupon = CouponModel(
+        id = "1",
+        code = "FWHWFW45A",
+        name = "Free Shipping",
+        description = "Applies to get free shipping",
+        type = CouponType.PERCENTAGE,
+        value = 0.5,
+        maxDiscount = null,
+        minOrderValue = null,
+        quantity = 1,
+        active = true,
+        startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+        endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
+        color1 = Color(0xFF9733EE),
+        color2 = Color(0xFFDA22FF)
+    )
+
     // Dữ liệu mẫu cho Coupon
     val dummyCoupon = listOf(
         CouponModel(
@@ -133,14 +156,14 @@ object DataDummy {
             code = "FWHWFW45A",
             name = "Free Shipping",
             description = "Applies to get free shipping",
-            type = "FIXED_AMOUNT",
-            value = 0.0,
+            type = CouponType.FIXED_AMOUNT,
+            value = 50000.0,
             maxDiscount = null,
             minOrderValue = null,
             quantity = 1,
-            isActive = true,
-            startDate = Timestamp.now(),
-            endDate = Timestamp.now(),
+            active = true,
+            startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+            endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF9733EE),
             color2 = Color(0xFFDA22FF)
         ),
@@ -149,14 +172,14 @@ object DataDummy {
             code = "ADERTS4TA",
             name = "25% Off",
             description = "Applies to get 25% off",
-            type = "PERCENTAGE",
-            value = 25.0,
+            type = CouponType.PERCENTAGE,
+            value = 0.25,
             maxDiscount = null,
             minOrderValue = 100.0,
             quantity = 1,
-            isActive = true,
-            startDate = Timestamp.now(),
-            endDate = Timestamp.now(),
+            active = true,
+            startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+            endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFFFFA726),
             color2 = Color(0xFFFFD54F)
         ),
@@ -165,18 +188,104 @@ object DataDummy {
             code = "NHJASE32Q",
             name = "50% Off",
             description = "Applies to get 50% off",
-            type = "PERCENTAGE",
+            type = CouponType.PERCENTAGE,
             value = 50.0,
             maxDiscount = null,
             minOrderValue = 50.0,
             quantity = 1,
-            isActive = true,
-            startDate = Timestamp.now(),
-            endDate = Timestamp.now(),
+            active = true,
+            startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+            endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF00C9FF),
             color2 = Color(0xFF92FE9D)
         )
     )
+
+    val couponManagementUiState = CouponManagementUiState(
+        listCoupon = dummyCoupon,
+        currentCouponActive = CouponActive.ONGOING,
+        listCouponByActive = mapOf(
+            CouponActive.ONGOING to listOf(
+                CouponModel(
+                    id = "1",
+                    code = "FWHWFW45A",
+                    name = "Free Shipping",
+                    description = "Applies to get free shipping",
+                    type = CouponType.FIXED_AMOUNT,
+                    value = 50000.0,
+                    maxDiscount = null,
+                    minOrderValue = null,
+                    quantity = 1,
+                    active = true,
+                    startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+                    endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
+                    color1 = Color(0xFF9733EE),
+                    color2 = Color(0xFFDA22FF)
+                )
+            ),
+            CouponActive.UPCOMING to listOf(
+                CouponModel(
+                    id = "2",
+                    code = "ADERTS4TA",
+                    name = "25% Off",
+                    description = "Applies to get 25% off",
+                    type = CouponType.PERCENTAGE,
+                    value = 0.25,
+                    maxDiscount = null,
+                    minOrderValue = 100.0,
+                    quantity = 1,
+                    active = true,
+                    startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+                    endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
+                    color1 = Color(0xFFFFA726),
+                    color2 = Color(0xFFFFD54F)
+                )
+            ),
+            CouponActive.EXPIRED to listOf(
+                CouponModel(
+                    id = "3",
+                    code = "NHJASE32Q",
+                    name = "50% Off",
+                    description = "Applies to get 50% off",
+                    type = CouponType.PERCENTAGE,
+                    value = 50.0,
+                    maxDiscount = null,
+                    minOrderValue = 50.0,
+                    quantity = 1,
+                    active = true,
+                    startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+                    endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
+                    color1 = Color(0xFF00C9FF),
+                    color2 = Color(0xFF92FE9D)
+                )
+            )
+        ),
+        isLoading = false,
+        errorMessage = null,
+        successMessage = "Dữ liệu tải thành công!"
+    )
+    val addCouponUiState = AddCouponUiState(
+        couponDetailsItem = CouponModel(
+            id = "COUPON123",
+            code = "SALE50",
+            name = "Giảm giá 50%",
+            description = "Áp dụng cho đơn hàng từ 500K",
+            type = CouponType.PERCENTAGE,
+            value = 50.0,
+            maxDiscount = 100.0,
+            minOrderValue = 500.0,
+            quantity = 10,
+            active = true,
+            startDate = Timestamp.now(),
+            endDate = Timestamp.now(),
+            color1 = Color.Blue,
+            color2 = Color.Cyan
+        ),
+        isLoading = false,
+        errorMessage = null,
+        successMessage = "Coupon đã được tạo thành công!"
+    )
+
 
     val productsOnCart = ProductsOnCart(
         productId = "101",
@@ -196,6 +305,63 @@ object DataDummy {
         remainingStock = 5,
         notExist = "",
         notEnough = ""
+    )
+
+    val listProductsOnCartToShow = listOf(
+        productsOnCartToShow,
+        productsOnCartToShow,
+        productsOnCartToShow
+    )
+
+    val checkoutUiState = CheckoutUiState(
+        selectedLocation = UserLocationModel(
+            id = "1",
+            userName = "La Hoai Nam",
+            street = "Jl. Durian No. 123",
+            province = "Jawa Tengah",
+            district = "Kab. Semarang",
+            ward = "Banyubiru",
+            userId = "user123",
+            provinceId = "province01",
+            districtId = "district01",
+            wardId = "ward01",
+        ),
+        products = listProductsOnCartToShow,
+        totalPrice = 90000.0,
+        oldTotalPrice = 100000.0,
+        finalPrice = 75000.0, // Giả sử có giảm giá
+        isShowDialog = false,
+        isChooseShipping = false,
+        isChooseCoupon = false,
+        listShipping = dummyShipping,
+        listCoupon = dummyCoupon,
+        selectedShipping = ShippingModel(
+            name = "Nhanh",
+            price = 13.00,
+            description = "Thời gian dự kiến đến: 2 - 3 ngày"
+        ),
+        selectedCoupon = CouponModel(
+            id = "1",
+            code = "FWHWFW45A",
+            name = "Free Shipping",
+            description = "Applies to get free shipping",
+            type = CouponType.PERCENTAGE,
+            value = 0.0,
+            maxDiscount = null,
+            minOrderValue = null,
+            quantity = 1,
+            active = true,
+            startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
+            endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
+            color1 = Color(0xFF9733EE),
+            color2 = Color(0xFFDA22FF)
+        ),
+        note = "Giao hàng ngoài giờ hành chính",
+        selectedPaymentMethod = "COD",
+        isButtonEnabled = true, // Giả sử nút đặt hàng có thể bấm
+        isLoading = false,
+        errorMessage = "",
+        successMessage = "Đặt hàng thành công"
     )
 
     // Dữ liệu mẫu cho Cart
