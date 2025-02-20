@@ -5,6 +5,7 @@ import com.example.storeapp.R
 import com.example.storeapp.model.AvailableOptions
 import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
+import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.CouponActive
 import com.example.storeapp.model.CouponModel
@@ -25,6 +26,7 @@ import com.example.storeapp.ui.screen.address.AddressUiState
 import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
+import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementUiState
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.screen.checkout.CheckoutUiState
 import com.google.firebase.Timestamp
@@ -200,6 +202,7 @@ object DataDummy {
             color2 = Color(0xFF92FE9D)
         )
     )
+
 
     val couponManagementUiState = CouponManagementUiState(
         listCoupon = dummyCoupon,
@@ -493,11 +496,12 @@ object DataDummy {
         )
 
     )
-
     val availableOptions = AvailableOptions(
         listProductOptions = listProductOptions,
         listColorOptions = listColorOptions
     )
+
+
 
     val productItem = ProductModel(
         id = "1",
@@ -523,5 +527,103 @@ object DataDummy {
         stockQuantity = 12,
         createdAt = Timestamp.now(),
         updatedAt = Timestamp.now(),
+    )
+
+    val listProduct = listOf(
+        ProductModel(
+            id = "1",
+            name = "Business Laptop",
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
+            images = arrayListOf(
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
+            ),
+            options = arrayListOf(
+                "core i3",
+                "core i5",
+                "core i7"
+            ),
+            availableOptions = availableOptions,
+            price = 550.0,
+            rating = 4.7,
+            categoryId = "1",
+            hidden = false,
+            stockQuantity = 12,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        ProductModel(
+            id = "2",
+            name = "Business Laptop",
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed  do eiusmod tempor incididunt ut labore et dolore magna  aliqua. Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat  cupidatat non proident, sunt in culpa qui officia deserunt .Excepteur sint occaecat",
+            images = arrayListOf(
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_1.png?alt=media&token=fb49a7c9-3094-4f5c-9ea6-b8365cd86323",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_2.png?alt=media&token=3f826014-4808-4387-af6f-22dc7ddd4780",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_3.png?alt=media&token=d4ab793a-cb72-45ab-ae43-8db69adaaeba",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_4.png?alt=media&token=dfb10462-9138-471a-b34a-537bc7f5b7c8",
+                "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2_5.png?alt=media&token=2bfd17ef-d8c5-409e-8d6c-2d9e57d394c4"
+            ),
+            options = arrayListOf(
+                "core i3",
+                "core i5",
+                "core i7"
+            ),
+            availableOptions = availableOptions,
+            price = 550.0,
+            rating = 4.7,
+            categoryId = "2",
+            hidden = false,
+            stockQuantity = 12,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        )
+    )
+    val categoryList = listOf(
+        CategoryModel(
+            id = 0,
+            name = "Pc",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            description = "",
+            hidden = false,
+            productCount = 1,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        CategoryModel(
+            id = 1,
+            name = "Smartphone",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2.png?alt=media&token=4508a8d0-dc76-4e54-8234-4a7ddcfbfe41",
+            description = "",
+            hidden = false,
+            productCount = 1,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        CategoryModel(
+            id = 2,
+            name = "Headphone",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat3.png?alt=media&token=9e2e8b2c-09f8-453f-9dcd-2d83c52acd93",
+            description = "",
+            hidden = false,
+            productCount = 1,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        )
+    )
+
+    val dummyItemsByCategory = mapOf(
+        1 to listProduct.filter { it.categoryId.toInt() == 1 },
+        2 to listProduct.filter { it.categoryId.toInt() == 2 }
+    )
+    val productManagementUiState = ProductManagementUiState(
+        categories = categoryList,
+        allProducts = listProduct,
+        itemsByCategory = dummyItemsByCategory,
+        currentCategoryId = 1,
+        showCategoryLoading = false,
+        showRecommendedLoading = false,
     )
 }

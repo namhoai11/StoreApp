@@ -63,16 +63,9 @@ fun CouponManagementScreen(
                 "Quản lý",
                 "Khuyến mãi",
                 { navController.navigateUp() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
-//        bottomBar = {
-//            AdminBottomNavigationBar(
-//                navController = navController,
-//                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-//
-//            )
-//        }
     ) { innerPadding ->
         CouponManagementContent(
             innerPadding = innerPadding,
@@ -104,12 +97,13 @@ fun CouponManagementContent(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(16.dp)
+                .padding(start=16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             FilterList(filterList = filterList, onFilterSelected = onFilterSelected)
             CouponManagementList(
                 listCoupon = uiState.currentListCoupon,
-                couponItemClick = { onCouponItemClick(it) })
+                couponItemClick = { onCouponItemClick(it) }
+            )
         }
         Card(
             border = BorderStroke(

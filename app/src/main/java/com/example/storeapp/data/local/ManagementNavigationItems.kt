@@ -5,6 +5,7 @@ import com.example.storeapp.ui.navigation.NavigationItem
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
@@ -38,10 +39,10 @@ object ManagementNavigationItems {
             route = CategoryManagementDestination.route
         ),
         NavigationItem(
-            title = ProfileDestination.titleRes,
+            title = ProductManagementDestination.titleRes,
             icon = R.drawable.admin_iconproduct,
             iconActive = R.drawable.admin_iconproduct,
-            route = ProfileDestination.route
+            route = ProductManagementDestination.route
         ),
         NavigationItem(
             title = R.string.couponmanage_title,

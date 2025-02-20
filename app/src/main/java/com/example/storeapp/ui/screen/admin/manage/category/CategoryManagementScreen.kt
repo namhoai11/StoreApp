@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.ui.component.admin.AdminSearch
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
@@ -35,7 +36,7 @@ fun CategoryManagementScreen(
                 "Quản lý",
                 "Danh mục",
                 { navController.navigateUp() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
 //        bottomBar = {
@@ -54,29 +55,7 @@ fun CategoryManagementScreen(
 fun CategoryManagementContent(
     innerPadding: PaddingValues,
 ) {
-    val sampleCategories = listOf(
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        ),
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        ),
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        )
-    )
+    val sampleCategories = DataDummy.categoryList
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {

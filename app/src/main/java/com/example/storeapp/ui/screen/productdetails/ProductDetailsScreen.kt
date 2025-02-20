@@ -126,7 +126,6 @@ fun ProductDetailsScreen(
     ) { innerPadding ->
 
         ProductDetailsContent(
-
             onAddToCartClick = { viewModel.buyClick() },
             onCartClick = { onNavigateToCart() },
             innerPadding = innerPadding,

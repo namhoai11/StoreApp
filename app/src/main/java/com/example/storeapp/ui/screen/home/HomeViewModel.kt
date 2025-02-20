@@ -22,10 +22,6 @@ class HomeViewModel(
     val user: LiveData<UserModel?> = _user
 
     init {
-        // Chạy trong Coroutine để tránh block UI
-//        viewModelScope.launch {
-//            migrateDataFromRealtimeToFirestore()
-//        }
         loadUser()
 
         loadData()

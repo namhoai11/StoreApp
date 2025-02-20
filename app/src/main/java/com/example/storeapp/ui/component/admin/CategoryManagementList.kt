@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 import com.google.firebase.Timestamp
@@ -110,29 +111,7 @@ fun CategoryManagementItem(
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewCategoryManagementList() {
-    val sampleCategories = listOf(
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        ),
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        ),
-        CategoryModel(
-            id = 0,
-            name = "PC",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        )
-    )
+    val sampleCategories = DataDummy.categoryList
     StoreAppTheme {
         CategoryManagementList(sampleCategories)
     }

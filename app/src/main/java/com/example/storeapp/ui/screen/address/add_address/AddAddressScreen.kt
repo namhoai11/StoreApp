@@ -323,7 +323,6 @@ fun InputStreet(
     Column {
         Text(text = label, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 4.dp))
 
-
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { text ->

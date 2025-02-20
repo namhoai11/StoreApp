@@ -10,6 +10,7 @@ import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
+import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.screen.favorite.WishListViewModel
@@ -32,21 +33,18 @@ object AppViewModelProvider {
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
-
         }
 
         initializer {
             CartViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
-
         }
 
         initializer {
             CheckoutViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
-
         }
 
         initializer {
@@ -54,10 +52,7 @@ object AppViewModelProvider {
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository
             )
-
         }
-
-
         initializer {
             AddAddressViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
@@ -70,13 +65,16 @@ object AppViewModelProvider {
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
-
         }
         initializer {
             CouponManagementViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
-
+        }
+        initializer {
+            ProductManagementViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
         }
 
 
@@ -100,10 +98,7 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.firebaseAuthRepository
             )
         }
-
-
     }
-
 }
 
 fun CreationExtras.storeAppManagerApplication(): StoreAppManagerApplication =

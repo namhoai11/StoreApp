@@ -26,6 +26,8 @@ import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponMa
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponScreen
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
+import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.favorite.WishListScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
@@ -203,7 +205,7 @@ fun StoreAppNavHost(
                 onAddCouponClick = {
                     navController.navigate(AddCouponManagementDestination.createRoute(null, true))
                 },
-                onNavigateCouponDetail ={
+                onNavigateCouponDetail = {
                     navController.navigate(AddCouponManagementDestination.createRoute(it, false))
 
                 }
@@ -220,6 +222,13 @@ fun StoreAppNavHost(
 //            val couponId = backStackEntry.arguments?.getString("couponId")
 //            val isEditing = backStackEntry.arguments?.getBoolean("isEditing") ?: false
             AddCouponScreen(navController = navController)
+        }
+
+        composable(ProductManagementDestination.route) {
+            ProductManagementScreen(
+                navController = navController,
+                onAddProductClick = {},
+                onNavigateProductDetail = {})
         }
 
 
