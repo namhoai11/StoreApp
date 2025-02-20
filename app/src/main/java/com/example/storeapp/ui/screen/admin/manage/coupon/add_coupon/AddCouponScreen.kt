@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -71,9 +74,18 @@ import com.example.storeapp.ui.theme.StoreAppTheme
 import java.util.Calendar
 
 object AddCouponManagementDestination : NavigationDestination {
-    override val route = "addcouponmanagement"
+    override val route = "addcouponmanagement/?couponId={couponId}&isEditing={isEditing}"
     override val titleRes = R.string.addcouponmanage_title
+
+    fun createRoute(couponId: String?, isEditing: Boolean): String {
+        return if (couponId == null) {
+            "addcouponmanagement/?isEditing=$isEditing"  // Giữ format nhất quán
+        } else {
+            "addcouponmanagement/?couponId=$couponId&isEditing=$isEditing"
+        }
+    }
 }
+
 
 @Composable
 fun AddCouponScreen(
@@ -81,35 +93,53 @@ fun AddCouponScreen(
     viewModel: AddCouponViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val couponId = uiState.couponDetailsItem.id
+    val isEditing = uiState.isEditing
+
+    val textRole = when {
+        couponId == "" && isEditing -> {
+            "Thêm"
+        }
+
+        couponId != "" && isEditing -> {
+            "Sửa"
+        }
+
+        else -> {
+            "Chi tiết"
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCoupon()
+    }
+
     Scaffold(
         topBar = {
             AdminTopAppBar(
                 R.drawable.arrowback,
-                "Điều chỉnh",
+                textRole,
                 "Khuyến mãi",
                 { navController.navigateUp() },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
             )
         },
-//        bottomBar = {
-//            AdminBottomNavigationBar(
-//                navController = navController,
-//                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-//
-//            )
-//        }
     ) { innerPadding ->
         AddCouponContent(
-            innerPadding = innerPadding, uiState = uiState,
-            onNameChange = { viewModel.onNameChange(it) },
-            onQuantityChange = { viewModel.onQuantityChange(it) },
-            onTypeSelected = { viewModel.onTypeSelected(it) },
-            onValueChange = { viewModel.onValueChange(it) },
-            onStartDateChange = { viewModel.onStartDateChange(it) },
-            onEndDateChange = { viewModel.onEndDateChange(it) },
-            onDescriptionChange = { viewModel.onDescriptionChange(it) },
+            innerPadding = innerPadding,
+            uiState = uiState,
+            isEditing = isEditing,
+            editCouponClick = { viewModel.editCouponClicked() },
+            deleteCouponClick = { viewModel.removeCoupon{ navController.navigateUp() } },
+            onNameChange = { if (isEditing) viewModel.onNameChange(it) },
+            onQuantityChange = { if (isEditing) viewModel.onQuantityChange(it) },
+            onTypeSelected = { if (isEditing) viewModel.onTypeSelected(it) },
+            onValueChange = { if (isEditing) viewModel.onValueChange(it) },
+            onStartDateChange = { if (isEditing) viewModel.onStartDateChange(it) },
+            onEndDateChange = { if (isEditing) viewModel.onEndDateChange(it) },
+            onDescriptionChange = { if (isEditing) viewModel.onDescriptionChange(it) },
             onConfirm = {
-                viewModel.addCoupon { navController.navigateUp() }
+                viewModel.addOrUpdateCoupon()
             }
         )
     }
@@ -120,6 +150,9 @@ fun AddCouponScreen(
 fun AddCouponContent(
     innerPadding: PaddingValues,
     uiState: AddCouponUiState,
+    isEditing: Boolean,
+    editCouponClick: () -> Unit = {},
+    deleteCouponClick: () -> Unit = {},
     onNameChange: (String) -> Unit = {},
     onQuantityChange: (String) -> Unit = {},
     onTypeSelected: (CouponType) -> Unit = {},
@@ -129,7 +162,7 @@ fun AddCouponContent(
     onDescriptionChange: (String) -> Unit = {},
     onConfirm: () -> Unit = {} // Hàm xử lý khi bấm "Xác nhận"
 ) {
-
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -139,15 +172,64 @@ fun AddCouponContent(
             modifier = Modifier
                 .weight(1f) // Dùng weight để phần nội dung có thể cuộn được mà không che button
                 .padding(8.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Khuyến mãi",
-                color = Color.Black,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Khuyến mãi",
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Box(
+                    contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(32.dp)
+                        .background(
+                            color = Color.Cyan,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .clickable {
+                            editCouponClick()
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.edit),
+                        contentDescription = "Edit Icon",
+                        tint = Color.White, // Đặt màu icon thành đen
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Box(
+                    contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(32.dp)
+                        .background(
+                            color = Color.Red,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .clickable {
+                            deleteCouponClick()
+                        }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_trash),
+                        contentDescription = "Trash Icon",
+                        tint = Color.White, // Đặt màu icon thành đen
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -183,11 +265,14 @@ fun AddCouponContent(
 
             AddTextField(
                 title = "Tên",
+                isEditing = isEditing,
                 valueInput = uiState.couponDetailsItem.name,
-                onValueChange = onNameChange
-            )
+                onValueChange = onNameChange,
+
+                )
             AddTextField(
                 title = "Số lượng",
+                isEditing = isEditing,
                 valueInput = uiState.quantityInput,
                 onValueChange = onQuantityChange,
                 isNumberInput = true
@@ -195,12 +280,14 @@ fun AddCouponContent(
 
             AddTypeField(
                 title = "Loại",
+                isEditing = isEditing,
                 selectedType = uiState.couponDetailsItem.type,
                 onTypeSelected = onTypeSelected
             )
 
             AddTextField(
                 title = "Giá trị",
+                isEditing = isEditing,
                 valueInput = uiState.valueInput,
                 onValueChange = onValueChange,
                 isNumberInput = true,
@@ -208,44 +295,44 @@ fun AddCouponContent(
 
             AddDateField(
                 title = "Bắt đầu",
+                isEditing = isEditing,
                 dateInput = timestampToDateOnlyString(uiState.couponDetailsItem.startDate),
                 onDateChange = onStartDateChange
             )
             AddDateField(
                 title = "Kết thúc",
+                isEditing = isEditing,
                 dateInput = timestampToDateOnlyString(uiState.couponDetailsItem.endDate),
                 onDateChange = onEndDateChange
             )
             AddLargeTextField(
                 title = "Mô tả",
+                isEditing = isEditing,
                 valueInput = uiState.couponDetailsItem.description,
                 onValueChange = onDescriptionChange
             )
         }
-        // Nút xác nhận cố định dưới cùng
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(color = Color.White),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
+        if (isEditing) {
+            Box(
                 modifier = Modifier
-                    .height(87.dp)
                     .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(10.dp),
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
+                    .height(100.dp)
+                    .background(color = Color.White),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Xác nhận",
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
+                Button(
+                    modifier = Modifier
+                        .height(87.dp)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = onConfirm,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(text = "Xác nhận", fontSize = 14.sp, color = Color.White)
+                }
             }
         }
     }
@@ -253,7 +340,8 @@ fun AddCouponContent(
 
 @Composable
 fun AddTextField(
-    modifier: Modifier = Modifier,
+//    modifier: Modifier = Modifier,
+    isEditing: Boolean,
     title: String,
     valueInput: String = "",
     onValueChange: (String) -> Unit,
@@ -278,36 +366,51 @@ fun AddTextField(
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        TextField(
-            value = valueInput,
-            onValueChange = onValueChange,
-            modifier = modifier
+        Box(
+            modifier = Modifier
                 .width(250.dp)
                 .height(66.dp)
-                .border(
-                    1.dp, Color(0xFF7D32A8),
-                    shape = RoundedCornerShape(12.dp)
+                .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp)), // Viền ngoài
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize() // Đảm bảo kích thước bằng với Box cha
+                    .background(
+                        if (isEditing) Color.Transparent else Color.LightGray,
+                        shape = RoundedCornerShape(12.dp)
+                    ) // Nền bên trong viền
+                    .padding(4.dp) // Padding chỉ áp dụng lên nội dung bên trong
+            ) {
+                TextField(
+                    value = valueInput,
+                    onValueChange = onValueChange,
+                    enabled = isEditing,
+                    modifier = Modifier.fillMaxSize(),
+                    keyboardOptions = if (isNumberInput) {
+                        KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                    } else {
+                        KeyboardOptions.Default
+                    },
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Start,
+                        color = Color(0xFF7D32A8),
+                        fontSize = 16.sp
+                    ),
+                    visualTransformation = VisualTransformation.None,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent
+                    )
                 )
-                .padding(4.dp),
-            keyboardOptions = if (isNumberInput) {
-                KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-            } else {
-                KeyboardOptions.Default
-            },
-            textStyle = TextStyle(
-                textAlign = TextAlign.Start,
-                color = Color(0xFF7D32A8),
-                fontSize = 16.sp
-            ),
-            visualTransformation = VisualTransformation.None,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
+            }
+        }
+
     }
     HorizontalDivider(
         thickness = 1.dp,
@@ -319,6 +422,7 @@ fun AddTextField(
 fun AddLargeTextField(
     modifier: Modifier = Modifier,
     title: String,
+    isEditing: Boolean,
     valueInput: String = "",
     onValueChange: (String) -> Unit,
 ) {
@@ -343,37 +447,52 @@ fun AddLargeTextField(
         }
 
         // TextField nhập mô tả
-        TextField(
-            value = valueInput,
-            onValueChange = onValueChange,
-            modifier = modifier
+        Box(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp) // Cao hơn để nhập mô tả dài
-                .border(
-                    1.dp, Color(0xFF7D32A8),
-                    shape = RoundedCornerShape(12.dp)
+                .height(150.dp)
+                .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp)), // Viền ngoài
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize() // Đảm bảo kích thước bằng với Box cha
+                    .background(
+                        if (isEditing) Color.Transparent else Color.LightGray,
+                        shape = RoundedCornerShape(12.dp)
+                    ) // Nền bên trong viền
+                    .padding(4.dp) // Padding chỉ áp dụng lên nội dung bên trong
+            ) {
+                TextField(
+                    value = valueInput,
+                    onValueChange = onValueChange,
+                    enabled = isEditing,
+                    modifier = modifier
+                        .fillMaxSize(),
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Start,
+                        color = Color(0xFF7D32A8),
+                        fontSize = 16.sp
+                    ),
+                    maxLines = Int.MAX_VALUE, // Cho phép nhập nhiều dòng
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences
+                    ),
+                    visualTransformation = VisualTransformation.None,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent
+                    )
                 )
-                .padding(4.dp),
-            textStyle = TextStyle(
-                textAlign = TextAlign.Start,
-                color = Color(0xFF7D32A8),
-                fontSize = 16.sp
-            ),
-            maxLines = Int.MAX_VALUE, // Cho phép nhập nhiều dòng
-            keyboardOptions = KeyboardOptions.Default.copy(
-                capitalization = KeyboardCapitalization.Sentences
-            ),
-            visualTransformation = VisualTransformation.None,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
+            }
 
-        // Thanh phân cách
+
+        }
         HorizontalDivider(
             thickness = 1.dp,
             modifier = Modifier.padding(16.dp)
@@ -384,6 +503,7 @@ fun AddLargeTextField(
 @Composable
 fun AddDateField(
     title: String,
+    isEditing: Boolean,
     dateInput: String = "",
     onDateChange: (String) -> Unit
 
@@ -407,7 +527,11 @@ fun AddDateField(
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        DatePickerField(selectedDate = dateInput, onDateSelected = onDateChange)
+        DatePickerField(
+            isEditing = isEditing,
+            selectedDate = dateInput,
+            onDateSelected = onDateChange
+        )
     }
     HorizontalDivider(
         thickness = 1.dp,
@@ -418,7 +542,8 @@ fun AddDateField(
 @SuppressLint("DefaultLocale")
 @Composable
 fun DatePickerField(
-    modifier: Modifier = Modifier,
+//    modifier: Modifier = Modifier,
+    isEditing: Boolean,
     selectedDate: String,
     onDateSelected: (String) -> Unit
 ) {
@@ -435,50 +560,64 @@ fun DatePickerField(
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
-
     Box(
-        modifier = modifier
+        modifier = Modifier
             .width(250.dp)
             .height(66.dp)
-            .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp))
-            .clickable { datePickerDialog.show() }
-            .padding(4.dp)
+            .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp)), // Viền ngoài
+        contentAlignment = Alignment.Center
     ) {
-        OutlinedTextField(
-            value = selectedDate,
-            onValueChange = {},
-            readOnly = true,
-            modifier = Modifier.fillMaxSize(),
-            trailingIcon = {
-                Icon(
-                    Icons.Default.DateRange, contentDescription = "Chọn ngày",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clickable { datePickerDialog.show() }
+        Box(
+            modifier = Modifier
+                .matchParentSize() // Đảm bảo kích thước bằng với Box cha
+                .background(
+                    if (isEditing) Color.Transparent else Color.LightGray,
+                    shape = RoundedCornerShape(12.dp)
+                ) // Nền bên trong viền
+                .padding(4.dp) // Padding chỉ áp dụng lên nội dung bên trong
+        ) {
+            OutlinedTextField(
+                value = selectedDate,
+                onValueChange = {},
+                readOnly = true,
+                enabled = isEditing,
+                modifier = Modifier
+                    .fillMaxSize(),
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.DateRange, contentDescription = "Chọn ngày",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable { datePickerDialog.show() }
+                    )
+                },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Start,
+                    color = Color(0xFF7D32A8),
+                    fontSize = 16.sp
+                ),
+                visualTransformation = VisualTransformation.None,
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,  // Thêm dòng này
+                    errorIndicatorColor = Color.Transparent     // Nếu có trạng thái lỗi
                 )
-            },
-            textStyle = TextStyle(
-                textAlign = TextAlign.Start,
-                color = Color(0xFF7D32A8),
-                fontSize = 16.sp
-            ),
-            visualTransformation = VisualTransformation.None,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
             )
-        )
+        }
+
     }
 
 }
 
 @Composable
 fun AddTypeField(
-    modifier: Modifier = Modifier,
+//    modifier: Modifier = Modifier,
     title: String,
+    isEditing: Boolean,
     selectedType: CouponType,
     onTypeSelected: (CouponType) -> Unit
 ) {
@@ -501,7 +640,11 @@ fun AddTypeField(
             modifier = Modifier.padding(8.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
-        FilterType(selectedType = selectedType, onTypeSelected = onTypeSelected)
+        FilterType(
+            isEditing = isEditing,
+            selectedType = selectedType,
+            onTypeSelected = onTypeSelected
+        )
     }
     HorizontalDivider(
         thickness = 1.dp,
@@ -513,6 +656,7 @@ fun AddTypeField(
 @Composable
 fun FilterType(
     modifier: Modifier = Modifier,
+    isEditing: Boolean,
     selectedType: CouponType,
     onTypeSelected: (CouponType) -> Unit
 ) {
@@ -521,46 +665,61 @@ fun FilterType(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { if (isEditing) expanded = !expanded }
     ) {
-        TextField(
-            value = selectedOption,
-            onValueChange = { },
-            readOnly = true,
-            trailingIcon = {
-                Icon(
-                    Icons.Default.ArrowDropDown, // Thay bằng icon dropdown
-                    contentDescription = "Dropdown Icon",
-                    modifier = Modifier
-                        .padding(8.dp),
-                    tint = MaterialTheme.colorScheme.outline
-                )
-            },
-            textStyle = TextStyle(
-                textAlign = TextAlign.Start,
-                color = Color(0xFF7D32A8),
-                fontSize = 16.sp
-            ),
-            shape = RoundedCornerShape(12.dp),
-            visualTransformation = VisualTransformation.None,
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            modifier = modifier
-                .menuAnchor() // Gắn menu vào TextField
+        Box(
+            modifier = Modifier
                 .width(250.dp)
                 .height(66.dp)
-                .border(
-                    1.dp, Color(0xFF7D32A8),
-                    shape = RoundedCornerShape(12.dp)
+                .border(1.dp, Color(0xFF7D32A8), shape = RoundedCornerShape(12.dp)), // Viền ngoài
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize() // Đảm bảo kích thước bằng với Box cha
+                    .background(
+                        if (isEditing) Color.Transparent else Color.LightGray,
+                        shape = RoundedCornerShape(12.dp)
+                    ) // Nền bên trong viền
+                    .padding(4.dp) // Padding chỉ áp dụng lên nội dung bên trong
+            ) {
+                TextField(
+                    value = selectedOption,
+                    onValueChange = { },
+                    readOnly = true,
+                    enabled = isEditing, // Chặn chỉnh sửa nếu không trong trạng thái sửa
+                    trailingIcon = {
+                        Icon(
+                            Icons.Default.ArrowDropDown, // Thay bằng icon dropdown
+                            contentDescription = "Dropdown Icon",
+                            modifier = Modifier
+                                .padding(8.dp),
+                            tint = MaterialTheme.colorScheme.outline
+                        )
+                    },
+                    textStyle = TextStyle(
+                        textAlign = TextAlign.Start,
+                        color = Color(0xFF7D32A8),
+                        fontSize = 16.sp
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    visualTransformation = VisualTransformation.None,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,  // Thêm dòng này
+                        errorIndicatorColor = Color.Transparent     // Nếu có trạng thái lỗi
+                    ),
+                    modifier = modifier
+                        .menuAnchor() // Gắn menu vào TextField
+                        .fillMaxSize()
                 )
-                .padding(4.dp),
-        )
+            }
 
+        }
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -587,7 +746,8 @@ fun PreviewAddCouponContent() {
     StoreAppTheme {
         AddCouponContent(
             innerPadding = PaddingValues(0.dp),
-            uiState = DataDummy.addCouponUiState
+            uiState = DataDummy.addCouponUiState,
+            isEditing = true
         )
     }
 }
@@ -599,6 +759,7 @@ fun PreviewAddTextField() {
     StoreAppTheme {
         AddTextField(
             title = "So Luong",
+            isEditing = true,
             onValueChange = {},
         )
     }
@@ -610,6 +771,7 @@ fun PreviewDatePickerField() {
     var selectedDate by remember { mutableStateOf("01/01/2024") }
 
     DatePickerField(
+        isEditing = true,
         selectedDate = selectedDate,
         onDateSelected = { newDate -> selectedDate = newDate }
     )
@@ -622,6 +784,7 @@ fun PreviewAddDateField() {
 
     AddDateField(
         title = "Ngày sinh",
+        isEditing = true,
         dateInput = selectedDate,
         onDateChange = { newDate -> selectedDate = newDate }
     )
@@ -635,6 +798,7 @@ fun FilterTypePreview() {
         var selectedType by remember { mutableStateOf(CouponType.PERCENTAGE) }
 
         FilterType(
+            isEditing = true,
             selectedType = selectedType,
             onTypeSelected = { selectedType = it }
         )

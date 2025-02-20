@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
+import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
@@ -66,6 +67,13 @@ object AppViewModelProvider {
 
         initializer {
             AddCouponViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+
+        }
+        initializer {
+            CouponManagementViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
 

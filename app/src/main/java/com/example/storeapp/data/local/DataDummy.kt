@@ -142,7 +142,7 @@ object DataDummy {
         maxDiscount = null,
         minOrderValue = null,
         quantity = 1,
-        active = true,
+                    active = CouponActive.ALL,
         startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
         endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
         color1 = Color(0xFF9733EE),
@@ -161,7 +161,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = null,
             quantity = 1,
-            active = true,
+                        active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF9733EE),
@@ -177,7 +177,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = 100.0,
             quantity = 1,
-            active = true,
+                        active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFFFFA726),
@@ -193,7 +193,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = 50.0,
             quantity = 1,
-            active = true,
+                        active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF00C9FF),
@@ -216,7 +216,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = null,
                     quantity = 1,
-                    active = true,
+                                active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFF9733EE),
@@ -234,7 +234,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = 100.0,
                     quantity = 1,
-                    active = true,
+                                active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFFFFA726),
@@ -252,7 +252,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = 50.0,
                     quantity = 1,
-                    active = true,
+                                active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFF00C9FF),
@@ -275,7 +275,7 @@ object DataDummy {
             maxDiscount = 100.0,
             minOrderValue = 500.0,
             quantity = 10,
-            active = true,
+                        active = CouponActive.ALL,
             startDate = Timestamp.now(),
             endDate = Timestamp.now(),
             color1 = Color.Blue,
@@ -350,7 +350,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = null,
             quantity = 1,
-            active = true,
+            active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF9733EE),

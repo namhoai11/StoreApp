@@ -15,6 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,14 +25,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CouponActive
+import com.example.storeapp.model.CouponModel
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.CouponManagementList
 import com.example.storeapp.ui.component.admin.FilterList
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 object CouponManagementDestination : NavigationDestination {
@@ -40,8 +47,15 @@ object CouponManagementDestination : NavigationDestination {
 @Composable
 fun CouponManagementScreen(
     navController: NavController,
-    onAddCouponClick: () -> Unit={}
+    onAddCouponClick: () -> Unit = {},
+    onNavigateCouponDetail: (String) -> Unit,
+    viewModel: CouponManagementViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCoupons()
+    }
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -62,8 +76,12 @@ fun CouponManagementScreen(
     ) { innerPadding ->
         CouponManagementContent(
             innerPadding = innerPadding,
-            uiState = DataDummy.couponManagementUiState,
-            onAddCouponClick = onAddCouponClick
+            uiState = uiState,
+            onAddCouponClick = onAddCouponClick,
+            onFilterSelected = { viewModel.selectActive(it) },
+            onCouponItemClick = {
+                onNavigateCouponDetail(it.code)
+            }
         )
     }
 }
@@ -73,7 +91,9 @@ fun CouponManagementScreen(
 fun CouponManagementContent(
     innerPadding: PaddingValues,
     uiState: CouponManagementUiState,
-    onAddCouponClick: () -> Unit = {}
+    onAddCouponClick: () -> Unit = {},
+    onFilterSelected: (String) -> Unit = {},
+    onCouponItemClick: (CouponModel) -> Unit = {}
 ) {
     val filterList = CouponActive.entries.map { it.toString() }
     Column(
@@ -86,8 +106,10 @@ fun CouponManagementContent(
                 .weight(1f)
                 .padding(16.dp)
         ) {
-            FilterList(filterList = filterList, onFilterSelected = {})
-            CouponManagementList(listCoupon = uiState.currentListCoupon)
+            FilterList(filterList = filterList, onFilterSelected = onFilterSelected)
+            CouponManagementList(
+                listCoupon = uiState.currentListCoupon,
+                couponItemClick = { onCouponItemClick(it) })
         }
         Card(
             border = BorderStroke(

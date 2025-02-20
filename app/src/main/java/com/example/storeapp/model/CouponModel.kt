@@ -13,13 +13,20 @@ data class CouponModel(
     val maxDiscount: Double? = null,         // Mức giảm tối đa có thể null
     val minOrderValue: Double? = null,       // Giá trị đơn hàng tối thiểu có thể null
     val quantity: Int = 0,                   // Số lượng mặc định là 1
-    val active: Boolean = true,              // Mặc định coupon còn hoạt động
+    val active: CouponActive = CouponActive.ALL,              // Mặc định coupon còn hoạt động
     val startDate: Timestamp = Timestamp.now(), // Ngày bắt đầu mặc định là thời điểm hiện tại
     val endDate: Timestamp = Timestamp.now(),   // Ngày hết hạn mặc định là thời điểm hiện tại
     val color1: Color? = null,               // Màu UI có thể null
     val color2: Color? = null                // Màu UI có thể null
-)
-
+){
+    constructor() : this(
+        id = "", code = "", name = "", description = "",
+        type = CouponType.PERCENTAGE, value = 0.0,
+        maxDiscount = null, minOrderValue = null, quantity = 0,
+        active = CouponActive.ALL, startDate = Timestamp.now(), endDate = Timestamp.now(),
+        color1 = null, color2 = null
+    )
+}
 
 
 enum class CouponType {

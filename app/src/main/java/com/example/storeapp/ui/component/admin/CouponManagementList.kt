@@ -1,6 +1,7 @@
 ﻿package com.example.storeapp.ui.component.admin
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,14 +32,15 @@ import com.example.storeapp.ui.theme.StoreAppTheme
 @Composable
 fun CouponManagementList(
     modifier: Modifier = Modifier,
-    listCoupon: List<CouponModel>
+    listCoupon: List<CouponModel>,
+    couponItemClick: (CouponModel) -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(listCoupon) { item ->
-            CouponManagementItem(couponItem = item)
+            CouponManagementItem(couponItem = item, couponItemClick = { couponItemClick(item) })
         }
     }
 }
@@ -46,6 +48,7 @@ fun CouponManagementList(
 @Composable
 fun CouponManagementItem(
     couponItem: CouponModel,
+    couponItemClick: () -> Unit = {}
 ) {
     val value = when (couponItem.type) {
         CouponType.PERCENTAGE -> "${couponItem.value * 100}%"
@@ -54,7 +57,10 @@ fun CouponManagementItem(
     }
     Card(
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(10.dp)
+        elevation = CardDefaults.cardElevation(10.dp),
+        modifier = Modifier.clickable {
+            couponItemClick()
+        }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -104,7 +110,7 @@ fun CouponManagementItem(
                         fontSize = 14.sp,
                     )
                     Text(
-                        text = timestampToDateString(couponItem.startDate),
+                        text = timestampToDateString(couponItem.endDate),
                         color = Color.Gray,
                         fontSize = 14.sp,
                     )

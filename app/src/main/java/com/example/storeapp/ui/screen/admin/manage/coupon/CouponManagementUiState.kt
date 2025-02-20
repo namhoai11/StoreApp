@@ -5,6 +5,7 @@ import com.example.storeapp.model.CouponModel
 
 data class CouponManagementUiState(
     val listCoupon: List<CouponModel> = emptyList(),
+//    val couponSelected: CouponModel = CouponModel(),
     val currentCouponActive: CouponActive = CouponActive.ALL,
     val listCouponByActive: Map<CouponActive, List<CouponModel>> = emptyMap(),
     val isLoading: Boolean = false,

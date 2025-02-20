@@ -200,9 +200,25 @@ fun StoreAppNavHost(
         }
         composable(CouponManagementDestination.route) {
             CouponManagementScreen(navController = navController,
-                onAddCouponClick = { navController.navigate(AddCouponManagementDestination.route) })
+                onAddCouponClick = {
+                    navController.navigate(AddCouponManagementDestination.createRoute(null, true))
+                },
+                onNavigateCouponDetail ={
+                    navController.navigate(AddCouponManagementDestination.createRoute(it, false))
+
+                }
+            )
         }
-        composable(AddCouponManagementDestination.route) {
+        composable(
+            route = AddCouponManagementDestination.route,
+            arguments = listOf(
+                navArgument("couponId") { type = NavType.StringType; nullable = true },
+                navArgument("isEditing") { type = NavType.BoolType; defaultValue = false }
+            )
+        ) {
+//            backStackEntry ->
+//            val couponId = backStackEntry.arguments?.getString("couponId")
+//            val isEditing = backStackEntry.arguments?.getBoolean("isEditing") ?: false
             AddCouponScreen(navController = navController)
         }
 

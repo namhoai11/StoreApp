@@ -525,4 +525,73 @@ class FirebaseFireStoreRepository {
             Result.failure(e) // Trả về lỗi
         }
     }
+
+    suspend fun addOrUpdateCouponToFireStore(coupon: CouponModel): Result<Unit> {
+        val couponRef = firestore.collection("Coupons") // Collection lưu coupon
+
+        return try {
+            val couponDocumentRef = if (coupon.id.isNotBlank() && coupon.code.isNotBlank()) {
+                couponRef.document(coupon.id)
+            } else {
+                couponRef.document()
+            }
+
+            val updatedCoupon = coupon.copy(
+                id = couponDocumentRef.id,
+                code = coupon.code.ifBlank { couponDocumentRef.id }
+            )
+
+            // Dùng set với merge để không ghi đè toàn bộ nếu update
+            couponDocumentRef.set(updatedCoupon, SetOptions.merge()).await()
+
+            Log.d("Firestore", "Coupon added/updated successfully")
+            Result.success(Unit) // Thành công
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error adding/updating Coupon", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+
+    suspend fun getCoupons(): Result<List<CouponModel>> {
+        return try {
+            val snapshot = firestore.collection("Coupons").get().await()
+            val coupons = snapshot.documents.mapNotNull { it.toObject(CouponModel::class.java) }
+            Log.d("Firestore", "Confirm loading Coupons")
+
+            Result.success(coupons)
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error loading Coupons", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getCouponById(couponId: String): Result<CouponModel> {
+        return try {
+            val doc = firestore.collection("Coupons").document(couponId).get().await()
+            val coupon = doc.toObject(CouponModel::class.java)
+            if (coupon != null) {
+                Result.success(coupon)
+            } else {
+                Result.failure(Exception("Không tìm thấy coupon"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun removeCouponById(couponId: String): Result<Unit> {
+        val couponRef = firestore.collection("Coupons").document(couponId)
+        return try {
+            couponRef.delete().await()
+            Log.d("FireStore", "coupon delete successfully: $couponId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FireStore", "coupon delete fail: $e")
+
+            Result.failure(e)
+        }
+    }
+
+
 }
