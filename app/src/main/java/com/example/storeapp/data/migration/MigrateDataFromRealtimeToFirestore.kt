@@ -49,7 +49,7 @@ suspend fun migrateDataFromRealtimeToFirestore() {
                     (availableOptionsMap?.get("listColorOptions") as? List<Map<String, Any>>)?.map {
                         ColorOptions(
                             colorName = it["color"] as? String ?: "",
-                            imagesColor = it["image"] as? String ?: ""
+                            imageColorUrl = it["image"] as? String ?: ""
                         )
                     } ?: emptyList()
 

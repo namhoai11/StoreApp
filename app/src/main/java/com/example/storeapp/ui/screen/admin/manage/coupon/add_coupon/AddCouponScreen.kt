@@ -128,16 +128,16 @@ fun AddCouponScreen(
         AddCouponContent(
             innerPadding = innerPadding,
             uiState = uiState,
-            isEditing = isEditing,
+            isEditing = uiState.isEditing,
             editCouponClick = { viewModel.editCouponClicked() },
-            deleteCouponClick = { viewModel.removeCoupon{ navController.navigateUp() } },
-            onNameChange = { if (isEditing) viewModel.onNameChange(it) },
-            onQuantityChange = { if (isEditing) viewModel.onQuantityChange(it) },
-            onTypeSelected = { if (isEditing) viewModel.onTypeSelected(it) },
-            onValueChange = { if (isEditing) viewModel.onValueChange(it) },
-            onStartDateChange = { if (isEditing) viewModel.onStartDateChange(it) },
-            onEndDateChange = { if (isEditing) viewModel.onEndDateChange(it) },
-            onDescriptionChange = { if (isEditing) viewModel.onDescriptionChange(it) },
+            deleteCouponClick = { viewModel.removeCoupon { navController.navigateUp() } },
+            onNameChange = { if (uiState.isEditing) viewModel.onNameChange(it) },
+            onQuantityChange = { if (uiState.isEditing) viewModel.onQuantityChange(it) },
+            onTypeSelected = { if (uiState.isEditing) viewModel.onTypeSelected(it) },
+            onValueChange = { if (uiState.isEditing) viewModel.onValueChange(it) },
+            onStartDateChange = { if (uiState.isEditing) viewModel.onStartDateChange(it) },
+            onEndDateChange = { if (uiState.isEditing) viewModel.onEndDateChange(it) },
+            onDescriptionChange = { if (uiState.isEditing) viewModel.onDescriptionChange(it) },
             onConfirm = {
                 viewModel.addOrUpdateCoupon()
             }
@@ -187,47 +187,48 @@ fun AddCouponContent(
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Box(
-                    contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(32.dp)
-                        .background(
-                            color = Color.Cyan,
-                            shape = RoundedCornerShape(10.dp)
+                if (!isEditing) {
+                    Box(
+                        contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(32.dp)
+                            .background(
+                                color = Color.Cyan,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable {
+                                editCouponClick()
+                            }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.edit),
+                            contentDescription = "Edit Icon",
+                            tint = Color.White, // Đặt màu icon thành đen
+                            modifier = Modifier.size(20.dp)
                         )
-                        .clickable {
-                            editCouponClick()
-                        }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.edit),
-                        contentDescription = "Edit Icon",
-                        tint = Color.White, // Đặt màu icon thành đen
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Box(
-                    contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .size(32.dp)
-                        .background(
-                            color = Color.Red,
-                            shape = RoundedCornerShape(10.dp)
+                    }
+                    Box(
+                        contentAlignment = Alignment.Center, // Căn giữa nội dung trong Box
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(32.dp)
+                            .background(
+                                color = Color.Red,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable {
+                                deleteCouponClick()
+                            }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_trash),
+                            contentDescription = "Trash Icon",
+                            tint = Color.White, // Đặt màu icon thành đen
+                            modifier = Modifier.size(20.dp)
                         )
-                        .clickable {
-                            deleteCouponClick()
-                        }
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icon_trash),
-                        contentDescription = "Trash Icon",
-                        tint = Color.White, // Đặt màu icon thành đen
-                        modifier = Modifier.size(20.dp)
-                    )
+                    }
                 }
-
             }
 
             Row(
@@ -747,7 +748,7 @@ fun PreviewAddCouponContent() {
         AddCouponContent(
             innerPadding = PaddingValues(0.dp),
             uiState = DataDummy.addCouponUiState,
-            isEditing = true
+            isEditing = false
         )
     }
 }

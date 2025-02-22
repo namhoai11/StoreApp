@@ -207,7 +207,6 @@ fun StoreAppNavHost(
                 },
                 onNavigateCouponDetail = {
                     navController.navigate(AddCouponManagementDestination.createRoute(it, false))
-
                 }
             )
         }
@@ -218,9 +217,6 @@ fun StoreAppNavHost(
                 navArgument("isEditing") { type = NavType.BoolType; defaultValue = false }
             )
         ) {
-//            backStackEntry ->
-//            val couponId = backStackEntry.arguments?.getString("couponId")
-//            val isEditing = backStackEntry.arguments?.getBoolean("isEditing") ?: false
             AddCouponScreen(navController = navController)
         }
 

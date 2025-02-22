@@ -1,5 +1,6 @@
 ﻿package com.example.storeapp.data.local
 
+import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
 import com.example.storeapp.model.AvailableOptions
@@ -27,6 +28,7 @@ import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementUiState
+import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductUiState
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.screen.checkout.CheckoutUiState
 import com.google.firebase.Timestamp
@@ -480,19 +482,25 @@ object DataDummy {
     val listColorOptions = listOf(
         ColorOptions(
             colorName = "Red",
-            imagesColor = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
+            imageColorUri = null,
+            imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Blue",
-            imagesColor = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
+            imageColorUri = null,
+
+            imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Pink",
-            imagesColor = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
+            imageColorUri = null,
+
+            imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Yellow",
-            imagesColor = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
+            imageColorUri = null,
+            imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         )
 
     )
@@ -625,5 +633,39 @@ object DataDummy {
         currentCategoryId = 1,
         showCategoryLoading = false,
         showRecommendedLoading = false,
+    )
+
+
+    val fakeUri = Uri.parse("android.resource://com.example.app/drawable/sample_image")
+
+    val addProductUiState = AddProductUiState(
+        productDetailsItem = productItem,
+        listCategory = categoryList,
+        categoryNameSelected = "Laptop",
+        priceInput = "25000000",
+        listImageUriSelected = listOf(
+            fakeUri,
+            fakeUri,
+        ),
+
+
+        listProductOptions = listOf(
+            ProductOptions(optionsName = "16GB RAM", priceForOptions = 1000000.0),
+            ProductOptions(optionsName = "32GB RAM", priceForOptions = 2000000.0)
+        ),
+        optionName = "SSD 512GB",
+        priceForOption = 2000000.0,
+        listColorOptions = listOf(
+            ColorOptions(colorName = "Đen", imageColorUrl = "black_image_url"),
+            ColorOptions(colorName = "Bạc", imageColorUrl = "silver_image_url")
+        ),
+        stockByVariant = listOf(
+            StockByVariant(colorName = "Đen", optionName = "16GB RAM", quantity = 10),
+            StockByVariant(colorName = "Bạc", optionName = "32GB RAM", quantity = 5)
+        ),
+        isEditing = true,
+        isLoading = false,
+        errorMessage = null,
+        successMessage = "Sản phẩm đã được thêm thành công!"
     )
 }

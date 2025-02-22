@@ -3,7 +3,6 @@ package com.example.storeapp.ui.screen.productdetails
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
-import com.example.storeapp.model.Stock
 import com.google.firebase.Timestamp
 
 fun defaultItemsModel() = ProductModel(

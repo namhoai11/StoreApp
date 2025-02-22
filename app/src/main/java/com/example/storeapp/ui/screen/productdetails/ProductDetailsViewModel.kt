@@ -83,7 +83,7 @@ class ProductDetailsViewModel(
                 //Load ListStandardImage
                 val listStandardImage = productDetails.images.toMutableList()
                 productDetails.availableOptions?.listColorOptions?.forEachIndexed { _, value ->
-                    listStandardImage += value.imagesColor
+                    listStandardImage += value.imageColorUrl
                 }
                 Log.d("ProductDetailsViewmodel", "lisStandardImage: $listStandardImage")
 
@@ -217,7 +217,7 @@ class ProductDetailsViewModel(
         } else {
             val stockByVariant =
                 _uiState.value.productDetailsItem.stockByVariant.filter { it.colorName == _uiState.value.listColorOptions[selectedIndex].colorName }
-            val currentImage = _uiState.value.listColorOptions[selectedIndex].imagesColor
+            val currentImage = _uiState.value.listColorOptions[selectedIndex].imageColorUrl
             _uiState.update { it ->
                 it.copy(
                     selectedColorUrl = selectedIndex,

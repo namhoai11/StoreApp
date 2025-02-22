@@ -10,6 +10,7 @@ import com.example.storeapp.model.SliderModel
 import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.CartAction
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -592,6 +593,34 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun addOrUpdateProduct(product: ProductModel): Result<Unit> {
+        val productRef = firestore.collection("Products") // Collection lưu sản phẩm
+
+        return try {
+            val productDocumentRef = if (product.id.isNotBlank()) {
+                productRef.document(product.id)
+            } else {
+                productRef.document()
+            }
+
+            val updatedProduct = product.copy(
+                id = productDocumentRef.id,
+                createdAt = product.createdAt.takeIf { product.id.isNotBlank() } ?: Timestamp.now(),
+                updatedAt = Timestamp.now()
+            )
+
+            // Sử dụng set với merge để cập nhật dữ liệu mà không ghi đè toàn bộ
+            productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
+
+            Log.d("Firestore", "Product added/updated successfully")
+            Result.success(Unit) // Thành công
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error adding/updating Product", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
 
 
 }

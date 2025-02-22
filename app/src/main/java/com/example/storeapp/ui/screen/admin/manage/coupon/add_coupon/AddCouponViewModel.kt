@@ -25,6 +25,8 @@ class AddCouponViewModel(
     private val couponId: String? = savedStateHandle["couponId"]
     private val isEditing: Boolean = savedStateHandle["isEditing"] ?: false
 
+
+
     fun loadCoupon() {
         viewModelScope.launch {
             if (couponId.isNullOrEmpty()) {
@@ -43,6 +45,8 @@ class AddCouponViewModel(
                         isLoading = false
                     )
                 }
+                Log.d("AddCouponViewModel", "isEditing : $isEditing")
+
                 Log.d("AddCouponViewModel", "Coupon Loaded: ${_uiState.value.couponDetailsItem}")
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }

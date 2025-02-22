@@ -1,5 +1,6 @@
 package com.example.storeapp.model
 
+import android.net.Uri
 import com.google.firebase.Timestamp
 
 
@@ -8,7 +9,7 @@ data class ProductModel(
     val name: String = "",
     val images: List<String> = emptyList(),
     val price: Double = 0.0,
-    val stockQuantity: Int = 0,  // Tổng số lượng của tất cả biến thể
+    val stockQuantity: Int = 0,
     val brandId: String? = null,
     val categoryId: String = "",
     val hidden: Boolean = false,
@@ -17,7 +18,7 @@ data class ProductModel(
     val rating: Double = 0.0,
     val availableOptions: AvailableOptions? = null,
     val options: List<String> = emptyList(),
-    val stockByVariant: List<StockByVariant> = emptyList(), // 🔥 Thêm danh sách tồn kho theo biến thể
+    val stockByVariant: List<StockByVariant> = emptyList(),
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp = Timestamp.now(),
     val brand: BrandModel? = null
@@ -97,20 +98,25 @@ data class AvailableOptions(
 }
 
 data class ProductOptions(
-    val optionsName: String? = null,
+    val optionsName: String = "",
     val priceForOptions: Double = 0.0
 ) {
-    constructor() : this(null, 0.0)
+    constructor() : this("", 0.0)
     constructor(optionsName: String) : this(optionsName, 0.0)
 }
 
 data class ColorOptions(
     val colorName: String = "",
-    val imagesColor: String = ""
+    val imageColorUri: Uri? = null, // Ảnh tạm thời trước khi upload
+    val imageColorUrl: String = ""  // URL ảnh sau khi upload lên Firebase Storage
 ) {
-    constructor() : this("", "")
-    constructor(colorName: String) : this(colorName, "")
+    constructor() : this("", null, "")
+    constructor(colorName: String) : this(colorName, null, "")
+    constructor(colorName: String,imageColorUrl:String):this(colorName,null,imageColorUrl)
 }
+
+
+
 
 data class Stock(
     val ProductId: String,
