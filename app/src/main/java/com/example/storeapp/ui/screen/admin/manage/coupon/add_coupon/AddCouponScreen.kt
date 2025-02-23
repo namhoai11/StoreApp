@@ -73,18 +73,32 @@ import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 import java.util.Calendar
 
+//object AddCouponManagementDestination : NavigationDestination {
+//    override val route = "addcouponmanagement/?couponId={couponId}&isEditing={isEditing}"
+//    override val titleRes = R.string.addcouponmanage_title
+//
+//    fun createRoute(couponId: String?, isEditing: Boolean): String {
+//        return if (couponId == null) {
+//            "addcouponmanagement/?isEditing=$isEditing"  // Giữ format nhất quán
+//        } else {
+//            "addcouponmanagement/?couponId=$couponId&isEditing=$isEditing"
+//        }
+//    }
+//}
+
 object AddCouponManagementDestination : NavigationDestination {
-    override val route = "addcouponmanagement/?couponId={couponId}&isEditing={isEditing}"
+    override val route = "addcouponmanagement?couponId={couponId}&isEditing={isEditing}"
     override val titleRes = R.string.addcouponmanage_title
 
     fun createRoute(couponId: String?, isEditing: Boolean): String {
         return if (couponId == null) {
-            "addcouponmanagement/?isEditing=$isEditing"  // Giữ format nhất quán
+            "addcouponmanagement?isEditing=$isEditing"
         } else {
-            "addcouponmanagement/?couponId=$couponId&isEditing=$isEditing"
+            "addcouponmanagement?couponId=$couponId&isEditing=$isEditing"
         }
     }
 }
+
 
 
 @Composable
@@ -95,7 +109,6 @@ fun AddCouponScreen(
     val uiState by viewModel.uiState.collectAsState()
     val couponId = uiState.couponDetailsItem.id
     val isEditing = uiState.isEditing
-
     val textRole = when {
         couponId == "" && isEditing -> {
             "Thêm"

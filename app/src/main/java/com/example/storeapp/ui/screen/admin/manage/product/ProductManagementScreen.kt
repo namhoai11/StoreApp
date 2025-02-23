@@ -140,7 +140,7 @@ fun ProductManagementContent(
                     }
             ) {
                 Text(
-                    text = "Thêm khuyến mãi",
+                    text = "Thêm sản phẩm",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
@@ -149,7 +149,6 @@ fun ProductManagementContent(
                 )
             }
         }
-
     }
 }
 

@@ -24,8 +24,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,27 +42,151 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.StockByVariant
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AddProductTextField
 import com.example.storeapp.ui.component.admin.AddValueLargeTextField
 import com.example.storeapp.ui.component.admin.AddValueTextField
+import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.ColorImagePicker
 import com.example.storeapp.ui.component.admin.FilterOption
 import com.example.storeapp.ui.component.admin.IconButton
 import com.example.storeapp.ui.component.admin.ImagePicker
 import com.example.storeapp.ui.component.function.formatCurrency2
+import com.example.storeapp.ui.component.function.formatNumber
+import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddTextField
 import com.example.storeapp.ui.theme.StoreAppTheme
 import com.google.firebase.Timestamp
 
 
+//object AddProductManagementDestination : NavigationDestination {
+//    override val route = "addproductmanagement/?productId={productId}&isEditing={isEditing}"
+//    override val titleRes = R.string.addcouponmanage_title
+//
+//    fun createRoute(productId: String?, isEditing: Boolean): String {
+//        return if (productId == null) {
+//            "addproductmanagement/?isEditing=$isEditing"  // Giữ format nhất quán
+//        } else {
+//            "addproductmanagement/?productId=$productId&isEditing=$isEditing"
+//        }
+//    }
+//}
+object AddProductManagementDestination : NavigationDestination {
+    override val route = "addproductmanagement?productId={productId}&isEditing={isEditing}"
+    override val titleRes = R.string.addcouponmanage_title
+
+    fun createRoute(productId: String?, isEditing: Boolean): String {
+        return if (productId == null) {
+            "addproductmanagement?isEditing=$isEditing"
+        } else {
+            "addproductmanagement?productId=$productId&isEditing=$isEditing"
+        }
+    }
+}
+
 @Composable
-fun AddProductScreen() {
+fun AddProductScreen(
+    navController: NavController,
+    viewModel: AddProductViewModel = viewModel(factory = AppViewModelProvider.Factory),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val productId = uiState.productDetailsItem.id
+    val isEditing = uiState.isEditing
+    val textRole = when {
+        productId == "" && isEditing -> {
+            "Thêm"
+        }
+
+        productId != "" && isEditing -> {
+            "Sửa"
+        }
+
+        else -> {
+            "Chi tiết"
+        }
+    }
+//    LaunchedEffect(Unit) {
+//
+//    }
+    Scaffold(
+        topBar = {
+            AdminTopAppBar(
+                R.drawable.arrowback,
+                textRole,
+                "Sản phẩm",
+                { navController.navigateUp() },
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
+            )
+        },
+    ) { innerPadding ->
+        AddProductContent(
+            innerPadding = innerPadding,
+            uiState = uiState,
+            isEditing = isEditing,
+            editProductClick = {},
+            deleteProductClick = {},
+            onNameChange = { viewModel.onNameChange(it) },
+            onCategoryNameSelected = { viewModel.onCategoryNameSelected(it) },
+            onPriceChange = { viewModel.onPriceChange(it) },
+
+            onImageSelected = { viewModel.onImageSelected(it) },
+            onDoneImageClick = { viewModel.onDoneImageClick() },
+            onDeleteImageClick = { viewModel.onDeleteImageClick(it) },
+            onEditImageChange = { index, uri ->
+                viewModel.onEditImageChange(index, uri)
+            },
+
+            onOptionNameChange = { viewModel.onOptionNameChange(it) },
+            onOptionPriceChange = { viewModel.onOptionPriceChange(it) },
+            onDoneOptionClick = { viewModel.onDoneOptionClick() },
+            onDeleteOptionClick = { viewModel.onDeleteOptionClick(it) },
+            onEditOptionNameChange = { index, optionName ->
+                viewModel.onEditOptionNameChange(index, optionName)
+            },
+            onEditOptionPriceChange = { index, optionPrice ->
+                viewModel.onEditOptionPriceChange(index, optionPrice)
+            },
+
+            onColorNameChange = { viewModel.onColorNameChange(it) },
+            onImageColorUriChange = { viewModel.onImageColorUriChange(it) },
+            onDoneColorClick = { viewModel.onDoneImageColorClick() },
+            onDeleteColorClick = { viewModel.onDeleteImageColorClick(it) },
+            onEditColorNameChange = { index, colorName ->
+                viewModel.onEditColorNameChange(index, colorName)
+            },
+            onEditImageColorUriChange = { index, uri ->
+                viewModel.onEditColorImageChange(index, uri)
+            },
+
+            onColorByVariantChange = { viewModel.onColorByVariantChange(it) },
+            onOptionByVariantChange = { viewModel.onOptionByVariantChange(it) },
+            onQuantityByVariantChange = { viewModel.onQuantityByVariantChange(it) },
+            onDoneStockByVariantClick = { viewModel.onDoneStockByVariantClick() },
+            onDeleteStockByVariantClick = { viewModel.onDeleteStockByVariantClick(it) },
+            onEditColorByVariant = { index, colorByVariantName ->
+                viewModel.onEditColorByVariantChange(index, colorByVariantName)
+            },
+            onEditOptionByVariant = { index, optionByVariantName ->
+                viewModel.onEditOptionByVariantChange(index, optionByVariantName)
+            },
+            onEditQuantityByVariantChange = { index, quantityByVariantName ->
+                viewModel.onEditQuantityStock(index, quantityByVariantName)
+            },
+
+            onDescriptionChange = { viewModel.onDescriptionChange(it) }
+
+
+        )
+
+    }
 
 }
 
@@ -71,37 +198,37 @@ fun AddProductContent(
     editProductClick: () -> Unit = {},
     deleteProductClick: () -> Unit = {},
     onNameChange: (String) -> Unit = {},
-//    onQuantityChange: (String) -> Unit = {},
     onCategoryNameSelected: (String) -> Unit = {},
     onPriceChange: (String) -> Unit = {},
 
+    onImageSelected: (Uri) -> Unit = { },
     onDoneImageClick: () -> Unit = {},
     onDeleteImageClick: (Int) -> Unit = {},
-    onImageSelected: (Uri) -> Unit = { },
     onEditImageChange: (Int, Uri) -> Unit = { _, _ -> },
 
+    onOptionNameChange: (String) -> Unit = {},
+    onOptionPriceChange: (String) -> Unit = {},
     onDoneOptionClick: () -> Unit = {},
     onDeleteOptionClick: (Int) -> Unit = {},
-    onOptionNameChange: (String) -> Unit = {},
-    onOptionPriceChange: (String) -> Unit = { },
     onEditOptionNameChange: (Int, String) -> Unit = { _, _ -> },
-    onEditOptionPriceChange: (Int, Double) -> Unit = { _, _ -> },
+    onEditOptionPriceChange: (Int, String) -> Unit = { _, _ -> },
 
+    onColorNameChange: (String) -> Unit = {},
+    onImageColorUriChange: (Uri) -> Unit = { },
     onEditColorNameChange: (Int, String) -> Unit = { _, _ -> },
     onEditImageColorUriChange: (Int, Uri) -> Unit = { _, _ -> },
     onDoneColorClick: () -> Unit = {},
     onDeleteColorClick: (Int) -> Unit = {},
-    onColorNameChange: (String) -> Unit = {},
-    onImageColorUriChange: (Uri) -> Unit = { },
 
-    onEditColorByVariant: (Int, String) -> Unit = { _, _ -> },
-    onEditOptionByVariant: (Int, String) -> Unit = { _, _ -> },
-    onEditQuantityByVariantChange: (Int, Int) -> Unit = { _, _ -> },
+
     onColorByVariantChange: (String) -> Unit = {},
     onOptionByVariantChange: (String) -> Unit = {},
-    onQuantityByVariantChange: (String) -> Unit = { },
+    onQuantityByVariantChange: (String) -> Unit = {},
     onDoneStockByVariantClick: () -> Unit = {},
     onDeleteStockByVariantClick: (Int) -> Unit = {},
+    onEditColorByVariant: (Int, String) -> Unit = { _, _ -> },
+    onEditOptionByVariant: (Int, String) -> Unit = { _, _ -> },
+    onEditQuantityByVariantChange: (Int, String) -> Unit = { _, _ -> },
 
     onDescriptionChange: (String) -> Unit = {},
     onConfirm: () -> Unit = {} // Hàm xử lý khi bấm "Xác nhận"
@@ -224,14 +351,36 @@ fun AddProductContent(
                     modifier = Modifier.padding(8.dp)
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                val isColorEditingList =
-                    remember { mutableStateListOf(*Array(uiState.listImageUriSelected.size) { false }) }
+//                val isColorEditingList =
+//                    remember { mutableStateListOf(*Array(uiState.listImageUriSelected.size) { false }) }
+
+//                val isColorEditingList = remember { mutableStateListOf<Boolean>() }
+//
+//                LaunchedEffect(uiState.listImageUriSelected) {
+//                    isColorEditingList.clear()
+//                    isColorEditingList.addAll(List(uiState.listImageUriSelected.size) { false })
+//                }
+                val isColorEditingList = remember {
+                    mutableStateListOf<Boolean>().apply {
+                        repeat(uiState.listImageUriSelected.size) { add(false) }
+                    }
+                }
+
+// Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
+                LaunchedEffect(uiState.listImageUriSelected.size) {
+                    if (isColorEditingList.size < uiState.listImageUriSelected.size) {
+                        repeat(uiState.listImageUriSelected.size - isColorEditingList.size) {
+                            isColorEditingList.add(false)
+                        }
+                    }
+                }
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     uiState.listImageUriSelected.forEachIndexed { index, image ->
                         ImagePicker(
-                            isEditing = isColorEditingList[index],
+                            isEditing = isColorEditingList.getOrElse(index) { false },
                             imageColorUri = image,
                             onImageSelected = {
                                 onEditImageChange(
@@ -262,9 +411,9 @@ fun AddProductContent(
             ) {
                 // Circle at the bottom
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceBetween
+//                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(
                         modifier = Modifier
@@ -281,8 +430,9 @@ fun AddProductContent(
                     )
                 }
                 ImagePicker(
+                    modifier = Modifier.weight(0.5f),
                     isEditing = isEditing,
-                    imageColorUri = uiState.imageColorUri,
+                    imageColorUri = uiState.currentImageSelected,
                     onImageSelected = {
                         onImageSelected(it)
                     },
@@ -291,7 +441,10 @@ fun AddProductContent(
                     }
                 )
             }
-
+            HorizontalDivider(
+                thickness = 1.dp,
+                modifier = Modifier.padding(16.dp)
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -312,14 +465,34 @@ fun AddProductContent(
                 )
             }
 
-            val isEditingList =
-                remember { mutableStateListOf(*Array(uiState.listProductOptions.size) { false }) }
+//            val isEditingList = remember { mutableStateListOf<Boolean>() }
+//
+//            LaunchedEffect(uiState.listProductOptions) {
+//                isEditingList.clear()
+//                isEditingList.addAll(List(uiState.listProductOptions.size) { false })
+//            }
+
+            val isEditingList = remember {
+                mutableStateListOf<Boolean>().apply {
+                    repeat(uiState.listProductOptions.size) { add(false) }
+                }
+            }
+
+// Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
+            LaunchedEffect(uiState.listProductOptions.size) {
+                if (isEditingList.size < uiState.listProductOptions.size) {
+                    repeat(uiState.listProductOptions.size - isEditingList.size) {
+                        isEditingList.add(false)
+                    }
+                }
+            }
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 uiState.listProductOptions.forEachIndexed { index, productOption ->
                     AddOptionTextField(
-                        isEditing = isEditingList[index],
+                        isEditing = isEditingList.getOrElse(index) { false },
                         title = "Loại",
                         title2 = "Giá",
                         optionName = productOption.optionsName,
@@ -333,7 +506,7 @@ fun AddProductContent(
                         onOptionPriceChange = {
                             onEditOptionPriceChange(
                                 index,
-                                it.toDouble()
+                                it
                             )
                         },
                         onEditOptionClick = {
@@ -351,6 +524,25 @@ fun AddProductContent(
                 thickness = 1.dp,
                 modifier = Modifier.padding(16.dp)
             )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Circle at the bottom
+                Box(
+                    modifier = Modifier
+                        .size(18.dp)
+                        .background(Color.Gray, shape = CircleShape)
+//                        .align(Alignment.BottomStart) // Đặt chấm tròn ở dưới cùng
+                )
+                Text(
+                    text = "Thêm phân loại",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
 
             AddOptionTextField(
                 isEditing = isEditing,
@@ -385,14 +577,28 @@ fun AddProductContent(
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            val isColorOptionEditingList =
-                remember { mutableStateListOf(*Array(uiState.listColorOptions.size) { false }) }
+//            val isColorOptionEditingList =
+//                remember { mutableStateListOf(*Array(uiState.listColorOptions.size) { false }) }
+            val isColorOptionEditingList = remember {
+                mutableStateListOf<Boolean>().apply {
+                    repeat(uiState.listColorOptions.size) { add(false) }
+                }
+            }
+
+// Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
+            LaunchedEffect(uiState.listColorOptions.size) {
+                if (isColorOptionEditingList.size < uiState.listColorOptions.size) {
+                    repeat(uiState.listColorOptions.size - isColorOptionEditingList.size) {
+                        isColorOptionEditingList.add(false)
+                    }
+                }
+            }
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 uiState.listColorOptions.forEachIndexed { index, colorOption ->
                     ColorImagePicker(
-                        isEditing = isColorOptionEditingList[index],
+                        isEditing = isColorOptionEditingList.getOrElse(index) { false },
                         title = "Màu",
                         colorName = colorOption.colorName,
                         imageColorUri = colorOption.imageColorUri,
@@ -457,14 +663,28 @@ fun AddProductContent(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-                val isStockByVariantList =
-                    remember { mutableStateListOf(*Array(uiState.stockByVariant.size) { false }) }
+//                val isStockByVariantList =
+//                    remember { mutableStateListOf(*Array(uiState.listStockByVariant.size) { false }) }
+                val isStockByVariantList = remember {
+                    mutableStateListOf<Boolean>().apply {
+                        repeat(uiState.listStockByVariant.size) { add(false) }
+                    }
+                }
+
+// Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
+                LaunchedEffect(uiState.listStockByVariant.size) {
+                    if (isStockByVariantList.size < uiState.listStockByVariant.size) {
+                        repeat(uiState.listStockByVariant.size - isStockByVariantList.size) {
+                            isStockByVariantList.add(false)
+                        }
+                    }
+                }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    uiState.stockByVariant.forEachIndexed { index, variant ->
+                    uiState.listStockByVariant.forEachIndexed { index, variant ->
                         AddStockByVariantField(
-                            isEditing = isStockByVariantList[index],
+                            isEditing = isStockByVariantList.getOrElse(index) { false },
                             listColorOptions = uiState.listColorOptions,
                             selectedColor = variant.colorName,
                             onColorSelected = {
@@ -475,10 +695,10 @@ fun AddProductContent(
                             onOptionSelected = {
                                 onEditOptionByVariant(index, it)
                             },
-                            stockByVariant = uiState.stockByVariant,
+                            stockByVariant = uiState.listStockByVariant,
                             quantity = variant.quantity.toString(),
                             onQuantityChange = {
-                                onEditQuantityByVariantChange(index, it.toInt())
+                                onEditQuantityByVariantChange(index, it)
                             },
                             onEditStockByVariantClick = {
                                 isStockByVariantList[index] = true
@@ -497,10 +717,10 @@ fun AddProductContent(
                 thickness = 1.dp,
                 modifier = Modifier.padding(16.dp)
             )
-            HorizontalDivider(
-                thickness = 1.dp,
-                modifier = Modifier.padding(16.dp)
-            )
+//            HorizontalDivider(
+//                thickness = 1.dp,
+//                modifier = Modifier.padding(16.dp)
+//            )
 
 //            onColorByVariantChange: (String) -> Unit = {},
 //            onOptionByVariantChange: (String) -> Unit = {},
@@ -538,7 +758,7 @@ fun AddProductContent(
                     onOptionSelected = {
                         onOptionByVariantChange(it)
                     },
-                    stockByVariant = uiState.stockByVariant,
+                    stockByVariant = uiState.listStockByVariant,
                     quantity = uiState.quantityStockInput,
                     onQuantityChange = {
                         onQuantityByVariantChange(it)
@@ -732,7 +952,17 @@ fun AddOptionTextField(
     onDeleteOptionClick: () -> Unit = {},
     isNumberInput: Boolean = false
 ) {
-    val optionPriceToString = formatCurrency2(optionPrice)
+    val optionPriceToString = try {
+        if (optionPrice == 0.0) {
+            ""
+        } else if (isEditing) {
+            formatNumber(optionPrice)
+        } else {
+            formatCurrency2(optionPrice)
+        }
+    } catch (e: NumberFormatException) {
+        "" // Nếu có lỗi khi chuyển đổi số
+    }
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

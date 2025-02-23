@@ -28,6 +28,8 @@ import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestina
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementScreen
+import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.favorite.WishListScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
@@ -197,6 +199,8 @@ fun StoreAppNavHost(
                     navController.navigate(ProfileDestination.route)
                 })
         }
+
+
         composable(OrderManagementDestination.route) {
             OrderManagementScreen(navController = navController)
         }
@@ -223,8 +227,23 @@ fun StoreAppNavHost(
         composable(ProductManagementDestination.route) {
             ProductManagementScreen(
                 navController = navController,
-                onAddProductClick = {},
-                onNavigateProductDetail = {})
+                onAddProductClick = {
+                    navController.navigate(AddProductManagementDestination.createRoute(null, true))
+
+                },
+                onNavigateProductDetail = {
+                    navController.navigate(AddProductManagementDestination.createRoute(it, false))
+                })
+        }
+
+        composable(
+            route = AddProductManagementDestination.route,
+            arguments = listOf(
+                navArgument("productId") { type = NavType.StringType; nullable = true },
+                navArgument("isEditing") { type = NavType.BoolType; defaultValue = false }
+            )
+        ) {
+            AddProductScreen(navController = navController)
         }
 
 

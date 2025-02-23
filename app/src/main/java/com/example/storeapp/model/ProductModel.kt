@@ -81,6 +81,15 @@ data class ProductModel(
 }
 
 
+//data class ProductImage(
+//    val uri: Uri? = null,  // Ảnh từ thiết bị (chưa upload)
+//    val url: String? = null // Ảnh đã upload lên Firebase
+//) {
+//    constructor() : this(null, "")
+//    constructor(url: String) : this(null, url)
+//}
+
+
 data class StockByVariant(
     val colorName: String = "",
     val optionName: String = "",

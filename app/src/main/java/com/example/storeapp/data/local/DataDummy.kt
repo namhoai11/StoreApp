@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.example.storeapp.R
 import com.example.storeapp.model.AvailableOptions
-import com.example.storeapp.model.BrandModel
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.ColorOptions
@@ -14,7 +13,6 @@ import com.example.storeapp.model.CouponType
 import com.example.storeapp.model.District
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
-import com.example.storeapp.model.ProductDataForOrderModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.ProductsOnCart
@@ -659,7 +657,7 @@ object DataDummy {
             ColorOptions(colorName = "Đen", imageColorUrl = "black_image_url"),
             ColorOptions(colorName = "Bạc", imageColorUrl = "silver_image_url")
         ),
-        stockByVariant = listOf(
+        listStockByVariant = listOf(
             StockByVariant(colorName = "Đen", optionName = "16GB RAM", quantity = 10),
             StockByVariant(colorName = "Bạc", optionName = "32GB RAM", quantity = 5)
         ),

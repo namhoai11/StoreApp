@@ -22,13 +22,14 @@ data class AddProductUiState(
     val listProductOptions: List<ProductOptions> = emptyList(),
     val optionName: String = "",
     val priceForOption: Double = 0.0,
+
     //mau dang duoc nhap
     val listColorOptions: List<ColorOptions> = emptyList(),
     val colorName: String = "",
     val imageColorUri: Uri? = null,
 
 //    stock được nhap
-    val stockByVariant: List<StockByVariant> = emptyList(),
+    val listStockByVariant: List<StockByVariant> = emptyList(),
     val stockInputColor: String = "",
     val stockInputOption: String = "",
     val quantityStockInput: String = "",
