@@ -1,6 +1,5 @@
 ﻿package com.example.storeapp.model
 
-import com.google.firebase.Timestamp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

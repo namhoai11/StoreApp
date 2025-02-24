@@ -10,10 +10,13 @@ data class ProductManagementUiState(
     val currentCategoryId: String = "-2",
     val showCategoryLoading: Boolean = true,
     val showRecommendedLoading: Boolean = true,
+
+    val productsSearched: List<ProductModel> = emptyList(),
+    val currentQuery: String = "",
 ) {
     val currentListItems: List<ProductModel>
         get() = when (currentCategoryId) {
-           "-2" -> allProducts // Hiển thị tất cả mục
+            "-2" -> allProducts // Hiển thị tất cả mục
             else -> itemsByCategory[currentCategoryId] ?: emptyList()
         }
 }

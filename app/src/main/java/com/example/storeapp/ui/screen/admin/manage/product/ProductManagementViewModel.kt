@@ -21,7 +21,7 @@ class ProductManagementViewModel(
 //         Quan sát trạng thái của uiState
         viewModelScope.launch {
             _uiState.collect { state ->
-                Log.d("HomeViewModel", "Current UI State: $state")
+                Log.d("ProductManagementViewModel", "Current UI State: $state")
             }
         }
 
@@ -31,11 +31,11 @@ class ProductManagementViewModel(
         try {
             _uiState.update { it.copy(showCategoryLoading = true) }
             val categories = repository.loadCategory()
-            Log.d("HomeViewModel", "categories:$categories")
+            Log.d("ProductManagementViewModel", "categories:$categories")
             _uiState.update { it.copy(categories = categories, showCategoryLoading = false) }
 
             val allProducts = repository.loadAllProducts()
-            Log.d("HomeViewModel", "All Product:$allProducts")
+            Log.d("ProductManagementViewModel", "All Product:$allProducts")
             val itemsByCategory = allProducts.groupBy { it.categoryId }
 
             _uiState.update {
@@ -49,10 +49,31 @@ class ProductManagementViewModel(
         }
     }
 
-    fun selectCategory(categoryName: String) {
-        val category = _uiState.value.categories.find { it.name==categoryName }
+    fun selectCategory(categoryName: String?) {
+        val category = categoryName?.let { name ->
+            _uiState.value.categories.find { it.name == name }
+        } ?: _uiState.value.categories.firstOrNull() // Lấy category đầu tiên nếu categoryName null
+
         if (category != null) {
             _uiState.update { it.copy(currentCategoryId = category.id) }
         }
     }
+
+
+    // Hàm tìm kiếm sản phẩm theo tên
+    fun searchProductsByName(query: String) = viewModelScope.launch {
+        _uiState.update { currentState ->
+            val filteredProducts = if (query.isNotBlank()) {
+                currentState.currentListItems.filter { it.name.contains(query, ignoreCase = true) }
+            } else {
+                currentState.currentListItems
+            }
+            currentState.copy(
+                productsSearched = filteredProducts,
+                currentQuery = query
+            )
+        }
+        Log.d("ProductManagementViewModel", "itemsSearched:${_uiState.value.productsSearched}")
+    }
+
 }

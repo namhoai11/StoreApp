@@ -62,9 +62,12 @@ fun ProductManagementScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadData()
+    LaunchedEffect(uiState.categories) {
+        if (uiState.categories.isNotEmpty() && uiState.currentCategoryId == "-2") {
+            viewModel.selectCategory(uiState.categories.first().name)
+        }
     }
+
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -83,7 +86,8 @@ fun ProductManagementScreen(
             onFilterSelected = { viewModel.selectCategory(it) },
             onProductItemClick = {
                 onNavigateProductDetail(it.id)
-            }
+            },
+            onSearchProduct = {viewModel.searchProductsByName(it)}
         )
     }
 }
@@ -94,7 +98,8 @@ fun ProductManagementContent(
     uiState: ProductManagementUiState,
     onAddProductClick: () -> Unit = {},
     onFilterSelected: (String) -> Unit = {},
-    onProductItemClick: (ProductModel) -> Unit = {}
+    onProductItemClick: (ProductModel) -> Unit = {},
+    onSearchProduct: (String) -> Unit = {}
 ) {
 
     val listCategory = uiState.categories.map { it.name }
@@ -107,15 +112,20 @@ fun ProductManagementContent(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(start=16.dp, end = 16.dp, bottom = 16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             AdminSearch(
                 textSearch = "Tìm kiếm sản phẩm",
+                onSearch = onSearchProduct,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
             FilterList(filterList = listCategory, onFilterSelected = onFilterSelected)
             ProductManagementList(
-                productList = uiState.currentListItems,
+                productList = if (uiState.currentQuery.isNotBlank()) {
+                    uiState.productsSearched
+                } else {
+                    uiState.currentListItems
+                },
                 productItemClick = { onProductItemClick(it) })
 
         }

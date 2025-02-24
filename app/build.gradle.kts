@@ -109,8 +109,8 @@ dependencies {
     implementation(libs.coilCompose)
 
 
-//    Map
-    implementation(libs.play.services.maps)
-    implementation(libs.play.services.location)
-    implementation(libs.maps.compose)
+////    Map
+//    implementation(libs.play.services.maps)
+//    implementation(libs.play.services.location)
+//    implementation(libs.maps.compose)
 }
