@@ -6,15 +6,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.AvailableOptions
 import com.example.storeapp.model.ColorOptions
+import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.StockByVariant
-import com.google.firebase.Timestamp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class AddProductViewModel(
     savedStateHandle: SavedStateHandle,
@@ -23,7 +27,7 @@ class AddProductViewModel(
     private val _uiState = MutableStateFlow(AddProductUiState())
     val uiState: StateFlow<AddProductUiState> = _uiState.asStateFlow()
 
-    private val couponId: String? = savedStateHandle["productId"]
+    private val productId: String? = savedStateHandle["productId"]
     private val isEditing: Boolean = savedStateHandle["isEditing"] ?: false
 
     init {
@@ -37,6 +41,62 @@ class AddProductViewModel(
 
     }
 
+    fun loadProduct() {
+        viewModelScope.launch {
+            if (productId.isNullOrEmpty()) {
+                Log.w("AddProductViewModel", "No productId provided, skipping load.")
+                return@launch
+            }
+            _uiState.update { it.copy(isLoading = true) }
+
+            val product = repository.getProductById(productId)
+
+            if (product != null) {
+                val categoryNameSelected = _uiState.value.listCategory.find { category ->
+                    category.id == product.categoryId
+                }?.name ?: ""
+
+                // Chuyển đổi ColorOptions từ Firestore thành ColorOptionsForAddProduct
+                val parsedColorOptions = product.availableOptions?.listColorOptions?.map { colorOption ->
+                    ColorOptionsForAddProduct(
+                        colorName = colorOption.colorName,
+                        imageColorUri = if (colorOption.imageColorUrl.isNotEmpty()) {
+                            runCatching { Uri.parse(colorOption.imageColorUrl) }.getOrNull()
+                        } else null,
+                        imageColorUrl = colorOption.imageColorUrl
+                    )
+                } ?: emptyList()
+
+                _uiState.update {
+                    it.copy(
+                        productDetailsItem = product,
+                        categoryNameSelected = categoryNameSelected,
+                        priceInput = product.price.toString(),
+                        listImageUriSelected = product.images.mapNotNull {
+                            runCatching { Uri.parse(it) }.getOrNull()
+                        },
+                        listProductOptions = product.availableOptions?.listProductOptions ?: emptyList(),
+                        listColorOptions = parsedColorOptions, // Chuyển sang kiểu phù hợp
+                        listStockByVariant = product.stockByVariant,
+                        isEditing = isEditing,
+                        isLoading = false
+                    )
+                }
+                Log.d("AddProductViewModel", "Product Loaded: ${_uiState.value.productDetailsItem}")
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Không tìm thấy sản phẩm."
+                    )
+                }
+                Log.e("AddProductViewModel", "Product not found: $productId")
+            }
+        }
+    }
+
+
+
     private fun loadCategory() = viewModelScope.launch {
         try {
             val categories = repository.loadCategory()
@@ -46,6 +106,10 @@ class AddProductViewModel(
         } catch (e: Exception) {
             // Xử lý lỗi nếu cần (thêm trạng thái lỗi vào UiState hoặc log)
         }
+    }
+
+    fun editProductClicked() {
+        _uiState.update { it.copy(isEditing = true) }
     }
 
     fun onNameChange(newName: String) {
@@ -58,7 +122,7 @@ class AddProductViewModel(
         _uiState.update { currentState ->
             currentState.copy(
                 productDetailsItem = currentState.productDetailsItem.copy(
-                    categoryId = categoryIdSelected.toString()
+                    categoryId = categoryIdSelected
                 ),
                 categoryNameSelected = categoryName
             )
@@ -206,13 +270,13 @@ class AddProductViewModel(
         val currentColorName = _uiState.value.colorName
         val currentImageColorUri = _uiState.value.imageColorUri
         if (currentImageColorUri != null) { // Chỉ thêm nếu currentUri khác null
-            val newColorOption = ColorOptions(
+            val newColorOptionsForAddProduct = ColorOptionsForAddProduct(
                 colorName = currentColorName,
                 imageColorUri = currentImageColorUri
             )
             _uiState.update {
                 it.copy(
-                    listColorOptions = it.listColorOptions + newColorOption,
+                    listColorOptions = it.listColorOptions + newColorOptionsForAddProduct,
                     colorName = "",
                     imageColorUri = null
                 )
@@ -353,12 +417,152 @@ class AddProductViewModel(
         }
     }
 
+    private suspend fun uploadAllImages(): Boolean = withContext(Dispatchers.IO) {
+        val productId = _uiState.value.productDetailsItem.id.ifBlank { UUID.randomUUID().toString() }
+
+        val uploadedImageUrls = _uiState.value.listImageUriSelected.mapIndexedNotNull { index, uri ->
+            val result = repository.uploadImageToStorage(uri, "products/$productId/image_$index")
+            result.getOrNull()
+        }
+
+        val uploadedColorOptions = _uiState.value.listColorOptions.map { colorOption ->
+            val imageUri = colorOption.imageColorUri ?: return@map ColorOptions(
+                colorName = colorOption.colorName,
+                imageColorUrl = colorOption.imageColorUrl // Nếu không có Uri mới, giữ nguyên URL cũ
+            )
+
+            val result = repository.uploadImageToStorage(imageUri, "products/$productId/color_${colorOption.colorName}")
+
+            if (result.isSuccess) {
+                ColorOptions(
+                    colorName = colorOption.colorName,
+                    imageColorUrl = result.getOrNull() ?: ""
+                )
+            } else {
+                Log.e("Upload", "Lỗi tải ảnh màu: ${result.exceptionOrNull()?.message}")
+                ColorOptions(colorName = colorOption.colorName, imageColorUrl = colorOption.imageColorUrl)
+            }
+        }
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                productDetailsItem = currentState.productDetailsItem.copy(
+                    id = productId,
+                    images = uploadedImageUrls,
+                    availableOptions = AvailableOptions(
+                        listProductOptions = _uiState.value.listProductOptions,
+                        listColorOptions = uploadedColorOptions
+                    ),
+                    stockByVariant = _uiState.value.listStockByVariant
+                ),
+                // Cập nhật lại UI state
+                listColorOptions = uploadedColorOptions.map {
+                    ColorOptionsForAddProduct(
+                        colorName = it.colorName,
+                        imageColorUrl = it.imageColorUrl
+                    )
+                }
+            )
+        }
+
+        return@withContext true
+    }
+
+
+
+    fun saveProduct() {
+        _uiState.update { it.copy(isEditing = false) }
+
+        if (!validateProduct()) {
+            Log.e("SaveProduct", "Dữ liệu sản phẩm không hợp lệ")
+            Log.e("SaveProduct", "Dữ liệu sản phẩm không hợp lệ:${_uiState.value.errorMessage}}")
+
+            return
+        }
+
+        viewModelScope.launch {
+            val success = withContext(Dispatchers.IO) { uploadAllImages() }
+
+            if (!success) {
+                Log.e("SaveProduct", "Lỗi khi tải ảnh lên Firebase Storage")
+                return@launch
+            }
+
+            val product = _uiState.value.productDetailsItem
+
+            Log.d("SaveProduct", "Dữ liệu sản phẩm trước khi lưu: $product")
+
+            val result = repository.addOrUpdateProductToFireStore(product)
+
+            result.onSuccess {
+                _uiState.update {
+                    it.copy(successMessage = "Thêm product thành công!", isEditing = false)
+                }
+                Log.d("AddProductUiState", "defaultUiState: ${_uiState.value}")
+            }.onFailure { e ->
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }
+            }
+        }
+    }
+
+
+    fun removeProduct(navigation: () -> Unit) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = "") }
+
+            val productId = _uiState.value.productDetailsItem.id
+            if (productId.isBlank()) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Product ID không hợp lệ"
+                    )
+                }
+                return@launch
+            }
+
+            val result = repository.removeProductById(productId)
+            result.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        successMessage = "product đã được xóa thành công!",
+                        productDetailsItem = ProductModel(), // Reset data
+                        categoryNameSelected = "",
+                        priceInput = "",
+                        listImageUriSelected = emptyList(),
+                        currentImageSelected = null,
+                        listProductOptions = emptyList(),
+                        optionName = "",
+                        priceForOption = 0.0,
+                        listColorOptions = emptyList(),
+                        colorName = "",
+                        imageColorUri = null,
+                        listStockByVariant = emptyList(),
+                        stockInputColor = "",
+                        stockInputOption = "",
+                        quantityStockInput = "",
+
+                        )
+                }
+                navigation()
+
+            }.onFailure { e ->
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }
+            }
+        }
+    }
 
     private fun validateProduct(): Boolean {
         val product = _uiState.value.productDetailsItem
 
         if (product.name.isBlank()) {
             _uiState.update { it.copy(errorMessage = "Tên sản phẩm không được để trống") }
+            return false
+        }
+
+        if (product.categoryId.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn danh mục sản phẩm") }
             return false
         }
 
@@ -369,11 +573,28 @@ class AddProductViewModel(
         }
 
         if (product.description.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Mô tả không được để trống") }
+            _uiState.update { it.copy(errorMessage = "Mô tả sản phẩm không được để trống") }
             return false
         }
 
+        if (_uiState.value.listImageUriSelected.isEmpty()) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng chọn ít nhất một ảnh sản phẩm") }
+            return false
+        }
+
+        if (_uiState.value.listProductOptions.isEmpty() && _uiState.value.listColorOptions.isEmpty()) {
+            _uiState.update { it.copy(errorMessage = "Sản phẩm cần ít nhất một tùy chọn hoặc màu sắc") }
+            return false
+        }
+
+        if (_uiState.value.listStockByVariant.isEmpty()) {
+            _uiState.update { it.copy(errorMessage = "Vui lòng nhập số lượng tồn kho") }
+            return false
+        }
+
+        // Nếu tất cả đều hợp lệ, xóa thông báo lỗi
         _uiState.update { it.copy(errorMessage = null) }
         return true
     }
+
 }

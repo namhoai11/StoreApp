@@ -32,7 +32,7 @@ import com.example.storeapp.R
 import com.example.storeapp.model.ProductModel
 
 @Composable
-fun ListItems(items: List<ProductModel>, navigateToItemDetails: (Int) -> Unit) {
+fun ListItems(items: List<ProductModel>, navigateToItemDetails: (String) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -49,7 +49,7 @@ fun ListItems(items: List<ProductModel>, navigateToItemDetails: (Int) -> Unit) {
 }
 
 @Composable
-fun ListItemsFullSize(items: List<ProductModel>, navigateToItemDetail: (Int) -> Unit) {
+fun ListItemsFullSize(items: List<ProductModel>, navigateToItemDetail: (String) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -66,13 +66,13 @@ fun ListItemsFullSize(items: List<ProductModel>, navigateToItemDetail: (Int) -> 
 }
 
 @Composable
-fun Item(item: ProductModel, navigateToItemDetail: (Int) -> Unit) {
+fun Item(item: ProductModel, navigateToItemDetail: (String) -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .height(235.dp)
             .clickable {
-                navigateToItemDetail(item.id.toInt())
+                navigateToItemDetail(item.id)
                 Log.d("ListItems", "ItemClicked: ${item.id}")
             }
     ) {

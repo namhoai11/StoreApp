@@ -36,7 +36,7 @@ class ProductManagementViewModel(
 
             val allProducts = repository.loadAllProducts()
             Log.d("HomeViewModel", "All Product:$allProducts")
-            val itemsByCategory = allProducts.groupBy { it.categoryId.toIntOrNull() ?: -2 }
+            val itemsByCategory = allProducts.groupBy { it.categoryId }
 
             _uiState.update {
                 it.copy(

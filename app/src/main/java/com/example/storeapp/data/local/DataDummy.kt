@@ -27,6 +27,7 @@ import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiStat
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductUiState
+import com.example.storeapp.ui.screen.admin.manage.product.add_product.ColorOptionsForAddProduct
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.screen.checkout.CheckoutUiState
 import com.google.firebase.Timestamp
@@ -480,24 +481,18 @@ object DataDummy {
     val listColorOptions = listOf(
         ColorOptions(
             colorName = "Red",
-            imageColorUri = null,
             imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Blue",
-            imageColorUri = null,
-
             imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Pink",
-            imageColorUri = null,
-
             imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         ),
         ColorOptions(
             colorName = "Yellow",
-            imageColorUri = null,
             imageColorUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/cat1_black.png?alt=media&token=85627f03-9075-43cf-af01-06e96bdd1a77"
         )
 
@@ -589,7 +584,7 @@ object DataDummy {
     )
     val categoryList = listOf(
         CategoryModel(
-            id = 0,
+            id =" 0",
             name = "Pc",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             description = "",
@@ -599,7 +594,7 @@ object DataDummy {
             updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 1,
+            id = "1",
             name = "Smartphone",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat2.png?alt=media&token=4508a8d0-dc76-4e54-8234-4a7ddcfbfe41",
             description = "",
@@ -609,7 +604,7 @@ object DataDummy {
             updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 2,
+            id = "2",
             name = "Headphone",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat3.png?alt=media&token=9e2e8b2c-09f8-453f-9dcd-2d83c52acd93",
             description = "",
@@ -621,14 +616,14 @@ object DataDummy {
     )
 
     val dummyItemsByCategory = mapOf(
-        1 to listProduct.filter { it.categoryId.toInt() == 1 },
-        2 to listProduct.filter { it.categoryId.toInt() == 2 }
+        "1" to listProduct.filter { it.categoryId == "1" },
+        "2" to listProduct.filter { it.categoryId == "2" }
     )
     val productManagementUiState = ProductManagementUiState(
         categories = categoryList,
         allProducts = listProduct,
         itemsByCategory = dummyItemsByCategory,
-        currentCategoryId = 1,
+        currentCategoryId = "1",
         showCategoryLoading = false,
         showRecommendedLoading = false,
     )
@@ -654,8 +649,8 @@ object DataDummy {
         optionName = "SSD 512GB",
         priceForOption = 2000000.0,
         listColorOptions = listOf(
-            ColorOptions(colorName = "Đen", imageColorUrl = "black_image_url"),
-            ColorOptions(colorName = "Bạc", imageColorUrl = "silver_image_url")
+            ColorOptionsForAddProduct(colorName = "Đen", imageColorUrl = "black_image_url"),
+            ColorOptionsForAddProduct(colorName = "Bạc", imageColorUrl = "silver_image_url")
         ),
         listStockByVariant = listOf(
             StockByVariant(colorName = "Đen", optionName = "16GB RAM", quantity = 10),

@@ -48,7 +48,7 @@ fun CategoryList(
     val extendedCategories = if (isShowRecommend) {
         listOf(
             CategoryModel(
-                id = -1,
+                id = "-1",
                 name = "Recommend",
                 imageUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/recommend.png?alt=media&token=0d69a7fa-9d97-489a-bfbc-f5d89c3f35fe",
                 createdAt = Timestamp.now(),
@@ -58,7 +58,7 @@ fun CategoryList(
     } else {
         listOf(
             CategoryModel(
-                id = -2,
+                id = "-2",
                 name = "All",
                 imageUrl = "https://firebasestorage.googleapis.com/v0/b/commerc-b4186.appspot.com/o/All.png?alt=media&token=f68f85f0-8388-4f60-b50b-fe952f2f17dd",
                 createdAt = Timestamp.now(),
@@ -68,7 +68,7 @@ fun CategoryList(
     }
     // Gọi onCategorySelected ngay khi danh sách được khởi tạo
     LaunchedEffect(extendedCategories, selectedIndex) {
-        onCategorySelected(extendedCategories[selectedIndex].id.toString())
+        onCategorySelected(extendedCategories[selectedIndex].id)
     }
     LazyRow(
         modifier = Modifier
@@ -138,7 +138,7 @@ fun CategoryItem(
 @Composable
 fun PreviewCategoryItem() {
     val sampleItem = CategoryModel(
-        id = 0,
+        id = "0",
         name = "PC",
         imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
         createdAt = Timestamp.now(),
@@ -160,21 +160,21 @@ fun PreviewCategoryItem() {
 fun PreviewCategoryList() {
     val sampleCategories = listOf(
         CategoryModel(
-            id = 0,
+            id = "0",
             name = "PC",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             createdAt = Timestamp.now(),
             updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 0,
+            id = "0",
             name = "PC",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             createdAt = Timestamp.now(),
             updatedAt = Timestamp.now(),
         ),
         CategoryModel(
-            id = 0,
+            id = "0",
             name = "PC",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             createdAt = Timestamp.now(),

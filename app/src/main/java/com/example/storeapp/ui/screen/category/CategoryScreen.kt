@@ -42,7 +42,7 @@ object CategoryDestination : NavigationDestination {
 @Composable
 fun CategoryScreen(
     navController: NavController,
-    navigateProductDetails: (Int) -> Unit,
+    navigateProductDetails: (String) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val homeUiState by viewModel.uiState.collectAsState()
@@ -96,7 +96,7 @@ fun CategoryScreen(
                     categories = homeUiState.categories,
                     onCategorySelected = { id ->
                         viewModel.selectCategory(
-                            id.toInt()
+                            id
                         )
                         Log.d("HomeScreenId", "selectCategory: $id")
                     },

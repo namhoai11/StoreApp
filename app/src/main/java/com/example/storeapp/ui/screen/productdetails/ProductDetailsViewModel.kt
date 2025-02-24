@@ -25,7 +25,7 @@ class ProductDetailsViewModel(
     val user: LiveData<UserModel?> = _user
 
 
-    private val productDetailsId: Int =
+    private val productDetailsId: String =
         checkNotNull(savedStateHandle[ProductDetailsDestination.productDetailsIdArg])
 
 
@@ -55,7 +55,7 @@ class ProductDetailsViewModel(
         try {
             _uiState.update { it.copy(showProductDetailsLoading = true) }
 
-            val productDetails = repository.getProductById(productDetailsId.toString())
+            val productDetails = repository.getProductById(productDetailsId)
 
             Log.d("ProductDetailsViewmodel", "productDetails: $productDetails")
 
@@ -66,7 +66,7 @@ class ProductDetailsViewModel(
 //                val stock = realtimeDatabase.loadStockByProductId(productDetailsId.toString())
 
                 val isWishlistItem =
-                    _user.value?.wishList?.contains(productDetailsId.toString()) ?: false
+                    _user.value?.wishList?.contains(productDetailsId) ?: false
 
                 Log.d("ProductDetailsViewmodel", "isWishlistItem: $isWishlistItem")
 
@@ -161,7 +161,7 @@ class ProductDetailsViewModel(
 
     private fun observeProductChanges() {
         viewModelScope.launch {
-            repository.observeProductById(productDetailsId.toString()).collect { product ->
+            repository.observeProductById(productDetailsId).collect { product ->
                 if (product != null) {
                     _uiState.update {
                         it.copy(
@@ -263,11 +263,11 @@ class ProductDetailsViewModel(
                 _user.value?.let {
                     repository.removeWishListItem(
                         it.id,
-                        productDetailsId.toString()
+                        productDetailsId
                     )
                 }
             } else {
-                _user.value?.let { repository.addWishListItem(it.id, productDetailsId.toString()) }
+                _user.value?.let { repository.addWishListItem(it.id, productDetailsId) }
             }
         }
     }
@@ -307,7 +307,7 @@ class ProductDetailsViewModel(
                 productName = _uiState.value.productDetailsItem.name,
                 productImage = _uiState.value.currentImage,
 //                productPrice = _uiState.value.currentPrice,
-                productOptions = selectedProductOption ?: "",
+                productOptions = selectedProductOption,
                 colorOptions = selectedColorOption,
                 quantity = 1
             )

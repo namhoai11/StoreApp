@@ -133,7 +133,7 @@ fun FilterOptionPreview() {
         var selectedCategory by remember { mutableStateOf("selectedCategory.name") }
         val listCategory = DataDummy.categoryList.map { it.name }
         val category = CategoryModel(
-            id = 0,
+            id = "0",
             name = "Pc",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             description = "",

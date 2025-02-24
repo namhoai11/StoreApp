@@ -1,5 +1,6 @@
 ﻿package com.example.storeapp.data.repository
 
+import android.net.Uri
 import android.util.Log
 import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CategoryModel
@@ -15,14 +16,22 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.net.URLDecoder
 
 class FirebaseFireStoreRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val storage = FirebaseStorage.getInstance().reference
 
     /** Load danh sách banner từ Firestore */
     suspend fun loadBanner(): List<SliderModel> {
@@ -36,22 +45,44 @@ class FirebaseFireStoreRepository {
     suspend fun loadCategory(): List<CategoryModel> {
         val snapshot = firestore.collection("Category").get().await()
         val categories = snapshot.documents.mapNotNull { doc ->
-            doc.toObject(CategoryModel::class.java)?.copy(id = doc.id.toIntOrNull() ?: 0)
+            doc.toObject(CategoryModel::class.java)?.copy(id = doc.id)
         }
         Log.d("FirestoreRepository", "Loaded Categories: $categories")
         return categories
     }
 
 
-    /** Load danh sách sản phẩm từ Firestore */
+//    /** Load danh sách sản phẩm từ Firestore */
+//    suspend fun loadAllProducts(): List<ProductModel> {
+//        val snapshot = firestore.collection("Products").get().await()
+//        val allProducts = snapshot.documents.mapNotNull { doc ->
+//            doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
+//        }
+//        Log.d("FirestoreRepository", "Loaded Products: $allProducts")
+//        return allProducts
+//    }
+
     suspend fun loadAllProducts(): List<ProductModel> {
-        val snapshot = firestore.collection("Products").get().await()
-        val allProducts = snapshot.documents.mapNotNull { doc ->
-            doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
+        return try {
+            val snapshot = firestore.collection("Products").get().await()
+
+            // In ra dữ liệu raw từ Firestore
+            snapshot.documents.forEach { doc ->
+                Log.d("FirestoreRepository", "Document ID: ${doc.id}, Data: ${doc.data}")
+            }
+
+            val allProducts = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
+            }
+
+            Log.d("FirestoreRepository", "Loaded Products: $allProducts")
+            allProducts
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading products", e)
+            emptyList()
         }
-        Log.d("FirestoreRepository", "Loaded Products: $allProducts")
-        return allProducts
     }
+
 
     suspend fun getProductById(productId: String): ProductModel? {
         val documentSnapshot = firestore.collection("Products").document(productId).get().await()
@@ -73,8 +104,34 @@ class FirebaseFireStoreRepository {
             .mapNotNull { it.toObject(ProductModel::class.java) }
     }
 
+//    suspend fun addOrUpdateProductToFireStore(product: ProductModel): Result<String> {
+//        val productRef = firestore.collection("Products") // Collection Products
+//
+//        return try {
+//            val isUpdating = product.id.isNotBlank()
+//            val productDocumentRef = if (isUpdating) {
+//                productRef.document(product.id) // Cập nhật sản phẩm đã có
+//            } else {
+//                productRef.document() // Tạo sản phẩm mới
+//            }
+//
+//            val updatedProduct = product.copy(
+//                id = productDocumentRef.id,
+////                updatedAt = Timestamp.now() // Cập nhật thời gian chỉnh sửa cuối cùng
+//            )
+//
+//            productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
+//
+//            Log.d("Firestore", "Product ${if (isUpdating) "updated" else "added"} successfully")
+//            Result.success(productDocumentRef.id) // Trả về ID sản phẩm
+//        } catch (e: Exception) {
+//            Log.e("Firestore", "Error ${if (product.id.isNotBlank()) "updating" else "adding"} Product", e)
+//            Result.failure(e) // Trả về lỗi
+//        }
+//    }
+
     suspend fun addOrUpdateProductToFireStore(product: ProductModel): Result<Unit> {
-        val productRef = firestore.collection("Products") // Collection lưu product
+        val productRef = firestore.collection("Products")
 
         return try {
             val productDocumentRef = if (product.id.isNotBlank()) {
@@ -85,31 +142,116 @@ class FirebaseFireStoreRepository {
 
             val updatedProduct = product.copy(
                 id = productDocumentRef.id,
+                updatedAt = Timestamp.now()
             )
 
-            // Dùng set với merge để không ghi đè toàn bộ nếu update
             productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
 
             Log.d("Firestore", "Product added/updated successfully")
-            Result.success(Unit) // Thành công
+            Result.success(Unit) // Không cần trả về id
         } catch (e: Exception) {
             Log.e("Firestore", "Error adding/updating Product", e)
-            Result.failure(e) // Trả về lỗi
-        }
-    }
-
-    suspend fun removeProductById(productId: String): Result<Unit> {
-        val productRef = firestore.collection("Products").document(productId)
-        return try {
-            productRef.delete().await()
-            Log.d("FireStore", "product delete successfully: $productId")
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Log.e("FireStore", "product delete fail: $e")
-
             Result.failure(e)
         }
     }
+
+    suspend fun uploadImageToStorage(imageUri: Uri, path: String): Result<String> {
+        return try {
+            val imageRef = storage.child(path)
+            imageRef.putFile(imageUri).await()
+            val downloadUrl = imageRef.downloadUrl.await().toString() // Lấy URL sau khi upload thành công
+            Result.success(downloadUrl)
+        } catch (e: Exception) {
+            Log.e("FirebaseStorage", "Upload image failed", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun uploadImages(images: List<Uri>, pathPrefix: String): Result<List<String>> {
+        val uploadedUrls = mutableListOf<String>()
+
+        for ((index, uri) in images.withIndex()) {
+            val result = uploadImageToStorage(uri, "$pathPrefix/image_$index")
+            if (result.isSuccess) {
+                uploadedUrls.add(result.getOrThrow()) // Lấy URL từ Result
+            } else {
+                return Result.failure(result.exceptionOrNull() ?: Exception("Unknown error")) // Báo lỗi ngay khi có ảnh thất bại
+            }
+        }
+
+        return Result.success(uploadedUrls) // ✅ Thành công nếu tất cả ảnh đều upload được
+    }
+
+    private suspend fun deleteImageFromStorage(imageUrl: String): Result<Unit> {
+        return try {
+            if (!imageUrl.startsWith("https://")) {
+                return Result.failure(Exception("Invalid image URL format"))
+            }
+
+            val decodedUrl = withContext(Dispatchers.IO) {
+                URLDecoder.decode(imageUrl, "UTF-8")
+            }
+
+            val pathStartIndex = decodedUrl.indexOf("/o/") + 3
+            val pathEndIndex = decodedUrl.indexOf("?alt=")
+
+            if (pathStartIndex == -1 || pathEndIndex == -1) {
+                return Result.failure(Exception("Invalid image URL"))
+            }
+
+            val imagePath = decodedUrl.substring(pathStartIndex, pathEndIndex)
+            val imageRef = storage.child(imagePath)
+
+            imageRef.delete().await() // Xóa ảnh trên Firebase Storage
+            Log.d("FirebaseStorage", "Deleted image successfully: $imageUrl")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirebaseStorage", "Error deleting image", e)
+            Result.failure(e)
+        }
+    }
+
+
+
+    suspend fun removeProductById(productId: String): Result<Unit> {
+        val productRef = firestore.collection("Products").document(productId)
+
+        return try {
+            val snapshot = productRef.get().await()
+            val product = snapshot.toObject(ProductModel::class.java) ?: return Result.failure(Exception("Product not found"))
+
+            val colorImageUrls = product.availableOptions?.listColorOptions
+                ?.mapNotNull { it.imageColorUrl.takeIf { url -> url.isNotBlank() } }
+                ?: emptyList()
+
+            val imageUrls = product.images + colorImageUrls
+            Log.d("FireStore", "Image URLs to delete: $imageUrls")
+
+            // Xóa tất cả ảnh song song
+            val deleteImageJobs = imageUrls.map { imageUrl ->
+                CoroutineScope(Dispatchers.IO).async {
+                    deleteImageFromStorage(imageUrl).onFailure {
+                        Log.e("FireStore", "Failed to delete image: $imageUrl", it)
+                    }
+                }
+            }
+
+            // Chờ tất cả ảnh được xóa xong
+            deleteImageJobs.awaitAll()
+
+            // Xóa sản phẩm sau khi đã xóa hết ảnh
+            productRef.delete().await()
+            Log.d("FireStore", "Product deleted successfully: $productId")
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FireStore", "Product delete failed", e)
+            Result.failure(e)
+        }
+    }
+
+
+
 
 
 
@@ -423,7 +565,6 @@ class FirebaseFireStoreRepository {
     }
 
 
-
     fun observeProductById(productId: String): Flow<ProductModel?> = callbackFlow {
         val productRef = firestore.collection("Products").document(productId)
 
@@ -599,7 +740,6 @@ class FirebaseFireStoreRepository {
             Result.failure(e) // Trả về lỗi
         }
     }
-
 
 
 }

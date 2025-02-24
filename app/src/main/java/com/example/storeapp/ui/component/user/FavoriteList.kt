@@ -37,7 +37,7 @@ import com.example.storeapp.ui.theme.StoreAppTheme
 fun FavoriteList(
     favItems: List<WishListModel>,
     onFavIconClick: (String) -> Unit = {},
-    onFavItemClick: (Int) -> Unit = {},
+    onFavItemClick: (String) -> Unit = {},
 
 ) {
     LazyColumn(
@@ -62,14 +62,14 @@ fun FavoriteList(
 fun FavItem(
     favItem: WishListModel,
     onFavIconClick: (String) -> Unit = {},
-    onFavItemClick: (Int) -> Unit = {},
+    onFavItemClick: (String) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = RoundedCornerShape(10.dp),
         modifier = modifier.clickable {
-            onFavItemClick(favItem.productId.toInt())
+            onFavItemClick(favItem.productId)
         }
     ) {
         Row(

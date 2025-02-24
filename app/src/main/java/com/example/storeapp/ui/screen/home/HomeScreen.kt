@@ -40,7 +40,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateCartScreen: () -> Unit,
     navigateAllProduct: () -> Unit,
-    navigateProductDetails: (Int) -> Unit,
+    navigateProductDetails: (String) -> Unit,
     navigateNotification: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     cartViewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory),
@@ -113,7 +113,7 @@ fun HomeScreen(
                         categories = homeUiState.categories,
                         onCategorySelected = { id ->
                             viewModel.selectCategory(
-                                id.toInt()
+                                id
                             )
                             Log.d("HomeScreenId", "selectCategory: $id")
                         }

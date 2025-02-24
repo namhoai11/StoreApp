@@ -47,7 +47,6 @@ import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CategoryModel
-import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.StockByVariant
 import com.example.storeapp.ui.AppViewModelProvider
@@ -113,9 +112,9 @@ fun AddProductScreen(
             "Chi tiết"
         }
     }
-//    LaunchedEffect(Unit) {
-//
-//    }
+    LaunchedEffect(Unit) {
+        viewModel.loadProduct()
+    }
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -131,8 +130,10 @@ fun AddProductScreen(
             innerPadding = innerPadding,
             uiState = uiState,
             isEditing = isEditing,
-            editProductClick = {},
-            deleteProductClick = {},
+            editProductClick = { viewModel.editProductClicked() },
+            deleteProductClick = {
+                viewModel.removeProduct { navController.navigateUp() }
+            },
             onNameChange = { viewModel.onNameChange(it) },
             onCategoryNameSelected = { viewModel.onCategoryNameSelected(it) },
             onPriceChange = { viewModel.onPriceChange(it) },
@@ -181,7 +182,8 @@ fun AddProductScreen(
                 viewModel.onEditQuantityStock(index, quantityByVariantName)
             },
 
-            onDescriptionChange = { viewModel.onDescriptionChange(it) }
+            onDescriptionChange = { viewModel.onDescriptionChange(it) },
+            onConfirm = { viewModel.saveProduct() }
 
 
         )
@@ -850,7 +852,7 @@ fun AddCategoryField(
 @Composable
 fun AddStockByVariantField(
     isEditing: Boolean,
-    listColorOptions: List<ColorOptions> = emptyList(),
+    listColorOptions: List<ColorOptionsForAddProduct> = emptyList(),
     selectedColor: String = "",
     onColorSelected: (String) -> Unit = {},
     listProductOptions: List<ProductOptions> = emptyList(),
@@ -1074,10 +1076,10 @@ fun PreviewAddProductContent() {
 @Composable
 fun AddCategoryFieldPreview() {
     StoreAppTheme {
-        var selectedCategory by remember { mutableStateOf("selectedCategory.name") }
+        var selectedCategory by remember { mutableStateOf("0") }
 //        val listCategory = DataDummy.categoryList.map { it.name }
         val category = CategoryModel(
-            id = 0,
+            id = "0",
             name = "Pc",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             description = "",
@@ -1100,17 +1102,7 @@ fun AddCategoryFieldPreview() {
 @Composable
 fun AddStockByVariantFieldPreview() {
     StoreAppTheme {
-        var selectedCategory by remember { mutableStateOf("selectedCategory.name") }
-        val category = CategoryModel(
-            id = 0,
-            name = "Pc",
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
-            description = "",
-            hidden = false,
-            productCount = 1,
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now(),
-        )
+
         AddStockByVariantField(
             isEditing = true,
 

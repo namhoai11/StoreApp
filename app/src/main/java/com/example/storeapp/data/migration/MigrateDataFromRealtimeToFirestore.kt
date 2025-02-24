@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 
 suspend fun migrateDataFromRealtimeToFirestore() {
     val database = FirebaseDatabase.getInstance().getReference("Products")
@@ -104,7 +103,7 @@ suspend fun migrateCategoriesFromRealtimeToFirestore() {
                 // Kiểm tra dữ liệu trong categoryMap
                 Log.d("RealtimeDB", "Category data: $categoryMap")
                 val category = CategoryModel(
-                    id = categoryMap["id"] as? Int ?: 0,
+                    id = categoryMap["id"] as? String ?: "",
                     name = categoryMap["name"] as? String ?: "",
                     imageUrl = categoryMap["imageUrl"] as? String ?: "",
                     description = categoryMap["description"] as? String ?: "",
@@ -115,7 +114,7 @@ suspend fun migrateCategoriesFromRealtimeToFirestore() {
                 )
 
                 // Lưu vào Firestore
-                val categoryId = categorySnapshot.key ?: category.id.toString()
+                val categoryId = categorySnapshot.key ?: category.id
                 categoriesCollection.document(categoryId)
                     .set(category)
                     .addOnSuccessListener {

@@ -27,7 +27,7 @@ object OurProductDestination : NavigationDestination {
 
 @Composable
 fun OurProductScreen(
-    navigateProductDetails: (Int) -> Unit,
+    navigateProductDetails: (String) -> Unit,
     navController: NavController,
     viewModel: OurProductViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {

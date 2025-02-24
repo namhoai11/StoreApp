@@ -2,7 +2,6 @@
 
 import android.net.Uri
 import com.example.storeapp.model.CategoryModel
-import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.StockByVariant
@@ -24,7 +23,7 @@ data class AddProductUiState(
     val priceForOption: Double = 0.0,
 
     //mau dang duoc nhap
-    val listColorOptions: List<ColorOptions> = emptyList(),
+    val listColorOptions: List<ColorOptionsForAddProduct> = emptyList(),
     val colorName: String = "",
     val imageColorUri: Uri? = null,
 
@@ -39,3 +38,13 @@ data class AddProductUiState(
     val errorMessage: String? = null,
     val successMessage: String = "",
 )
+
+
+data class ColorOptionsForAddProduct(
+    val colorName: String = "",
+    val imageColorUri: Uri? = null,
+    val imageColorUrl: String = ""
+) {
+    constructor(colorName: String) : this(colorName, null, "")
+    constructor(colorName: String, imageColorUrl: String) : this(colorName, null, imageColorUrl)
+}

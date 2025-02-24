@@ -61,7 +61,7 @@ class WishListViewModel(
             val allCategory = repository.loadCategory()
             val listWishListModel = emptyList<WishListModel>().toMutableList()
             wishListProduct.forEach { product ->
-                val categoryItem = allCategory.find { it.id == product.categoryId.toIntOrNull() }
+                val categoryItem = allCategory.find { it.id == product.categoryId }
                 val wishListItem = WishListModel(
                     productId = product.id,
                     productName = product.name,

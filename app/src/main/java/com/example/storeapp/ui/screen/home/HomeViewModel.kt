@@ -58,7 +58,7 @@ class HomeViewModel(
 
             val allProducts = repository.loadAllProducts()
             Log.d("HomeViewModel", "All Product:$allProducts")
-            val itemsByCategory = allProducts.groupBy { it.categoryId.toIntOrNull() ?: -2 }
+            val itemsByCategory = allProducts.groupBy { it.categoryId }
 
             _uiState.update {
                 it.copy(
@@ -83,7 +83,7 @@ class HomeViewModel(
         }
     }
 
-    fun selectCategory(categoryId: Int) {
+    fun selectCategory(categoryId: String) {
         _uiState.update { it.copy(currentCategoryId = categoryId) }
     }
 }

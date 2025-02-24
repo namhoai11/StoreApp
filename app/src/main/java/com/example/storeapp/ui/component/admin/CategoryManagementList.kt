@@ -80,7 +80,7 @@ fun CategoryManagementItem(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = item.id.toString(),
+                            text = item.id,
                             color = Color.Gray,
 //                            fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
@@ -121,7 +121,7 @@ fun PreviewCategoryManagementList() {
 @Composable
 fun PreviewCategoryManagementItem() {
     val sampleItem = CategoryModel(
-        id = 0,
+        id = "0",
         name = "PC",
         imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
         createdAt = Timestamp.now(),

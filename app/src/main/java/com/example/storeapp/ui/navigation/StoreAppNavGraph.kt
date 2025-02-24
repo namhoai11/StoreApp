@@ -119,7 +119,7 @@ fun StoreAppNavHost(
         composable(
             route = ProductDetailsDestination.routeWithArgs,
             arguments = listOf(navArgument(ProductDetailsDestination.productDetailsIdArg) {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) {
             ProductDetailsScreen(

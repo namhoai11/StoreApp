@@ -42,7 +42,7 @@ object FavoriteDestination : NavigationDestination {
 @Composable
 fun WishListScreen(
     navController: NavController,
-    navigateProductDetails: (Int) -> Unit,
+    navigateProductDetails: (String) -> Unit,
     viewModel: WishListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -101,7 +101,7 @@ fun FavContent(
     favItems: List<WishListModel>,
     isShowLoading: Boolean = false,
     onFavIconClick: (String) -> Unit = {},
-    onFavItemClick: (Int) -> Unit = {},
+    onFavItemClick: (String) -> Unit = {},
 
     ) {
     if (isShowLoading) {

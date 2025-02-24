@@ -116,12 +116,9 @@ data class ProductOptions(
 
 data class ColorOptions(
     val colorName: String = "",
-    val imageColorUri: Uri? = null, // Ảnh tạm thời trước khi upload
     val imageColorUrl: String = ""  // URL ảnh sau khi upload lên Firebase Storage
 ) {
-    constructor() : this("", null, "")
-    constructor(colorName: String) : this(colorName, null, "")
-    constructor(colorName: String,imageColorUrl:String):this(colorName,null,imageColorUrl)
+    constructor() : this("", "")
 }
 
 
