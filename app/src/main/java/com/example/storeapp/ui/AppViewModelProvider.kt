@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
+import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementViewModel
@@ -85,6 +86,12 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
+        initializer {
+            CategoryManagementViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+
 
 
         initializer {

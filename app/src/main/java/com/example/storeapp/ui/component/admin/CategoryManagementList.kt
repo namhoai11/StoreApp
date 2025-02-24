@@ -100,6 +100,11 @@ fun CategoryManagementItem(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                     )
+                    Text(
+                        text = item.productCount.toString(),
+                        color = Color.Gray,
+                        fontSize = 12.sp
+                    )
                 }
             }
         }
@@ -116,6 +121,7 @@ fun PreviewCategoryManagementList() {
         CategoryManagementList(sampleCategories)
     }
 }
+
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

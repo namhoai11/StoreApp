@@ -5,14 +5,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.CategoryModel
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminSearch
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.CategoryManagementList
@@ -28,7 +33,12 @@ object CategoryManagementDestination : NavigationDestination {
 @Composable
 fun CategoryManagementScreen(
     navController: NavController,
+    viewModel: CategoryManagementViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -39,31 +49,37 @@ fun CategoryManagementScreen(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
-//        bottomBar = {
-//            AdminBottomNavigationBar(
-//                navController = navController,
-//                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-//
-//            )
-//        }
     ) { innerPadding ->
-        CategoryManagementContent(innerPadding = innerPadding)
+        CategoryManagementContent(
+            innerPadding = innerPadding,
+            uiState = uiState,
+            onSearchCategory = { viewModel.searchCategorysByName(it) }
+
+        )
     }
 }
 
 @Composable
 fun CategoryManagementContent(
+    uiState: CategoryManagementUiState,
     innerPadding: PaddingValues,
+    onSearchCategory: (String) -> Unit = {}
 ) {
-    val sampleCategories = DataDummy.categoryList
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
         AdminSearch(
             textSearch = "Tìm kiếm danh mục",
+            onSearch = onSearchCategory,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         )
-        CategoryManagementList(categoryList = sampleCategories)
+        CategoryManagementList(
+            categoryList = if (uiState.currentQuery.isNotBlank()) {
+                uiState.categoriesSearched
+            } else {
+                uiState.categories
+            },
+        )
     }
 }
 
@@ -72,8 +88,9 @@ fun CategoryManagementContent(
 @Composable
 fun PreviewCategoryManagementScreen() {
     StoreAppTheme {
-        CategoryManagementScreen(
-            navController = rememberNavController()
+        CategoryManagementContent(
+            uiState = DataDummy.categoryManagementUiState,
+            innerPadding = PaddingValues(0.dp)
         )
     }
 }

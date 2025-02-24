@@ -61,12 +61,15 @@ fun ProductManagementScreen(
     viewModel: ProductManagementViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
     LaunchedEffect(uiState.categories) {
         if (uiState.categories.isNotEmpty() && uiState.currentCategoryId == "-2") {
             viewModel.selectCategory(uiState.categories.first().name)
         }
     }
+
 
     Scaffold(
         topBar = {

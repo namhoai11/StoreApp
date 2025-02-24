@@ -23,6 +23,7 @@ import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.Ward
 import com.example.storeapp.ui.screen.address.AddressUiState
 import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
+import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementUiState
@@ -145,7 +146,7 @@ object DataDummy {
         maxDiscount = null,
         minOrderValue = null,
         quantity = 1,
-                    active = CouponActive.ALL,
+        active = CouponActive.ALL,
         startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
         endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
         color1 = Color(0xFF9733EE),
@@ -164,7 +165,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = null,
             quantity = 1,
-                        active = CouponActive.ALL,
+            active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF9733EE),
@@ -180,7 +181,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = 100.0,
             quantity = 1,
-                        active = CouponActive.ALL,
+            active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFFFFA726),
@@ -196,7 +197,7 @@ object DataDummy {
             maxDiscount = null,
             minOrderValue = 50.0,
             quantity = 1,
-                        active = CouponActive.ALL,
+            active = CouponActive.ALL,
             startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
             endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
             color1 = Color(0xFF00C9FF),
@@ -220,7 +221,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = null,
                     quantity = 1,
-                                active = CouponActive.ALL,
+                    active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFF9733EE),
@@ -238,7 +239,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = 100.0,
                     quantity = 1,
-                                active = CouponActive.ALL,
+                    active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFFFFA726),
@@ -256,7 +257,7 @@ object DataDummy {
                     maxDiscount = null,
                     minOrderValue = 50.0,
                     quantity = 1,
-                                active = CouponActive.ALL,
+                    active = CouponActive.ALL,
                     startDate = Timestamp(1706774400, 0),// 01/02/2024 08:00:00
                     endDate = Timestamp(1707570600, 0),// 10/02/2024 18:30:00
                     color1 = Color(0xFF00C9FF),
@@ -279,7 +280,7 @@ object DataDummy {
             maxDiscount = 100.0,
             minOrderValue = 500.0,
             quantity = 10,
-                        active = CouponActive.ALL,
+            active = CouponActive.ALL,
             startDate = Timestamp.now(),
             endDate = Timestamp.now(),
             color1 = Color.Blue,
@@ -503,7 +504,6 @@ object DataDummy {
     )
 
 
-
     val productItem = ProductModel(
         id = "1",
         name = "Business Laptop",
@@ -584,7 +584,7 @@ object DataDummy {
     )
     val categoryList = listOf(
         CategoryModel(
-            id =" 0",
+            id = " 0",
             name = "Pc",
             imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
             description = "",
@@ -660,5 +660,9 @@ object DataDummy {
         isLoading = false,
         errorMessage = null,
         successMessage = "Sản phẩm đã được thêm thành công!"
+    )
+
+    val categoryManagementUiState = CategoryManagementUiState(
+        categories = categoryList
     )
 }
