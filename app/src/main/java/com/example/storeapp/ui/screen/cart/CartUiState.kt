@@ -2,6 +2,7 @@
 
 
 data class CartUiState(
+    val cartId: String = "",
     val listProductOnCart: List<ProductsOnCartToShow> = emptyList(),
     val totalPrice: Double = 0.0,
     val showCartLoading: Boolean = false,

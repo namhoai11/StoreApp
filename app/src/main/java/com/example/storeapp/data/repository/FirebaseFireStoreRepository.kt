@@ -515,18 +515,20 @@ class FirebaseFireStoreRepository {
         }
     }
 
+    suspend fun getCartById(cartId: String): Result<CartModel?> {
+        return try {
+            val documentSnapshot = firestore.collection("Cart").document(cartId).get().await()
+            val cart = documentSnapshot.toObject(CartModel::class.java)
 
-//    suspend fun increaseProductQuantity(
-//        currentUserId: String, productOnCart: ProductsOnCart
-//    ): Result<Unit> {
-//        return updateProductQuantity(currentUserId, productOnCart, isIncreasing = true)
-//    }
-//
-//    suspend fun decreaseProductQuantity(
-//        currentUserId: String, productOnCart: ProductsOnCart
-//    ): Result<Unit> {
-//        return updateProductQuantity(currentUserId, productOnCart, isIncreasing = false)
-//    }
+            Log.d("FirestoreRepository", "Loaded Product with ID $cartId: $cart")
+            Result.success(cart) // Thành công, trả về kết quả
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading product with ID $cartId", e)
+            Result.failure(e) // Lỗi, trả về exception
+        }
+    }
+
+
 
     suspend fun updateProductQuantityInCart(
         currentUserId: String,
@@ -716,6 +718,24 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getActiveCoupons(): Result<List<CouponModel>> {
+        return try {
+            val snapshot = firestore.collection("Coupons").get().await()
+            val now = Timestamp.now()
+
+            val activeCoupons = snapshot.documents.mapNotNull { it.toObject(CouponModel::class.java) }
+                .filter { it.startDate <= now && it.endDate >= now } // Lọc chỉ lấy Coupon đang hoạt động
+
+            Log.d("Firestore", "Đã tải ${activeCoupons.size} coupon đang hoạt động")
+
+            Result.success(activeCoupons)
+        } catch (e: Exception) {
+            Log.e("Firestore", "Lỗi khi tải Coupons", e)
+            Result.failure(e)
+        }
+    }
+
 
     suspend fun getCouponById(couponId: String): Result<CouponModel> {
         return try {

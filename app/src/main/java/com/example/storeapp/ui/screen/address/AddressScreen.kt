@@ -50,7 +50,6 @@ import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.AddressItemScreen2
 import com.example.storeapp.ui.navigation.NavigationDestination
-import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 
@@ -78,7 +77,7 @@ fun AddressScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Address",
+                        text = "Địa chỉ",
 //                        fontFamily = poppinsFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold

@@ -39,6 +39,7 @@ import com.example.storeapp.ui.screen.ourproduct.OurProductScreen
 import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.checkout.CheckoutDestination
+import com.example.storeapp.ui.screen.checkout.CheckoutScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.home.HomeScreen
 import com.example.storeapp.ui.screen.intro.IntroDestination
@@ -144,8 +145,21 @@ fun StoreAppNavHost(
         ) {
             CartScreen(navController = navController,
                 onNavigateProductDetails = { navController.navigate("${ProductDetailsDestination.route}/$it") },
-                onNavigateToCheckout = { navController.navigate(CheckoutDestination.route) }
+                onNavigateToCheckout = {
+                    navController.navigate(
+                        CheckoutDestination.createRoute(locationId = null)
+                    )
+                }
             )
+        }
+
+        composable(
+            CheckoutDestination.route,
+            arguments = listOf(
+                navArgument("locationId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            CheckoutScreen(navController = navController)
         }
 
         composable(

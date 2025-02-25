@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,14 +18,23 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,51 +43,86 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.CouponModel
-import com.example.storeapp.model.OrderModel
-import com.example.storeapp.model.ShippingModel
-import com.example.storeapp.model.UserLocationModel
+import com.example.storeapp.model.CouponType
+import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.user.AddressItemScreen
-import com.example.storeapp.ui.component.user.CartItemMini
+import com.example.storeapp.ui.component.user.CartMiniList
 import com.example.storeapp.ui.component.user.CouponInactiveSelected
 import com.example.storeapp.ui.component.user.CouponItemSelected
 import com.example.storeapp.ui.component.user.ShippingItem
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
+
 object CheckoutDestination : NavigationDestination {
-    override val route = "checkout"
-    override val titleRes = R.string.checkout_title
+    override val route = "checkout?locationId={locationId}"
+    override val titleRes = R.string.addcouponmanage_title
+    fun createRoute(locationId: String?): String {
+        return "checkout?locationId=$locationId"
+    }
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckoutScreen(){
+fun CheckoutScreen(
+    navController: NavController,
+    viewModel: CheckoutViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "Thanh toán",
+//                        fontFamily = poppinsFontFamily,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                navigationIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "back",
+                        modifier = Modifier
+                            .clickable { navController.navigateUp() }
+                            .padding(horizontal = 16.dp)
+                    )
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
+    ) { innerPadding ->
+        CheckoutContent(
+            innerPadding = innerPadding,
+            uiState = uiState,
+            onEditAddress = { /*TODO*/ },
+            onChooseShipping = { /*TODO*/ },
+            onChooseCoupon = { /*TODO*/ }) {
+        }
+    }
 }
 
 @Composable
 fun CheckoutContent(
+    innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
     uiState: CheckoutUiState,
-    onEditAddress: () -> Unit,//truyền 1
-    state: OrderModel? = null,
-    selectedLocationId: Int?,
-    selectedLocation: UserLocationModel,
-    onShowDialog: () -> Unit,
+    onEditAddress: () -> Unit,
     onChooseShipping: () -> Unit,
     onChooseCoupon: () -> Unit,
-    selectedShippingId: Int?,
-    shippingItem: List<ShippingModel>,
-    selectedCouponId: Int?,
-    couponItem: List<CouponModel>,
-    isButtonEnabled: Boolean = false,
     onChoosePayment: () -> Unit,
-    finalPrice: Double,
 ) {
     Column(
         modifier = modifier
+            .padding(innerPadding)
             .fillMaxSize()
     ) {
         Column(
@@ -92,7 +137,7 @@ fun CheckoutContent(
                 )
                 .weight(1f)
         ) {
-            if (selectedLocationId == -1) {
+            if (uiState.selectedLocation == null) {
                 Card(
                     border = BorderStroke(
                         width = 1.dp,
@@ -112,7 +157,7 @@ fun CheckoutContent(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .align(Alignment.Center),
-                            text = "Choose Address",
+                            text = "Chọn địa chỉ",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                         )
@@ -134,22 +179,14 @@ fun CheckoutContent(
                         .height(125.dp)
                 ) {
                     AddressItemScreen(
-                        name = selectedLocation.street,
-                        address = selectedLocation.province
+                        name = uiState.selectedLocation.userName,
+                        address = uiState.selectedLocation.street + " - " + uiState.selectedLocation.ward + " - " + uiState.selectedLocation.district + " - " + uiState.selectedLocation.province
+
                     )
                 }
             }
-            state?.products?.firstOrNull()?.let { item ->
-                CartItemMini(
-                    productName = item.productName,
-                    imageId = item.productImage,
-                    price = item.productPrice,
-                    orderCount = item.quantity,
-                    totalOrder = item.quantity,
-                    onDetailOrder = { onShowDialog() }
-                )
-            }
-            if (selectedShippingId == null) {
+            CartMiniList(products = uiState.products)
+            if (uiState.selectedShipping == null) {
                 Card(
                     border = BorderStroke(
                         width = 1.dp,
@@ -171,7 +208,7 @@ fun CheckoutContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Choose Shipping",
+                            text = "Chọn phương thức vận chuyển",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             modifier = Modifier.weight(1f)
@@ -180,7 +217,7 @@ fun CheckoutContent(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Edit",
+                                text = "Sửa",
                                 fontSize = 14.sp,
                             )
                             Spacer(modifier = Modifier.size(4.dp))
@@ -194,7 +231,6 @@ fun CheckoutContent(
                     }
                 }
             } else {
-                val selectedShipping = shippingItem[selectedShippingId]
                 Card(
                     border = BorderStroke(
                         width = 1.dp,
@@ -214,24 +250,28 @@ fun CheckoutContent(
                     ShippingItem(
                         isChoose = true,
                         onChoose = { onChooseShipping() },
-                        name = selectedShipping.name,
-                        price = selectedShipping.price,
-                        description = selectedShipping.description
+                        name = uiState.selectedShipping.name,
+                        price = uiState.selectedShipping.price,
+                        description = uiState.selectedShipping.description
                     )
                 }
             }
-            if (selectedCouponId == null) {
+            if (uiState.selectedCoupon == null) {
                 CouponInactiveSelected(
                     modifier = Modifier
                         .clickable { onChooseCoupon() }
                 )
             } else {
-                val selectedCouponChoose = couponItem[selectedCouponId]
+                val value = when (uiState.selectedCoupon.type) {
+                    CouponType.PERCENTAGE -> "${uiState.selectedCoupon.value * 100}%"
+                    CouponType.FIXED_AMOUNT -> formatCurrency2(uiState.selectedCoupon.value)
+                    CouponType.FREE_SHIPPING -> "free ship"
+                }
                 CouponItemSelected(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .clickable { onChooseCoupon() },
-                    discountTittle = selectedCouponChoose.maxDiscount.toString()
+                    discountTittle = value
                 )
             }
         }
@@ -249,7 +289,7 @@ fun CheckoutContent(
                 )
             ) {
                 Text(
-                    text = "Payment Summary",
+                    text = "Tóm tắt thanh toán ",
                     fontWeight = FontWeight.SemiBold
                 )
                 Row(
@@ -258,11 +298,19 @@ fun CheckoutContent(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Sub-total",
+                        text = "Giá",
                         color = MaterialTheme.colorScheme.outline
                     )
+                    if (uiState.selectedCoupon != null) {
+                        Text(
+                            text = formatCurrency2(uiState.oldTotalPrice),
+                            textDecoration = TextDecoration.LineThrough,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Spacer(modifier = Modifier.padding(end = 16.dp))
+                    }
                     Text(
-                        text = "$${"%.2f".format(state?.totalPrice)}",
+                        text = formatCurrency2(uiState.totalPrice),
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -273,18 +321,18 @@ fun CheckoutContent(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Shipping Charge",
+                        text = "Phí vận chuyển",
                         color = MaterialTheme.colorScheme.outline
                     )
-                    selectedShippingId?.let {
+                    if (uiState.selectedShipping != null) {
                         Text(
-                            text = "$${shippingItem[selectedShippingId].price}",
+                            text = formatCurrency2(uiState.selectedShipping.price),
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary
                         )
-                    } ?: run {
+                    } else {
                         Text(
-                            text = "$0.00",
+                            text = formatCurrency2(0.0),
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -296,27 +344,15 @@ fun CheckoutContent(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Final Price",
+                        text = "Tổng",
                         color = MaterialTheme.colorScheme.outline
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (selectedCouponId != null) {
-                            Text(
-                                text = if (selectedShippingId == null) "$${"%.2f".format(state?.totalPrice)}"
-                                else "$${
-                                    "%.2f".format(
-                                        (state?.totalPrice)?.plus(shippingItem[selectedShippingId].price)
-                                    )
-                                }",
-                                textDecoration = TextDecoration.LineThrough,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                            )
-                        }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "$${"%.2f".format(finalPrice)}",
+                            text = formatCurrency2(uiState.finalPrice),
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -327,7 +363,7 @@ fun CheckoutContent(
                     color = Color.Black,
                 )
                 Button(
-                    enabled = isButtonEnabled,
+                    enabled = uiState.isButtonEnabled,
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 8.dp)
                         .height(55.dp)
@@ -339,7 +375,7 @@ fun CheckoutContent(
                     )
                 ) {
                     Text(
-                        text = "Choose Payment",
+                        text = "Thanh toán",
                         fontSize = 16.sp,
                         color = Color.White
                     )
@@ -356,35 +392,12 @@ private fun CheckoutContentPreview() {
         dynamicColor = false
     ) {
         CheckoutContent(
+            innerPadding = PaddingValues(0.dp),
             uiState = DataDummy.checkoutUiState,
             onEditAddress = {},
-            onShowDialog = {},
             onChooseShipping = {},
-            selectedLocation = UserLocationModel(
-                id = "1",
-                userName = "La Hoai Nam",
-                street = "Jl. Durian No. 123",
-                province = "Jawa Tengah",
-                district = "Kab. Semarang",
-                ward = "Banyubiru",
-//                isDefault = true,
-                userId = "user123",
-                provinceId = "province01",
-                districtId = "district01",
-                wardId = "ward01",
-//                latitude = -7.123456,
-//                longitude = 110.123456,
-//                createdAt = Timestamp.now(),
-//                updatedAt = Timestamp.now()
-            ),
-            selectedLocationId = 1,
-            selectedShippingId = 2,
-            shippingItem = DataDummy.dummyShipping,
             onChooseCoupon = {},
-            selectedCouponId = 2,
-            couponItem = DataDummy.dummyCoupon,
             onChoosePayment = {},
-            finalPrice = 0.0
         )
     }
 }

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.UserModel
-import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -61,6 +60,7 @@ class CartViewModel(
                 _uiState.update { it.copy(showCartLoading = false, errorMessage = "Không thể xác định người dùng") }
                 return@launch
             }
+
             val cart = repository.getCartByUser(currentUser.id)
             Log.d("CartViewModel", "cart: $cart")
 
@@ -125,6 +125,7 @@ class CartViewModel(
 
             _uiState.update {
                 it.copy(
+                    cartId = cart.id,
                     listProductOnCart = listProductToShow,
                     totalPrice = totalPrice,
                     showCartLoading = false,
@@ -358,9 +359,6 @@ class CartViewModel(
                 this.colorOptions == other.colorOptions
     }
 
-    /**
-     * Chuyển đổi từ ProductsOnCartToShow sang ProductsOnCart
-     */
     private fun ProductsOnCartToShow.toProductsOnCart(): ProductsOnCart {
         return ProductsOnCart(
             productId = this.productId,
@@ -424,12 +422,5 @@ class CartViewModel(
                 }
             }
         }
-    }
-
-    fun proceedToCheckout(navigateToCheckout: () -> Unit, checkoutViewModel: CheckoutViewModel) {
-        val cartProducts = _uiState.value.listProductOnCart
-
-        checkoutViewModel.proceedToCheckout(cartProducts) // Gửi danh sách sản phẩm qua CheckoutViewModel
-        navigateToCheckout() // Điều hướng sang màn hình Checkout
     }
 }

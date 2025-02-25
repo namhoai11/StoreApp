@@ -1,38 +1,177 @@
 ﻿package com.example.storeapp.ui.screen.checkout
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class CheckoutViewModel(
+    savedStateHandle: SavedStateHandle,
     private val repository: FirebaseFireStoreRepository
 ) : ViewModel() {
-    private val _checkoutUiState = MutableStateFlow(CheckoutUiState())
-    val checkoutUiState: StateFlow<CheckoutUiState> = _checkoutUiState
+    private val _uiState = MutableStateFlow(CheckoutUiState())
+    val uiState: StateFlow<CheckoutUiState> = _uiState
 
-    fun proceedToCheckout(cartProducts: List<ProductsOnCartToShow>) {
-        if (cartProducts.isEmpty()) {
-            _checkoutUiState.update { it.copy(errorMessage = "Giỏ hàng trống!") }
-            return
+    private val _user = MutableLiveData<UserModel?>()
+    val user: LiveData<UserModel?> = _user
+
+
+    private val locationId: String? = savedStateHandle["locationId"]
+
+
+    init {
+        loadUser()
+        viewModelScope.launch {
+            _uiState.collect { state ->
+                Log.d("CheckoutViewModel", "Current UI State: $state")
+            }
+        }
+    }
+
+    private fun loadUser() {
+        viewModelScope.launch {
+            val userData = repository.getCurrentUser()
+            _user.value = userData
+            Log.d("CheckoutViewModel", "User loaded: $userData")
+            loadCheckout()
+
+        }
+    }
+
+    private fun loadCheckout() = viewModelScope.launch {
+        try {
+            _uiState.update { it.copy(isLoading = true) }
+            val currentUser = _user.value
+            if (currentUser == null) {
+                _uiState.update { it.copy(errorMessage = "Không thể xác định người dùng") }
+                return@launch
+            }
+//------------d/c
+            val locationResult = repository.getListAddressByUser(currentUser.id)
+            if (locationResult.isSuccess) {
+                val listAddress = locationResult.getOrDefault(emptyList())
+                val defaultLocationId = currentUser.defaultLocationId
+                val validDefaultLocationId = if (listAddress.any { it.id == defaultLocationId }) {
+                    defaultLocationId
+                } else {
+                    null // Nếu không có trong danh sách thì để null
+                }
+                val currentLocationId = locationId ?: validDefaultLocationId
+
+                val currentLocation = listAddress.find { it.id == currentLocationId }
+
+                _uiState.update { it.copy(selectedLocation = currentLocation) }
+
+                Log.d("CheckoutViewModel", "Loaded ${listAddress.size} addresses")
+            } else {
+                _uiState.update { it.copy(selectedLocation = null) }
+
+                throw locationResult.exceptionOrNull()
+                    ?: Exception("Lỗi không xác định khi tải danh sách địa chỉ")
+            }
+//--------------end d/c
+//==============list ProductForCheckout
+            val cart = repository.getCartByUser(currentUser.id)
+            Log.d("CheckoutViewModel", "cart: $cart")
+            if (cart == null) {
+                Log.e("CheckoutViewModel", "Cart not found for UserId: ${currentUser.id}")
+                _uiState.update {
+                    it.copy(
+                        errorMessage = "Cart not found for UserId: ${currentUser.id}"
+                    )
+                }
+                return@launch
+            }
+            val productIds = cart.products.map { it.productId }
+            val products = repository.getProductByListId(productIds).associateBy { it.id }
+
+            val listProductToShow = cart.products.map { productOnCart ->
+                val product = products[productOnCart.productId]
+
+                if (product != null) {
+                    val selectedOption = product.availableOptions?.listProductOptions
+                        ?.find { it.optionsName == productOnCart.productOptions }
+                    val price = selectedOption?.priceForOptions ?: product.price
+
+                    val remainingStock = product.stockByVariant.find {
+                        it.colorName == productOnCart.colorOptions && it.optionName == productOnCart.productOptions
+                    }?.quantity ?: 0
+
+                    val notEnough =
+                        if (productOnCart.quantity > remainingStock) "sản phẩm trong kho không đủ" else ""
+
+                    ProductsOnCartToShow(
+                        productId = productOnCart.productId,
+                        productName = productOnCart.productName,
+                        productImage = productOnCart.productImage,
+                        productPrice = price,
+                        productOptions = productOnCart.productOptions,
+                        colorOptions = productOnCart.colorOptions,
+                        quantity = productOnCart.quantity,
+                        remainingStock = remainingStock,
+                        notExist = "",
+                        notEnough = notEnough
+                    )
+                } else {
+                    ProductsOnCartToShow(
+                        productId = productOnCart.productId,
+                        productName = productOnCart.productName,
+                        productImage = productOnCart.productImage,
+                        productPrice = 0.0,
+                        productOptions = productOnCart.productOptions,
+                        colorOptions = productOnCart.colorOptions,
+                        quantity = productOnCart.quantity,
+                        remainingStock = 0,
+                        notExist = "Sản phẩm ngừng kinh doanh",
+                        notEnough = "",
+                    )
+                }
+            }
+            val oldTotalPrice = listProductToShow.sumOf { it.productTotalPrice }
+            _uiState.update {
+                it.copy(
+                    products = listProductToShow,
+                    oldTotalPrice = oldTotalPrice,
+                    totalPrice = oldTotalPrice,
+                    finalPrice = oldTotalPrice + DataDummy.dummyShipping[2].price,
+                    listShipping = DataDummy.dummyShipping,
+                    selectedShipping = DataDummy.dummyShipping[2],
+                )
+            }
+//----------------------done listProduct, oldTotalPrice, listShipping
+//----------------------LoadCoupon
+            val couponResult = repository.getActiveCoupons()
+            couponResult.onSuccess { activeCoupons ->
+                Log.d("CheckoutViewModel", "Số lượng coupon đang hoạt động: ${activeCoupons.size}")
+                _uiState.update {
+                    it.copy(
+                        listCoupon = activeCoupons,
+                    )
+                }
+            }.onFailure { e ->
+                Log.e("CheckoutViewModel", "Lỗi khi tải coupons", e)
+                _uiState.update { it.copy(errorMessage = e.localizedMessage) }
+            }
+//------------------------Done
+        } catch (e: Exception) {
+            Log.e("CheckoutViewModel", "Error loading Checkout: ${e.message}")
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = "Error loading Cart: ${e.message}"
+                )
+            }
         }
 
-        val totalPrice = cartProducts.sumOf { it.productTotalPrice }
-
-//        _checkoutUiState.update {
-//            it.copy(
-//                products = cartProducts,
-//                totalPrice = totalPrice,
-//                oldTotalPrice = totalPrice,  // Lưu giá trước khi áp dụng giảm giá
-//                shippingCost = 0.0,          // Ban đầu chưa có phí ship
-//                shippingDescription = "",
-//                voucherId = "",
-//                note = "",
-//                selectedPaymentMethod = "",
-//                selectedLocation = null
-//            )
-//        }
     }
 }

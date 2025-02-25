@@ -36,14 +36,12 @@ import com.example.storeapp.ui.component.user.CartList
 import com.example.storeapp.ui.component.user.CartSummary
 import com.example.storeapp.ui.component.user.ConfirmRemovedDialog
 import com.example.storeapp.ui.navigation.NavigationDestination
-import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 object CartDestination : NavigationDestination {
     override val route = "cart"
     override val titleRes = R.string.cart_title
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
@@ -51,7 +49,6 @@ fun CartScreen(
     onNavigateProductDetails: (String) -> Unit,
     onNavigateToCheckout: () -> Unit,
     viewModel: CartViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    checkoutViewModel: CheckoutViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
 //    val cart = DataDummy.cartItems
     val uiState by viewModel.uiState.collectAsState()
@@ -91,7 +88,7 @@ fun CartScreen(
             cartItems = uiState.listProductOnCart,
             totalPrice = uiState.totalPrice,
             checkoutClick = {
-                viewModel.proceedToCheckout(onNavigateToCheckout, checkoutViewModel)
+                onNavigateToCheckout()
             }
         )
         if (uiState.isShowConfirmRemovedDialog) {

@@ -38,7 +38,6 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.CartModel
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -79,6 +78,21 @@ fun CartItem(
     onCartItemClicked: (String) -> Unit = {},
     cartItem: ProductsOnCartToShow,
 ) {
+
+    val textPrice: String = when {
+        cartItem.productOptions.isNotEmpty() && cartItem.colorOptions.isNotEmpty() ->
+            "${cartItem.productOptions} - ${cartItem.colorOptions} - ${cartItem.productPrice}"
+
+        cartItem.productOptions.isNotEmpty() ->
+            "${cartItem.productOptions} - ${cartItem.productPrice}"
+
+        cartItem.colorOptions.isNotEmpty() ->
+            "${cartItem.colorOptions} - ${cartItem.productPrice}"
+
+        else ->
+            "${cartItem.productPrice}"
+    }
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(10.dp),
@@ -117,19 +131,19 @@ fun CartItem(
                                 .padding(start = 8.dp)
                         )
                         Text(
-                            text = if (cartItem.productOptions != "") "${cartItem.productOptions} - ${cartItem.productPrice}" else "${cartItem.productPrice}",
+                            text = textPrice,
                             color = colorResource(id = R.color.purple),
                             modifier = Modifier
                                 .padding(start = 8.dp)
                         )
-                        if (cartItem.notExist == ""&&cartItem.notEnough=="") {
+                        if (cartItem.notExist == "" && cartItem.notEnough == "") {
                             Text(
                                 text = "Sản phẩm còn lại: ${cartItem.remainingStock}",
                                 color = colorResource(id = R.color.grey),
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                             )
-                        }else{
+                        } else {
                             Text(
                                 text = cartItem.notEnough,
                                 color = Color.Red,
@@ -283,14 +297,8 @@ fun NumberInCart(
 @Composable
 fun CartItemMini(
     modifier: Modifier = Modifier,
-    productName: String,
-    imageId: String,
-    price: Double,
-    orderCount: Int,
-    totalOrder: Int,
-    onDetailOrder: () -> Unit,
+    item: ProductsOnCartToShow,
 ) {
-    val totalPrice = price * orderCount
 
     Row(
         modifier = modifier
@@ -307,7 +315,7 @@ fun CartItemMini(
         AsyncImage(
             modifier = Modifier
                 .size(60.dp),
-            model = imageId,
+            model = item.productImage,
             contentDescription = null
         )
         Column(
@@ -317,27 +325,29 @@ fun CartItemMini(
                 .weight(1f)
         ) {
             Text(
-                text = productName,
+                text = item.productName,
 //                fontSize = 12.sp,
 //                fontWeight = FontWeight.Medium,
                 maxLines = 2
             )
-            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "${item.productOptions} - ${item.colorOptions}",
+//                fontSize = 12.sp,
+//                fontWeight = FontWeight.Medium,
+                maxLines = 2
+            )
+//            Spacer(modifier = Modifier.weight(1f))
             Row {
                 Text(
-                    text = "$orderCount x $${"%.2f".format(totalPrice)}",
+                    text = "${item.quantity} x $${"%.2f".format(item.productPrice)}",
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
                 )
-//                if (totalOrder > 1) {
-//                    Text(
-//                        text = "and ${totalOrder - 1} more",
-//                        fontWeight = FontWeight.Normal,
-//                        fontSize = 12.sp,
-//                        color = MaterialTheme.colorScheme.primary,
-//                        modifier = Modifier.clickable { onDetailOrder() }
-//                    )
-//                }
+                Text(
+                    text = "${item.productTotalPrice}",
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
     }
@@ -345,22 +355,17 @@ fun CartItemMini(
 
 @Composable
 fun CartMiniList(
-    cartItems: CartModel,
+    products: List<ProductsOnCartToShow>,
 ) {
-    LazyColumn(
+    Column(
         Modifier
             .padding(top = 8.dp)
             .heightIn(max = 500.dp) // Đặt chiều cao tối đa
     )
     {
-        items(cartItems.products) { item ->
+        products.forEach { item ->
             CartItemMini(
-                productName = item.productName,
-                imageId = item.productImage,
-                price = 0.0,
-                orderCount = item.quantity,
-                totalOrder = 0,
-                onDetailOrder = {}
+                item = item
             )
         }
     }
@@ -373,12 +378,7 @@ private fun CartItemMiniPreview() {
         dynamicColor = false
     ) {
         CartItemMini(
-            productName = "Fjallraven - Foldsack No. 1 Backpack",
-            price = 234.0,
-            orderCount = 2,
-            imageId = "",
-            totalOrder = 3,
-            onDetailOrder = {}
+            item = DataDummy.productsOnCartToShow
         )
     }
 }
@@ -431,7 +431,7 @@ fun CartListPreview() {
 fun CartMiniListPreview() {
     StoreAppTheme {
         val cart = DataDummy.cartItems
-        CartMiniList(cartItems = cart)
+        CartMiniList(products = DataDummy.listProductsOnCartToShow)
     }
 }
 

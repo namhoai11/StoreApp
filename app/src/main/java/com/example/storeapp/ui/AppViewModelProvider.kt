@@ -43,6 +43,7 @@ object AppViewModelProvider {
         }
         initializer {
             CheckoutViewModel(
+                this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
