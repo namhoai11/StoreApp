@@ -1,6 +1,7 @@
 ﻿package com.example.storeapp.ui.component.admin
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,14 +32,15 @@ import com.google.firebase.Timestamp
 
 @Composable
 fun CategoryManagementList(
-    categoryList: List<CategoryModel>
+    categoryList: List<CategoryModel>,
+    categoryItemClick:(CategoryModel)->Unit={}
 ) {
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(categoryList) { item ->
-            CategoryManagementItem(item = item)
+            CategoryManagementItem(item = item, itemClick = {categoryItemClick(item)})
         }
     }
 }
@@ -46,10 +48,14 @@ fun CategoryManagementList(
 @Composable
 fun CategoryManagementItem(
     item: CategoryModel,
+    itemClick: () -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(10.dp)
+        elevation = CardDefaults.cardElevation(10.dp),
+        modifier = Modifier.clickable {
+            itemClick()
+        }
     ) {
         Row(
             modifier = Modifier

@@ -9,6 +9,7 @@ import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementViewModel
+import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCategoryViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementViewModel
@@ -29,20 +30,17 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.firebaseFireStoreRepository
             )
         }
-
         initializer {
             ProductDetailsViewModel(
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
-
         initializer {
             CartViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
-
         initializer {
             CheckoutViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
@@ -71,6 +69,13 @@ object AppViewModelProvider {
 
         initializer {
             AddProductViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+
+        initializer {
+            AddCategoryViewModel(
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )

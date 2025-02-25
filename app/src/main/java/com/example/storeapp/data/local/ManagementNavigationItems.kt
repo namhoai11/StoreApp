@@ -7,10 +7,7 @@ import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementDestin
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
-import com.example.storeapp.ui.screen.home.HomeDestination
-import com.example.storeapp.ui.screen.order.OrdersDestination
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
-import com.example.storeapp.ui.screen.profile.ProfileDestination
 
 object ManagementNavigationItems {
     val navigationItemList = listOf(

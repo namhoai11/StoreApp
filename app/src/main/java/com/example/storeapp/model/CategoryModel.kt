@@ -14,7 +14,7 @@ data class CategoryModel(
     val imageUrl: String = "",
     val description: String = "",
     val hidden: Boolean = false,
-    val productCount: Int = 1,
+    val productCount: Int = 0,
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp = Timestamp.now()
 //    val createdAt: Timestamp,

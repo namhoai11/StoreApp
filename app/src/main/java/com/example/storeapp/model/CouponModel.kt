@@ -61,7 +61,7 @@ enum class CouponActive {
 
     companion object {
         fun fromString(value: String): CouponActive? {
-            return values().find { it.toString() == value }
+            return entries.find { it.toString() == value }
         }
     }
 }

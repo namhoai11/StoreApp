@@ -52,97 +52,76 @@ class ProductDetailsViewModel(
     }
 
     private fun loadProduct() = viewModelScope.launch {
-        try {
-            _uiState.update { it.copy(showProductDetailsLoading = true) }
+        _uiState.update { it.copy(showProductDetailsLoading = true) }
 
-            val productDetails = repository.getProductById(productDetailsId)
+        repository.getProductById(productDetailsId)
+            .onSuccess { productDetails ->
+                if (productDetails != null) {
+                    val isWishlistItem = _user.value?.wishList?.contains(productDetailsId) ?: false
+                    Log.d("ProductDetailsViewmodel", "isWishlistItem: $isWishlistItem")
 
-            Log.d("ProductDetailsViewmodel", "productDetails: $productDetails")
+                    val listColorOption = productDetails.availableOptions?.listColorOptions ?: emptyList()
+                    Log.d("ProductDetailsViewmodel", "listColorOptions: $listColorOption")
 
+                    val listProductOption = productDetails.availableOptions?.listProductOptions ?: emptyList()
+                    Log.d("ProductDetailsViewmodel", "listProductOptions: $listProductOption")
 
-            if (productDetails != null) {
+                    val listStandardImage = productDetails.images.toMutableList().apply {
+                        productDetails.availableOptions?.listColorOptions?.forEach { add(it.imageColorUrl) }
+                    }
+                    Log.d("ProductDetailsViewmodel", "listStandardImage: $listStandardImage")
 
-                // Lấy Stock từ Realtime Database
-//                val stock = realtimeDatabase.loadStockByProductId(productDetailsId.toString())
+                    val currentImage = listStandardImage.firstOrNull() ?: ""
+                    Log.d("ProductDetailsViewmodel", "currentImage: $currentImage")
 
-                val isWishlistItem =
-                    _user.value?.wishList?.contains(productDetailsId) ?: false
+                    val currentPrice = productDetails.price
+                    Log.d("ProductDetailsViewmodel", "currentPrice: $currentPrice")
 
-                Log.d("ProductDetailsViewmodel", "isWishlistItem: $isWishlistItem")
+                    val stockByVariant = productDetails.stockByVariant.sumOf { it.quantity }
+                    Log.d("ProductDetailsViewmodel", "stockByVariant: $stockByVariant")
 
-                //Load ListColorOption
-                val listColorOption =
-                    productDetails.availableOptions?.listColorOptions ?: emptyList()
-                Log.d("ProductDetailsViewmodel", "listColorOptions: $listColorOption")
-
-                //Load ListProductOption
-                val listProductOption =
-                    productDetails.availableOptions?.listProductOptions ?: emptyList()
-                Log.d("ProductDetailsViewmodel", "listProductOptions: $listProductOption")
-
-                //Load ListStandardImage
-                val listStandardImage = productDetails.images.toMutableList()
-                productDetails.availableOptions?.listColorOptions?.forEachIndexed { _, value ->
-                    listStandardImage += value.imageColorUrl
-                }
-                Log.d("ProductDetailsViewmodel", "lisStandardImage: $listStandardImage")
-
-                val currentImage = listStandardImage.firstOrNull() ?: ""
-
-                Log.d("ProductDetailsViewmodel", "currentImage: $currentImage")
-
-
-                val currentPrice = productDetails.price
-
-                Log.d("ProductDetailsViewmodel", "currentPrice: $currentPrice")
-
-                val stockByVariant = productDetails.stockByVariant.sumOf { it.quantity }
-                Log.d("ProductDetailsViewmodel", "stockByVariant: $stockByVariant")
-
-                _uiState.update { it ->
-                    it.copy(
-                        productDetailsItem = productDetails,
-                        isWishListItem = isWishlistItem,
-                        listColorOptions = listColorOption,
-                        listProductOptions = listProductOption,
-                        listStandardImages = listStandardImage,
-                        currentPrice = currentPrice,
-//                        stock = stock,
-                        currentQuantity = stockByVariant,
-                        showProductDetailsLoading = false
-                    )
-                }
-                selectStandardImages(
-                    selectedIndex = 0,
-                )
-                Log.d(
-                    "ProductDetailsViewmodel",
-                    "currentImageUiState: ${_uiState.value.currentImage}"
-                )
-
-            } else {
-                Log.e("ProductDetailsViewmodel", "Product not found for id: $productDetailsId")
-                // Cập nhật trạng thái lỗi vào UI State
-                _uiState.update {
-                    it.copy(
-                        showProductDetailsLoading = false,
-                        errorMessage = "Product not found for id: $productDetailsId"
-                    )
+                    _uiState.update {
+                        it.copy(
+                            productDetailsItem = productDetails,
+                            isWishListItem = isWishlistItem,
+                            listColorOptions = listColorOption,
+                            listProductOptions = listProductOption,
+                            listStandardImages = listStandardImage,
+                            currentPrice = currentPrice,
+                            currentQuantity = stockByVariant,
+                            showProductDetailsLoading = false
+                        )
+                    }
+                    selectStandardImages(0)
+                    Log.d("ProductDetailsViewmodel", "currentImageUiState: ${_uiState.value.currentImage}")
+                } else {
+                    handleProductNotFound()
                 }
             }
-        } catch (e: Exception) {
-            // Xử lý lỗi nếu cần (thêm trạng thái lỗi vào UiState hoặc log)
-            Log.e("ProductDetailsViewmodel", "Error loading product details: ${e.message}")
-            // Xử lý lỗi chung, cập nhật trạng thái lỗi
-            _uiState.update {
-                it.copy(
-                    showProductDetailsLoading = false,
-                    errorMessage = "Error loading product details: ${e.message}"
-                )
+            .onFailure { exception ->
+                handleLoadingError(exception)
             }
+    }
+
+    private fun handleProductNotFound() {
+        Log.e("ProductDetailsViewModel", "Product not found for id: $productDetailsId")
+        _uiState.update {
+            it.copy(
+                showProductDetailsLoading = false,
+                errorMessage = "Product not found for id: $productDetailsId"
+            )
         }
     }
 
+    private fun handleLoadingError(exception: Throwable) {
+        Log.e("ProductDetailsViewModel", "Error loading product details", exception)
+        _uiState.update {
+            it.copy(
+                showProductDetailsLoading = false,
+                errorMessage = "Error loading product details: ${exception.message}"
+            )
+        }
+    }
 //    private fun observeStockChanges() {
 //        viewModelScope.launch {
 //            realtimeDatabase.observeStockByProductId(productDetailsId.toString()).collect { stock ->

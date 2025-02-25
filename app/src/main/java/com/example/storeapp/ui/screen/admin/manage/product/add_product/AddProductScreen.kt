@@ -319,7 +319,7 @@ fun AddProductContent(
                 onValueChange = onNameChange,
             )
             AddCategoryField(
-                title = "Loại",
+                title = "Danh mục",
                 isEditing = isEditing,
                 listCategory = uiState.listCategory,
                 selectedCategory = uiState.categoryNameSelected,
@@ -353,26 +353,17 @@ fun AddProductContent(
                     modifier = Modifier.padding(8.dp)
                 )
                 Spacer(modifier = Modifier.weight(1f))
-//                val isColorEditingList =
-//                    remember { mutableStateListOf(*Array(uiState.listImageUriSelected.size) { false }) }
 
-//                val isColorEditingList = remember { mutableStateListOf<Boolean>() }
-//
-//                LaunchedEffect(uiState.listImageUriSelected) {
-//                    isColorEditingList.clear()
-//                    isColorEditingList.addAll(List(uiState.listImageUriSelected.size) { false })
-//                }
-                val isColorEditingList = remember {
+                val isEditingImageList = remember {
                     mutableStateListOf<Boolean>().apply {
                         repeat(uiState.listImageUriSelected.size) { add(false) }
                     }
                 }
 
-// Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
                 LaunchedEffect(uiState.listImageUriSelected.size) {
-                    if (isColorEditingList.size < uiState.listImageUriSelected.size) {
-                        repeat(uiState.listImageUriSelected.size - isColorEditingList.size) {
-                            isColorEditingList.add(false)
+                    if (isEditingImageList.size < uiState.listImageUriSelected.size) {
+                        repeat(uiState.listImageUriSelected.size - isEditingImageList.size) {
+                            isEditingImageList.add(false)
                         }
                     }
                 }
@@ -382,7 +373,7 @@ fun AddProductContent(
                 ) {
                     uiState.listImageUriSelected.forEachIndexed { index, image ->
                         ImagePicker(
-                            isEditing = isColorEditingList.getOrElse(index) { false },
+                            isEditing = isEditingImageList.getOrElse(index) { false },
                             imageColorUri = image,
                             onImageSelected = {
                                 onEditImageChange(
@@ -391,11 +382,11 @@ fun AddProductContent(
                                 )
                             },
                             onEditColorClick = {
-                                isColorEditingList[index] = true
+                                isEditingImageList[index] = true
                             },
                             onDeleteColorClick = { onDeleteImageClick(index) },
                             onDoneColorClick = {
-                                isColorEditingList[index] = false
+                                isEditingImageList[index] = false
                             }
                         )
                     }
@@ -474,7 +465,7 @@ fun AddProductContent(
 //                isEditingList.addAll(List(uiState.listProductOptions.size) { false })
 //            }
 
-            val isEditingList = remember {
+            val isEditingProductOptionList = remember {
                 mutableStateListOf<Boolean>().apply {
                     repeat(uiState.listProductOptions.size) { add(false) }
                 }
@@ -482,9 +473,9 @@ fun AddProductContent(
 
 // Khi danh sách thay đổi kích thước, cập nhật danh sách isEditingList mà không mất trạng thái
             LaunchedEffect(uiState.listProductOptions.size) {
-                if (isEditingList.size < uiState.listProductOptions.size) {
-                    repeat(uiState.listProductOptions.size - isEditingList.size) {
-                        isEditingList.add(false)
+                if (isEditingProductOptionList.size < uiState.listProductOptions.size) {
+                    repeat(uiState.listProductOptions.size - isEditingProductOptionList.size) {
+                        isEditingProductOptionList.add(false)
                     }
                 }
             }
@@ -494,7 +485,7 @@ fun AddProductContent(
             ) {
                 uiState.listProductOptions.forEachIndexed { index, productOption ->
                     AddOptionTextField(
-                        isEditing = isEditingList.getOrElse(index) { false },
+                        isEditing = isEditingProductOptionList.getOrElse(index) { false },
                         title = "Loại",
                         title2 = "Giá",
                         optionName = productOption.optionsName,
@@ -512,11 +503,11 @@ fun AddProductContent(
                             )
                         },
                         onEditOptionClick = {
-                            isEditingList[index] = true
+                            isEditingProductOptionList[index] = true
                         },
                         onDeleteOptionClick = { onDeleteOptionClick(index) },
                         onDoneOptionClick = {
-                            isEditingList[index] = false
+                            isEditingProductOptionList[index] = false
                         }
                     )
                 }

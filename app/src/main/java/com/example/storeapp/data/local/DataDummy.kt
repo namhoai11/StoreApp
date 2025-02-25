@@ -24,6 +24,7 @@ import com.example.storeapp.model.Ward
 import com.example.storeapp.ui.screen.address.AddressUiState
 import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementUiState
+import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCategoryUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementUiState
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponUiState
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementUiState
@@ -640,8 +641,6 @@ object DataDummy {
             fakeUri,
             fakeUri,
         ),
-
-
         listProductOptions = listOf(
             ProductOptions(optionsName = "16GB RAM", priceForOptions = 1000000.0),
             ProductOptions(optionsName = "32GB RAM", priceForOptions = 2000000.0)
@@ -664,5 +663,22 @@ object DataDummy {
 
     val categoryManagementUiState = CategoryManagementUiState(
         categories = categoryList
+    )
+
+    val addCategoryUiStateUiState = AddCategoryUiState(
+        categoryDetailsItem = CategoryModel(
+            id = " 0",
+            name = "Pc",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/project-200-1.appspot.com/o/cat1.png?alt=media&token=e3988db7-b935-495a-abbb-89a1b0aa5e0e",
+            description = "",
+            hidden = false,
+            productCount = 1,
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now(),
+        ),
+        isEditing = true,
+        isLoading = false,
+        errorMessage = null,
+        successMessage = "Sản phẩm đã được thêm thành công!"
     )
 }

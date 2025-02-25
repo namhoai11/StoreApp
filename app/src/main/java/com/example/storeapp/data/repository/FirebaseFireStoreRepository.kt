@@ -50,6 +50,70 @@ class FirebaseFireStoreRepository {
         Log.d("FirestoreRepository", "Loaded Categories: $categories")
         return categories
     }
+    suspend fun getCategoryById(categoryId: String): Result<CategoryModel> {
+        return try {
+            val doc = firestore.collection("Category").document(categoryId).get().await()
+            val category = doc.toObject(CategoryModel::class.java)
+            if (category != null) {
+                Result.success(category)
+            } else {
+                Result.failure(Exception("Không tìm thấy danh muc"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    suspend fun addOrUpdateCategoryToFireStore(category:CategoryModel): Result<Unit> {
+        val categoryRef = firestore.collection("Category")
+        return try {
+            val categoryDocumentRef = if (category.id.isNotBlank()) {
+                categoryRef.document(category.id)
+            } else {
+                categoryRef.document()
+            }
+
+            val updatedCategory = category.copy(
+                id = categoryDocumentRef.id,
+                updatedAt = Timestamp.now()
+            )
+
+            categoryDocumentRef.set(updatedCategory, SetOptions.merge()).await()
+
+            Log.d("Firestore", "Category added/updated successfully")
+            Result.success(Unit) // Không cần trả về id
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error adding/updating Category", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun removeCategorytById(categoryId: String): Result<Unit> {
+        val categoryRef = firestore.collection("Category").document(categoryId)
+        return try {
+            val snapshot = categoryRef.get().await()
+            val category = snapshot.toObject(CategoryModel::class.java) ?: return Result.failure(Exception("Category not found"))
+
+
+            val imageUrl = category.imageUrl
+            Log.d("FireStore", "Image URLs to delete: $imageUrl")
+
+
+            // Xóa ảnh (nếu có)
+            if (imageUrl.isNotBlank()) {
+                deleteImageFromStorage(imageUrl).onFailure {
+                    Log.e("FireStore", "Failed to delete image: $imageUrl", it)
+                }
+            }
+            // Xóa danh mục
+            categoryRef.delete().await()
+            Log.d("FireStore", "Category deleted successfully: $categoryId")
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FireStore", "Category delete failed", e)
+            Result.failure(e)
+        }
+    }
 
 
 //    /** Load danh sách sản phẩm từ Firestore */
@@ -84,14 +148,20 @@ class FirebaseFireStoreRepository {
     }
 
 
-    suspend fun getProductById(productId: String): ProductModel? {
-        val documentSnapshot = firestore.collection("Products").document(productId).get().await()
-        val product = documentSnapshot.toObject(ProductModel::class.java)
+    suspend fun getProductById(productId: String): Result<ProductModel?> {
+        return try {
+            val documentSnapshot = firestore.collection("Products").document(productId).get().await()
+            val product = documentSnapshot.toObject(ProductModel::class.java)
 
-        Log.d("FirestoreRepository", "Loaded Product with ID $productId: $product")
+            Log.d("FirestoreRepository", "Loaded Product with ID $productId: $product")
+            Result.success(product) // Thành công, trả về kết quả
 
-        return product
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading product with ID $productId", e)
+            Result.failure(e) // Lỗi, trả về exception
+        }
     }
+
 
     suspend fun getProductByListId(productIds: List<String>): List<ProductModel> {
         if (productIds.isEmpty()) return emptyList()
@@ -104,31 +174,6 @@ class FirebaseFireStoreRepository {
             .mapNotNull { it.toObject(ProductModel::class.java) }
     }
 
-//    suspend fun addOrUpdateProductToFireStore(product: ProductModel): Result<String> {
-//        val productRef = firestore.collection("Products") // Collection Products
-//
-//        return try {
-//            val isUpdating = product.id.isNotBlank()
-//            val productDocumentRef = if (isUpdating) {
-//                productRef.document(product.id) // Cập nhật sản phẩm đã có
-//            } else {
-//                productRef.document() // Tạo sản phẩm mới
-//            }
-//
-//            val updatedProduct = product.copy(
-//                id = productDocumentRef.id,
-////                updatedAt = Timestamp.now() // Cập nhật thời gian chỉnh sửa cuối cùng
-//            )
-//
-//            productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
-//
-//            Log.d("Firestore", "Product ${if (isUpdating) "updated" else "added"} successfully")
-//            Result.success(productDocumentRef.id) // Trả về ID sản phẩm
-//        } catch (e: Exception) {
-//            Log.e("Firestore", "Error ${if (product.id.isNotBlank()) "updating" else "adding"} Product", e)
-//            Result.failure(e) // Trả về lỗi
-//        }
-//    }
 
     suspend fun addOrUpdateProductToFireStore(product: ProductModel): Result<Unit> {
         val productRef = firestore.collection("Products")
@@ -165,21 +210,6 @@ class FirebaseFireStoreRepository {
             Log.e("FirebaseStorage", "Upload image failed", e)
             Result.failure(e)
         }
-    }
-
-    suspend fun uploadImages(images: List<Uri>, pathPrefix: String): Result<List<String>> {
-        val uploadedUrls = mutableListOf<String>()
-
-        for ((index, uri) in images.withIndex()) {
-            val result = uploadImageToStorage(uri, "$pathPrefix/image_$index")
-            if (result.isSuccess) {
-                uploadedUrls.add(result.getOrThrow()) // Lấy URL từ Result
-            } else {
-                return Result.failure(result.exceptionOrNull() ?: Exception("Unknown error")) // Báo lỗi ngay khi có ảnh thất bại
-            }
-        }
-
-        return Result.success(uploadedUrls) // ✅ Thành công nếu tất cả ảnh đều upload được
     }
 
     private suspend fun deleteImageFromStorage(imageUrl: String): Result<Unit> {

@@ -75,7 +75,6 @@ class CartViewModel(
                 return@launch
             }
 
-
             val productIds = cart.products.map { it.productId }
             val products = repository.getProductByListId(productIds).associateBy { it.id }
 
@@ -375,11 +374,11 @@ class CartViewModel(
 
     private fun observeProductsChanges() {
         viewModelScope.launch {
-            _uiState.collectLatest { uiState ->
-                val productIds = uiState.listProductOnCart.map { it.productId }.distinct()
+            _uiState.collectLatest { currentUiState ->
+                val productIds = currentUiState.listProductOnCart.map { it.productId }.distinct()
 
                 repository.observeProductsByListId(productIds).collectLatest { updatedProducts ->
-                    val updatedCart = uiState.listProductOnCart.map { cartItem ->
+                    val updatedCart = currentUiState.listProductOnCart.map { cartItem ->
                         val updatedProduct = updatedProducts.find { it.id == cartItem.productId }
 
                         if (updatedProduct != null) {

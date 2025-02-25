@@ -20,6 +20,8 @@ import com.example.storeapp.ui.screen.admin.manage.ManageScreen
 import com.example.storeapp.ui.screen.admin.manage.ManegeAdminDestination
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementScreen
+import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCategoryManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCategoryScreen
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementScreen
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponManagementDestination
@@ -248,8 +250,31 @@ fun StoreAppNavHost(
 
 
         composable(CategoryManagementDestination.route) {
-            CategoryManagementScreen(navController = navController)
+            CategoryManagementScreen(
+                navController = navController,
+                onAddCategoryClick = {
+                    navController.navigate(
+                        AddCategoryManagementDestination.createRoute(
+                            null,
+                            true
+                        )
+                    )
+                },
+                onNavigateCategoryDetail = {
+                    navController.navigate(AddCategoryManagementDestination.createRoute(it, false))
+                }
+            )
         }
+        composable(
+            route = AddCategoryManagementDestination.route,
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.StringType; nullable = true },
+                navArgument("isEditing") { type = NavType.BoolType; defaultValue = false }
+            )
+        ) {
+            AddCategoryScreen(navController = navController)
+        }
+
         composable(SignUpDestination.route) {
             SignUpScreen(
                 onNavigateSignIn = {

@@ -1,6 +1,5 @@
 package com.example.storeapp.model
 
-import android.net.Uri
 import com.google.firebase.Timestamp
 
 

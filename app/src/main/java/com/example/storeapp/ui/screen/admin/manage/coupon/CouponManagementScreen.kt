@@ -76,6 +76,7 @@ fun CouponManagementScreen(
                 onNavigateCouponDetail(it.code)
             }
         )
+
     }
 }
 
