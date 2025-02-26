@@ -20,7 +20,7 @@ data class CheckoutUiState(
     val selectedCoupon: CouponModel? = null,
     val note: String = "",
     val selectedPaymentMethod: String = "",
-    val isButtonEnabled: Boolean = false,
+    val isButtonEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val errorMessage: String = "",
     val successMessage: String = ""

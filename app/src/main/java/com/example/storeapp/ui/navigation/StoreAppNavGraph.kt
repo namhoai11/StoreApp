@@ -159,7 +159,11 @@ fun StoreAppNavHost(
                 navArgument("locationId") { type = NavType.StringType; nullable = true },
             )
         ) {
-            CheckoutScreen(navController = navController)
+            CheckoutScreen(navController = navController,
+            onNavigateChooseAddress = {
+                navController.navigate(AddressDestination.routeWithSetupRole.replace("{addressSetupRole}", "1"))
+            }
+            )
         }
 
         composable(
@@ -174,6 +178,11 @@ fun StoreAppNavHost(
                 },
                 onNavigateToProfile = {
                     navController.navigate(ProfileDestination.route)
+                },
+                onReturnToCheckout = {
+                    navController.navigate(
+                        CheckoutDestination.createRoute(locationId = it)
+                    )
                 }
             )
         }

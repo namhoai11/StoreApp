@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.CouponType
+import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,8 +151,10 @@ class CheckoutViewModel(
                     selectedShipping = DataDummy.dummyShipping[2],
                 )
             }
+
 //----------------------done listProduct, oldTotalPrice, listShipping
 //----------------------LoadCoupon
+
             val couponResult = repository.getActiveCoupons()
             couponResult.onSuccess { activeCoupons ->
                 Log.d("CheckoutViewModel", "Số lượng coupon đang hoạt động: ${activeCoupons.size}")
@@ -167,11 +172,88 @@ class CheckoutViewModel(
             Log.e("CheckoutViewModel", "Error loading Checkout: ${e.message}")
             _uiState.update {
                 it.copy(
+                    isButtonEnabled = false,
                     isLoading = false,
                     errorMessage = "Error loading Cart: ${e.message}"
                 )
             }
         }
-
     }
+
+    fun onChooseShipping() {
+        _uiState.update {
+            it.copy(
+                isChooseShipping = true
+            )
+        }
+    }
+
+    fun shippingSelected(shipping: ShippingModel) {
+        val previousShippingPrice = _uiState.value.selectedShipping?.price ?: 0.0
+        val coupon = _uiState.value.selectedCoupon
+
+        val newFinalPrice = if (coupon != null && coupon.type == CouponType.FREE_SHIPPING) {
+            _uiState.value.finalPrice
+        } else {
+            _uiState.value.finalPrice - previousShippingPrice + shipping.price
+        }
+
+        _uiState.update {
+            it.copy(
+                finalPrice = newFinalPrice,
+                selectedShipping = shipping
+            )
+        }
+    }
+
+
+    fun onConfirmationShipping() {
+        _uiState.update {
+            it.copy(
+                isChooseShipping = false
+            )
+        }
+    }
+
+    fun onChooseCoupon() {
+        _uiState.update {
+            it.copy(
+                isChooseCoupon = true
+            )
+        }
+    }
+
+    fun couponSelected(coupon: CouponModel) {
+        val oldTotalPrice = _uiState.value.oldTotalPrice
+        // Đảm bảo totalPrice không bị âm
+        val totalPrice = when (coupon.type) {
+            CouponType.PERCENTAGE -> (oldTotalPrice - (oldTotalPrice * coupon.value)).coerceAtLeast(0.0)
+            CouponType.FIXED_AMOUNT -> (oldTotalPrice - coupon.value).coerceAtLeast(0.0)
+            else -> oldTotalPrice
+        }
+
+        val finalPrice = if(coupon.type!=CouponType.FREE_SHIPPING){
+            totalPrice + (_uiState.value.selectedShipping?.price ?: 0.0)
+        }else{
+            totalPrice
+        }
+
+
+        _uiState.update {
+            it.copy(
+                selectedCoupon = coupon,
+                totalPrice = totalPrice,
+                finalPrice = finalPrice
+            )
+        }
+    }
+
+    fun onConfirmationCoupon() {
+        _uiState.update {
+            it.copy(
+                isChooseCoupon = false
+            )
+        }
+    }
+
 }

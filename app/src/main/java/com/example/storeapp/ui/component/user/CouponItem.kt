@@ -19,18 +19,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.ShippingModel
+import com.example.storeapp.model.CouponModel
+import com.example.storeapp.model.CouponType
 import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
-fun ShippingItem(
+fun CouponItem(
     modifier: Modifier = Modifier,
-    item:ShippingModel,
-    isChoose: Boolean,
+    item:CouponModel,
     onChoose: () -> Unit,
-
+    isChoose: Boolean,
 ) {
+    val value = when (item.type) {
+        CouponType.PERCENTAGE -> "${item.value * 100}%"
+        CouponType.FIXED_AMOUNT -> formatCurrency2(item.value)
+        CouponType.FREE_SHIPPING -> "free ship"
+    }
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
@@ -48,7 +53,7 @@ fun ShippingItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "${item.name} (${formatCurrency2(item.price)})",
+                    text = value,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -68,13 +73,17 @@ fun ShippingItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun ShippingItemPreview() {
+private fun CouponItemPreview() {
     StoreAppTheme {
-        ShippingItem(
-            item = DataDummy.dummyShipping[1],
-            isChoose = false,
+        CouponItem(
+            item = DataDummy.coupon,
             onChoose = {},
-
+            isChoose = false,
+//            discount = "25%",
+//            description = "Applies to get 25% off",
+//            expiredDate = "31 Desember 2024",
+//            color1 = Color(0xFFFFA726),
+//            color2 = Color(0xFFFFD54F)
         )
     }
 }

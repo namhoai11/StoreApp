@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -47,12 +52,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
+import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.CouponType
+import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.user.AddressItemScreen
 import com.example.storeapp.ui.component.user.CartMiniList
 import com.example.storeapp.ui.component.user.CouponInactiveSelected
+import com.example.storeapp.ui.component.user.CouponItem
 import com.example.storeapp.ui.component.user.CouponItemSelected
 import com.example.storeapp.ui.component.user.ShippingItem
 import com.example.storeapp.ui.navigation.NavigationDestination
@@ -66,14 +74,35 @@ object CheckoutDestination : NavigationDestination {
         return "checkout?locationId=$locationId"
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CheckoutScreen(
     navController: NavController,
+    onNavigateChooseAddress: () -> Unit,
     viewModel: CheckoutViewModel = viewModel(factory = AppViewModelProvider.Factory)
-
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    if (uiState.isChooseShipping) {
+        BottomSheetShipping(
+            onDismiss = { viewModel.onConfirmationShipping() },
+            state = uiState.listShipping,
+            selectedShipping = uiState.selectedShipping,
+            onChoose = { viewModel.shippingSelected(it) },
+            onConfirmationShipping = { viewModel.onConfirmationShipping() }
+        )
+    }
+    if (uiState.isChooseCoupon) {
+        BottomSheetCoupon(
+            onDismiss = { viewModel.onConfirmationCoupon() },
+            state = uiState.listCoupon,
+            selectedCoupon = uiState.selectedCoupon,
+            onChoose = { viewModel.couponSelected(it) },
+            onConfirmationCoupon = { viewModel.onConfirmationCoupon() }
+        )
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -103,10 +132,11 @@ fun CheckoutScreen(
         CheckoutContent(
             innerPadding = innerPadding,
             uiState = uiState,
-            onEditAddress = { /*TODO*/ },
-            onChooseShipping = { /*TODO*/ },
-            onChooseCoupon = { /*TODO*/ }) {
-        }
+            onEditAddress = { onNavigateChooseAddress() },
+            onChooseShipping = { viewModel.onChooseShipping() },
+            onChooseCoupon = { viewModel.onChooseCoupon() },
+            onChoosePayment = {}
+        )
     }
 }
 
@@ -248,11 +278,9 @@ fun CheckoutContent(
                         }
                 ) {
                     ShippingItem(
+                        item = uiState.selectedShipping,
                         isChoose = true,
                         onChoose = { onChooseShipping() },
-                        name = uiState.selectedShipping.name,
-                        price = uiState.selectedShipping.price,
-                        description = uiState.selectedShipping.description
                     )
                 }
             }
@@ -301,7 +329,7 @@ fun CheckoutContent(
                         text = "Giá",
                         color = MaterialTheme.colorScheme.outline
                     )
-                    if (uiState.selectedCoupon != null) {
+                    if (uiState.selectedCoupon != null && uiState.selectedCoupon.type != CouponType.FREE_SHIPPING) {
                         Text(
                             text = formatCurrency2(uiState.oldTotalPrice),
                             textDecoration = TextDecoration.LineThrough,
@@ -325,11 +353,25 @@ fun CheckoutContent(
                         color = MaterialTheme.colorScheme.outline
                     )
                     if (uiState.selectedShipping != null) {
-                        Text(
-                            text = formatCurrency2(uiState.selectedShipping.price),
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                        if (uiState.selectedCoupon != null && uiState.selectedCoupon.type == CouponType.FREE_SHIPPING) {
+                            Text(
+                                text = formatCurrency2(uiState.selectedShipping.price),
+                                textDecoration = TextDecoration.LineThrough,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                            Spacer(modifier = Modifier.padding(end = 16.dp))
+                            Text(
+                                text = formatCurrency2(0.0),
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Text(
+                                text = formatCurrency2(uiState.selectedShipping.price),
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     } else {
                         Text(
                             text = formatCurrency2(0.0),
@@ -385,6 +427,175 @@ fun CheckoutContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetCoupon(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    state: List<CouponModel>,
+    selectedCoupon: CouponModel?,
+    onChoose: (CouponModel) -> Unit,
+    onConfirmationCoupon: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        windowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
+        BottomSheetCouponContent(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .wrapContentHeight(),
+            state = state,
+            couponSelected = selectedCoupon,
+            onChoose = { onChoose(it) },
+            onConfirmationCoupon = onConfirmationCoupon
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomSheetShipping(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    state: List<ShippingModel>,
+    selectedShipping: ShippingModel?,
+    onChoose: (ShippingModel) -> Unit,
+    onConfirmationShipping: () -> Unit
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        windowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
+        BottomSheetShippingContent(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .wrapContentHeight(),
+            state = state,
+            shippingSelected = selectedShipping,
+            onChoose = { onChoose(it) },
+            onConfirmationShipping = onConfirmationShipping
+        )
+    }
+}
+
+@Composable
+fun BottomSheetCouponContent(
+    modifier: Modifier = Modifier,
+    state: List<CouponModel>,
+    couponSelected: CouponModel?,
+    onChoose: (CouponModel) -> Unit,
+    onConfirmationCoupon: () -> Unit
+) {
+
+    Box(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 8.dp
+                )
+                .background(MaterialTheme.colorScheme.background)
+                .align(Alignment.BottomCenter)
+        ) {
+            LazyColumn {
+                itemsIndexed(items = state) { _, coupon ->
+                    CouponItem(
+                        item = coupon,
+                        isChoose = couponSelected == coupon,
+                        onChoose = { onChoose(coupon) },
+                    )
+                }
+            }
+            Button(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .height(55.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                enabled = couponSelected != null,
+                onClick = {
+                    onConfirmationCoupon()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Confirmation",
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomSheetShippingContent(
+    modifier: Modifier = Modifier,
+    state: List<ShippingModel>,
+    shippingSelected: ShippingModel?,
+    onChoose: (ShippingModel) -> Unit,
+    onConfirmationShipping: () -> Unit,
+) {
+
+    Box(
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.background)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 8.dp
+                )
+                .background(MaterialTheme.colorScheme.background)
+                .align(Alignment.BottomCenter)
+        ) {
+            LazyColumn {
+                itemsIndexed(items = state) { _, shipping ->
+                    ShippingItem(
+                        item = shipping,
+                        isChoose = shipping == shippingSelected,
+                        onChoose = { onChoose(shipping) },
+                    )
+                }
+            }
+            Button(
+                modifier = Modifier
+                    .height(55.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                onClick = {
+//                    onChoose(temporarySelectedShippingId!!)
+                    onConfirmationShipping()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Confirmation",
+                    fontSize = 14.sp,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun CheckoutContentPreview() {
@@ -398,6 +609,32 @@ private fun CheckoutContentPreview() {
             onChooseShipping = {},
             onChooseCoupon = {},
             onChoosePayment = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomSheetCouponContentPreview() {
+    StoreAppTheme(dynamicColor = false) {
+        BottomSheetCouponContent(
+            state = DataDummy.dummyCoupon,
+            onChoose = {},
+            onConfirmationCoupon = {},
+            couponSelected = DataDummy.dummyCoupon[0]
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomSheetShippingContentPreview() {
+    StoreAppTheme {
+        BottomSheetShippingContent(
+            state = DataDummy.dummyShipping,
+            onChoose = {},
+            onConfirmationShipping = {},
+            shippingSelected = DataDummy.dummyShipping[0]
         )
     }
 }

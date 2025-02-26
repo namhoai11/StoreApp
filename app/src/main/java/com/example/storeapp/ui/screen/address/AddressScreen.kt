@@ -66,6 +66,7 @@ fun AddressScreen(
     navController: NavController,
     onNavigateToAddAddress: () -> Unit,
     onNavigateToProfile: () -> Unit,
+    onReturnToCheckout:(String)->Unit,
     viewModel: AddressViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     LaunchedEffect(Unit) {
@@ -109,6 +110,7 @@ fun AddressScreen(
                 viewModel.onSetDefaultLocationClicked()
                 onNavigateToProfile()
             },
+            onConfirmationForCheckoutClick = {onReturnToCheckout(it)},
             onAddNewAddressClick = { onNavigateToAddAddress() },
         )
 
@@ -127,6 +129,7 @@ fun AddressContent(
     onSelectedItem: (String) -> Unit,
     onDeletedItem: (String) -> Unit,
     onConfirmationClick: () -> Unit,
+    onConfirmationForCheckoutClick:(String)->Unit,
     onAddNewAddressClick: () -> Unit,
 ) {
     Column(
@@ -207,24 +210,44 @@ fun AddressContent(
             }
 
             Spacer(modifier = Modifier.size(16.dp))
-
-            Button(
-                enabled = uiState.selectedItemId != null,
-                modifier = Modifier
-                    .height(55.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                onClick = onConfirmationClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-                    text = "Xác nhận",
-                    fontSize = 14.sp,
-                    color = Color.White
-                )
+            if(uiState.isDefaultLocationSetting){
+                Button(
+                    enabled = uiState.selectedItemId != null,
+                    modifier = Modifier
+                        .height(55.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = onConfirmationClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = "Xác nhận địa chỉ mặc định",
+                        fontSize = 14.sp,
+                        color = Color.White
+                    )
+                }
+            }else{
+                Button(
+                    enabled = uiState.selectedItemId != null,
+                    modifier = Modifier
+                        .height(55.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = { uiState.selectedItemId?.let { onConfirmationForCheckoutClick(it) } },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = "chọn địa chỉ",
+                        fontSize = 14.sp,
+                        color = Color.White
+                    )
+                }
             }
+
         }
     }
 }
@@ -243,6 +266,7 @@ private fun AddressContentPreview() {
             onSelectedItem = {},
             onDeletedItem = {},
             onConfirmationClick = {},
+            onConfirmationForCheckoutClick = {},
             onAddNewAddressClick = {},
         )
     }

@@ -194,7 +194,7 @@ object DataDummy {
             name = "50% Off",
             description = "Applies to get 50% off",
             type = CouponType.PERCENTAGE,
-            value = 50.0,
+            value = 0.5,
             maxDiscount = null,
             minOrderValue = 50.0,
             quantity = 1,
