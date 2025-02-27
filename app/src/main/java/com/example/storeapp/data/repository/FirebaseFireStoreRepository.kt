@@ -850,7 +850,7 @@ class FirebaseFireStoreRepository {
         }
     }
 
-    suspend fun addOrderToFirestore(order: OrderModel): Result<Unit> {
+    suspend fun addOrderToFirestore(order: OrderModel): Result<OrderModel> {
         return try {
             val orderRef = firestore.collection("Orders").document() // Tạo document mới
             val updatedOrder = order.copy(
@@ -861,11 +861,56 @@ class FirebaseFireStoreRepository {
 
             orderRef.set(updatedOrder, SetOptions.merge()).await()
             Log.d("Firestore", "Order added successfully")
-            Result.success(Unit)
+            Result.success(updatedOrder)
         } catch (e: Exception) {
             Log.e("Firestore", "Error adding order", e)
             Result.failure(e)
         }
     }
+
+    suspend fun getOrderById(orderId: String): Result<OrderModel?> {
+        return try {
+            val documentSnapshot =
+                firestore.collection("Orders").document(orderId).get().await()
+            val order = documentSnapshot.toObject(OrderModel::class.java)
+
+            Log.d("FirestoreRepository", "Loaded Order with ID $orderId: $order")
+            Result.success(order) // Thành công, trả về kết quả
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading Order with ID $orderId", e)
+            Result.failure(e) // Lỗi, trả về exception
+        }
+    }
+
+    suspend fun updateOrderPaymentMethod(orderId: String, paymentMethod: String): Result<Unit> {
+        return try {
+            val orderRef = firestore.collection("Orders").document(orderId)
+
+            // Lấy thông tin đơn hàng hiện tại
+            val snapshot = orderRef.get().await()
+            if (!snapshot.exists()) {
+                return Result.failure(Exception("Đơn hàng không tồn tại"))
+            }
+
+            val order = snapshot.toObject(OrderModel::class.java)
+                ?: return Result.failure(Exception("Lỗi chuyển đổi dữ liệu đơn hàng"))
+
+            // Cập nhật phương thức thanh toán và thời gian cập nhật
+            val updatedOrder = order.copy(
+                paymentMethod = paymentMethod,
+                updatedAt = Timestamp.now()
+            )
+
+            // Dùng set với SetOptions.merge() để giữ nguyên các field khác
+            orderRef.set(updatedOrder, SetOptions.merge()).await()
+
+            Log.d("FirestoreRepository", "Cập nhật phương thức thanh toán thành công: $paymentMethod")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Lỗi khi cập nhật phương thức thanh toán", e)
+            Result.failure(e)
+        }
+    }
+
 
 }

@@ -16,6 +16,8 @@ import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementView
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
+import com.example.storeapp.ui.screen.checkout.payment.PaymentViewModel
+import com.example.storeapp.ui.screen.checkout.successpayment.SuccessPaymentViewModel
 import com.example.storeapp.ui.screen.favorite.WishListViewModel
 import com.example.storeapp.ui.screen.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
@@ -43,6 +45,18 @@ object AppViewModelProvider {
         }
         initializer {
             CheckoutViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+        initializer {
+            PaymentViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+        initializer {
+            SuccessPaymentViewModel(
                 this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )

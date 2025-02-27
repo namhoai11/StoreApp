@@ -28,7 +28,11 @@
 
     <string name="home_title">Home</string>
     <string name="cart_title">Your Cart</string>
-    <string name="checkout_title">Checkout</string>
+    <string name="checkout_title">Thanh toán</string>
+    <string name="paymentmethod_title">Phương thức thanh toán</string>
+    <string name="successpaymentmethod_title">Thanh toán thành công</string>
+
+
     <string name="address_title">Address</string>
     <string name="add_address_title">Add Address</string>
 

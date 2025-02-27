@@ -70,7 +70,7 @@ import com.example.storeapp.ui.theme.StoreAppTheme
 
 object CheckoutDestination : NavigationDestination {
     override val route = "checkout?locationId={locationId}"
-    override val titleRes = R.string.addcouponmanage_title
+    override val titleRes = R.string.checkout_title
     fun createRoute(locationId: String?): String {
         return "checkout?locationId=$locationId"
     }
@@ -81,6 +81,7 @@ object CheckoutDestination : NavigationDestination {
 fun CheckoutScreen(
     navController: NavController,
     onNavigateChooseAddress: () -> Unit,
+    onNavigateToPayment: (String) -> Unit,
     viewModel: CheckoutViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -136,14 +137,18 @@ fun CheckoutScreen(
             onEditAddress = { onNavigateChooseAddress() },
             onChooseShipping = { viewModel.onChooseShipping() },
             onChooseCoupon = { viewModel.onChooseCoupon() },
-            onChoosePayment = {viewModel.onChoosePayment()}
+            onChoosePayment = { viewModel.onChoosePayment() }
         )
         if (uiState.isShowDialog) {
             ConfirmDialog(
                 onDismiss = { viewModel.dismissDialog() },
-                title = "Xóa Sản phẩm",
-                message = "Xác nhận xóa sản phẩm",
-                confirmRemove = { viewModel.confirmChoosePaymentClicked() })
+                title = "Xác nhận",
+                message = "Xác nhận tới thanh toán",
+                confirmRemove = {
+                    viewModel.confirmChoosePaymentClicked {
+                        onNavigateToPayment(it)
+                    }
+                })
         }
     }
 }

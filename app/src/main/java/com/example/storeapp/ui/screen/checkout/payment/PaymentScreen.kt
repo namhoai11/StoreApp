@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,30 +50,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
+import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.PaymentMethodModel
+import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.function.formatCurrency2
+import com.example.storeapp.ui.component.user.ConfirmDialog
+import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
+
+object PaymentDestination : NavigationDestination {
+    override val route = "payment?orderId={orderId}"
+    override val titleRes = R.string.paymentmethod_title
+    fun createRoute(orderId: String?): String {
+        return "payment?orderId=$orderId"
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    onNavigateToSuccessPayment: (String) -> Unit,
+    viewModel: PaymentViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val paymentMethod = DataDummy.dummyPaymentMethod
-
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .statusBarsPadding(),
                 title = {
                     Text(
-                        text = "Payment",
+                        text = "Thanh toán",
+//                        fontFamily = poppinsFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -84,9 +96,8 @@ fun PaymentScreen(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
                         modifier = Modifier
-                            .clickable {
-                                navController.navigateUp()
-                            }
+                            .clickable { navController.navigateUp() }
+                            .padding(horizontal = 16.dp)
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -101,30 +112,35 @@ fun PaymentScreen(
                 .fillMaxSize()
         ) {
             PaymentContent(
-                state = paymentMethod,
-                selectedPaymentId = 0,
-//                latestCheckout = {  },
-                isButtonEnabled = false,
+                uiState = uiState,
                 onChoosePaymentMethod = {
+                    viewModel.onChoosePaymentMethod()
                 },
                 onChooseCardPayment = {
-
+                    viewModel.onChooseCardPayment(it)
                 }
             )
+            if (uiState.isShowDialog) {
+                ConfirmDialog(
+                    onDismiss = { viewModel.dismissDialog() },
+                    title = "Xác nhận",
+                    message = "Xác nhận thanh toán",
+                    confirmRemove = {
+                        viewModel.confirmPaymentClicked {
+                            onNavigateToSuccessPayment(it)
+                        }
+                    })
+            }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PaymentContent(
     modifier: Modifier = Modifier,
-    state: List<PaymentMethodModel>,
-//    latestCheckout: Checkout?,
-    isButtonEnabled: Boolean = false,
+    uiState: PaymentUiState,
     onChoosePaymentMethod: () -> Unit,
-    selectedPaymentId: Int? = null,
-    onChooseCardPayment: (Int) -> Unit
+    onChooseCardPayment: (PaymentMethodModel) -> Unit
 ) {
     var visible by remember { mutableStateOf(true) }
 
@@ -149,7 +165,7 @@ fun PaymentContent(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                itemsIndexed(items = state) { index, payment ->
+                itemsIndexed(items = uiState.listPaymentMethodModel) { _, payment ->
                     AnimatedVisibility(
                         modifier = Modifier.animateItem(
                             fadeInSpec = null,
@@ -163,11 +179,10 @@ fun PaymentContent(
                         ) + fadeIn(animationSpec = tween(durationMillis = 300))
                     ) {
                         CardPaymentItem(
-                            icon = payment.icon,
-                            name = payment.name,
-                            isChoose = selectedPaymentId == index,
+                            paymentMethod = payment,
+                            isChoose = uiState.paymentMethodSelected == payment,
                             onChoose = {
-                                onChooseCardPayment(index)
+                                onChooseCardPayment(payment)
                             }
                         )
                     }
@@ -188,7 +203,7 @@ fun PaymentContent(
                 )
             ) {
                 Text(
-                    text = "Payment Summary",
+                    text = "Tổng đơn hàng",
                     fontWeight = FontWeight.SemiBold
                 )
                 Row(
@@ -197,11 +212,11 @@ fun PaymentContent(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Final Price",
+                        text = "Giá",
                         color = MaterialTheme.colorScheme.outline
                     )
                     Text(
-                        text = "",
+                        text = uiState.currentOrder?.let { formatCurrency2(it.totalPrice) } ?: "",
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -210,7 +225,7 @@ fun PaymentContent(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
                 Button(
-                    enabled = isButtonEnabled,
+                    enabled = uiState.isButtonEnabled,
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 8.dp)
                         .height(55.dp)
@@ -222,7 +237,7 @@ fun PaymentContent(
                     )
                 ) {
                     Text(
-                        text = "Pay Now",
+                        text = "Thanh toán ngay",
                         fontSize = 16.sp,
                         color = Color.White
                     )
@@ -235,8 +250,7 @@ fun PaymentContent(
 @Composable
 fun CardPaymentItem(
     modifier: Modifier = Modifier,
-    icon: Int,
-    name: String,
+    paymentMethod: PaymentMethodModel,
     isChoose: Boolean,
     onChoose: () -> Unit
 ) {
@@ -260,8 +274,8 @@ fun CardPaymentItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(icon),
-                contentDescription = name,
+                painter = painterResource(paymentMethod.icon),
+                contentDescription = paymentMethod.name,
                 tint = Color.Unspecified,
                 modifier = Modifier
                     .size(
@@ -283,8 +297,10 @@ fun CardPaymentItem(
 private fun CardPaymentItemPreview() {
     StoreAppTheme(dynamicColor = false) {
         CardPaymentItem(
-            icon = R.drawable.icon_master_card,
-            name = "Cash On Delivery",
+            paymentMethod = PaymentMethodModel(
+                icon = R.drawable.icon_discover,
+                name = "Discover"
+            ),
             isChoose = true,
             onChoose = {}
         )
@@ -296,7 +312,14 @@ private fun CardPaymentItemPreview() {
 private fun PaymentScreenPreview() {
     StoreAppTheme(dynamicColor = false) {
         PaymentContent(
-            state = DataDummy.dummyPaymentMethod,
+            uiState = PaymentUiState(
+                listPaymentMethodModel = DataDummy.dummyPaymentMethod,
+                paymentMethodSelected = PaymentMethodModel(
+                    icon = R.drawable.icon_discover,
+                    name = "Discover"
+                ),
+                currentOrder = OrderModel(),
+            ),
             onChoosePaymentMethod = {},
             onChooseCardPayment = {}
         )

@@ -40,6 +40,10 @@ import com.example.storeapp.ui.screen.category.CategoryDestination
 import com.example.storeapp.ui.screen.category.CategoryScreen
 import com.example.storeapp.ui.screen.checkout.CheckoutDestination
 import com.example.storeapp.ui.screen.checkout.CheckoutScreen
+import com.example.storeapp.ui.screen.checkout.payment.PaymentDestination
+import com.example.storeapp.ui.screen.checkout.payment.PaymentScreen
+import com.example.storeapp.ui.screen.checkout.successpayment.SuccessPaymentDestination
+import com.example.storeapp.ui.screen.checkout.successpayment.SuccessPaymentScreen
 import com.example.storeapp.ui.screen.home.HomeDestination
 import com.example.storeapp.ui.screen.home.HomeScreen
 import com.example.storeapp.ui.screen.intro.IntroDestination
@@ -160,12 +164,50 @@ fun StoreAppNavHost(
             )
         ) {
             CheckoutScreen(navController = navController,
-            onNavigateChooseAddress = {
-                navController.navigate(AddressDestination.routeWithSetupRole.replace("{addressSetupRole}", "1"))
-            }
+                onNavigateChooseAddress = {
+                    navController.navigate(
+                        AddressDestination.routeWithSetupRole.replace(
+                            "{addressSetupRole}",
+                            "1"
+                        )
+                    )
+                },
+                onNavigateToPayment = {
+                    navController.navigate(
+                        PaymentDestination.createRoute(
+                            orderId = it
+                        )
+                    )
+                }
             )
         }
 
+        composable(
+            PaymentDestination.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            PaymentScreen(
+                navController = navController,
+                onNavigateToSuccessPayment = {
+                    navController.navigate(
+                        SuccessPaymentDestination.createRoute(
+                            orderId = it
+                        )
+                    )
+                })
+
+        }
+        composable(
+            SuccessPaymentDestination.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            SuccessPaymentScreen(onNavigateHome = { navController.navigate(HomeDestination.route) })
+
+        }
         composable(
             AddressDestination.routeWithSetupRole,
             arguments = listOf(navArgument(AddressDestination.addressSetupRole) {

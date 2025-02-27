@@ -278,7 +278,7 @@ class CheckoutViewModel(
         }
     }
 
-    fun confirmChoosePaymentClicked() {
+    fun confirmChoosePaymentClicked(navigate:(String)->Unit) {
         if (!validateCheckout()) {
             Log.e("CheckoutViewModel", "Dữ liệu không hợp lệ: ${_uiState.value.errorMessage}")
             return
@@ -292,22 +292,6 @@ class CheckoutViewModel(
             }
 
             try {
-                val order = OrderModel(
-                    userId = currentUserId,
-                    products = _uiState.value.products,
-                    totalPrice = _uiState.value.finalPrice,
-                    note = _uiState.value.note,
-                    status = OrderStatus.AWAITING_PAYMENT,
-                    paymentMethod = _uiState.value.selectedPaymentMethod,
-                    address = _uiState.value.selectedLocation ?: UserLocationModel()
-                )
-
-                val addOrderResult = repository.addOrderToFirestore(order)
-                if (addOrderResult.isFailure) {
-                    _uiState.update { it.copy(errorMessage = "Lỗi khi tạo đơn hàng: ${addOrderResult.exceptionOrNull()?.message}") }
-                    Log.e("CheckoutViewModel","Lỗi khi tạo đơn hàng: ${addOrderResult.exceptionOrNull()?.message}")
-                    return@launch
-                }
 
                 _uiState.value.products.forEach { product ->
                     val result = repository.updateProductQuantityForCheckout(product)
@@ -334,7 +318,29 @@ class CheckoutViewModel(
                     Log.e("CheckoutViewModel","Lỗi xóa giỏ hàng: ${removeCartResult.exceptionOrNull()?.message}")
                     return@launch
                 }
+                val order = OrderModel(
+                    userId = currentUserId,
+                    products = _uiState.value.products,
+                    totalPrice = _uiState.value.finalPrice,
+                    note = _uiState.value.note,
+                    status = OrderStatus.AWAITING_PAYMENT,
+                    paymentMethod = _uiState.value.selectedPaymentMethod,
+                    address = _uiState.value.selectedLocation ?: UserLocationModel()
+                )
+
+                val addOrderResult = repository.addOrderToFirestore(order)
+                addOrderResult.onSuccess { newOrder ->
+                    Log.d("CheckoutViewModel", "Đơn hàng tạo thành công: $newOrder")
+                    _uiState.update { it.copy(successMessage = "Đặt hàng thành công!") }
+//=========================================
+                    navigate(newOrder.orderCode)
+
+                }.onFailure { e ->
+                    _uiState.update { it.copy(errorMessage = "Lỗi khi tạo đơn hàng: ${e.message}") }
+                    Log.e("CheckoutViewModel", "Lỗi khi tạo đơn hàng", e)
+                }
                 _uiState.update { it.copy(successMessage = "Đặt hàng thành công!") }
+
             } catch (e: Exception) {
                 Log.e("CheckoutViewModel", "Lỗi khi xác nhận thanh toán", e)
                 _uiState.update { it.copy(errorMessage = "Lỗi khi xác nhận thanh toán: ${e.message}") }
@@ -355,10 +361,10 @@ class CheckoutViewModel(
             return false
         }
 
-        if (_uiState.value.selectedPaymentMethod.isEmpty()) {
-            Log.e("CheckoutViewModel", "Chưa chọn phương thức thanh toán")
-            return false
-        }
+//        if (_uiState.value.selectedPaymentMethod.isEmpty()) {
+//            Log.e("CheckoutViewModel", "Chưa chọn phương thức thanh toán")
+//            return false
+//        }
 
         // Nếu tất cả đều hợp lệ, xóa thông báo lỗi
         _uiState.update { it.copy(errorMessage = "") }
