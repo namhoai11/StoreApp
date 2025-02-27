@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
-import com.example.storeapp.model.OrderStatusModel
 import com.example.storeapp.ui.component.user.FilterOrder
 import com.example.storeapp.ui.component.user.OrderList
 import com.example.storeapp.ui.component.user.SearchOrder
@@ -98,12 +97,12 @@ fun OrderContent(
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
-    val options = listOf(
-        OrderStatusModel.All,
-        OrderStatusModel.Shipping,
-        OrderStatusModel.Completed,
-        OrderStatusModel.Canceled
-    )
+//    val options = listOf(
+//        OrderStatusModel.All,
+//        OrderStatusModel.Shipping,
+//        OrderStatusModel.Completed,
+//        OrderStatusModel.Canceled
+//    )
 
     LazyColumn(
         contentPadding = innerPadding,
@@ -126,7 +125,7 @@ fun OrderContent(
                         fontWeight = FontWeight.Bold
                     )
                     FilterOrder(
-                        options = options,
+//                        options = options,
                         modifier = modifier
                     )
                 }

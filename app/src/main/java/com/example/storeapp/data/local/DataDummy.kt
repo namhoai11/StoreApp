@@ -12,6 +12,7 @@ import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.CouponType
 import com.example.storeapp.model.District
 import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.PaymentMethodModel
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
@@ -406,64 +407,35 @@ object DataDummy {
             )
         ),
         totalPrice = 3500000.0,
-        status = "Pending",
+        status = OrderStatus.PENDING,
         orderCode = "VoHuyenTram",
         paymentMethod = "Credit Card",
-        addressId = "address123",
+        address = UserLocationModel(
+            id = "1",
+            userName = "La Hoai Nam",
+            street = "Jl. Durian No. 123",
+            province = "Jawa Tengah",
+            district = "Kab. Semarang",
+            ward = "Banyubiru",
+//            isDefault = true,
+            userId = "user123",
+            provinceId = "province01",
+            districtId = "district01",
+            wardId = "ward01",
+//            latitude = -7.123456,
+//            longitude = 110.123456,
+//            createdAt = Timestamp.now(),
+//            updatedAt = Timestamp.now()
+        ),
         createdAt = Timestamp.now(),
         updatedAt = Timestamp.now()
     )
 
     // Dữ liệu mẫu cho Order
     val listOrder = listOf(
-        OrderModel(
-            userId = "user123",
-            products = listOf(
-                ProductsOnCartToShow(
-                    productId = "101",
-                    productName = "Sản phẩm A",
-                    productImage = "url_to_image_1",
-                    productPrice = 50000.0,
-                    productOptions = "Size L",
-                    colorOptions = "Đỏ",
-                    quantity = 2,
-                    remainingStock = 5,
-                    notExist = "",
-                    notEnough = ""
-                )
-            ),
-            totalPrice = 3500000.0,
-            status = "Pending",
-            orderCode = "VoHuyenTram",
-            paymentMethod = "Credit Card",
-            addressId = "address123",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now()
-        ),
-        OrderModel(
-            userId = "user123",
-            products = listOf(
-                ProductsOnCartToShow(
-                    productId = "101",
-                    productName = "Sản phẩm A",
-                    productImage = "url_to_image_1",
-                    productPrice = 50000.0,
-                    productOptions = "Size L",
-                    colorOptions = "Đỏ",
-                    quantity = 2,
-                    remainingStock = 5,
-                    notExist = "",
-                    notEnough = ""
-                )
-            ),
-            totalPrice = 3500000.0,
-            status = "Pending",
-            orderCode = "VoHuyenTram",
-            paymentMethod = "Credit Card",
-            addressId = "address123",
-            createdAt = Timestamp.now(),
-            updatedAt = Timestamp.now()
-        )
+        order,
+        order,
+        order
     )
 
     val listProductOptions = listOf(
@@ -681,4 +653,6 @@ object DataDummy {
         errorMessage = null,
         successMessage = "Sản phẩm đã được thêm thành công!"
     )
+
+
 }

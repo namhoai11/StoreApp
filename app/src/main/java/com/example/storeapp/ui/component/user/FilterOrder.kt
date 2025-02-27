@@ -27,15 +27,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
-import com.example.storeapp.model.OrderStatusModel
+import com.example.storeapp.model.OrderStatus
+//import com.example.storeapp.model.OrderStatusModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterOrder(
     modifier: Modifier = Modifier,
-    options: List<OrderStatusModel>, // Danh sách trạng thái hoặc mục để chọn
-    onOptionSelected: (OrderStatusModel) -> Unit = {}
+//    options: List<OrderStatusModel>, // Danh sách trạng thái hoặc mục để chọn
+    onOptionSelected: (OrderStatus) -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) } // Kiểm soát trạng thái menu
     var selectedOption by rememberSaveable { mutableStateOf("") } // Lựa chọn hiện tại
@@ -87,11 +88,11 @@ fun FilterOrder(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            options.forEach { option ->
+            OrderStatus.entries.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option.title) },
+                    text = { Text(option.toString()) },
                     onClick = {
-                        selectedOption = option.title
+                        selectedOption = option.toString()
                         expanded = false
                         onOptionSelected(option) // Gửi kết quả ra ngoài
                     }
@@ -106,14 +107,7 @@ fun FilterOrder(
 @Composable
 fun FilterOrderPreview() {
     StoreAppTheme {
-        val options = listOf(
-            OrderStatusModel.All,
-            OrderStatusModel.Shipping,
-            OrderStatusModel.Completed,
-            OrderStatusModel.Canceled
-        )
-
-        FilterOrder(options = options)
+        FilterOrder()
     }
 }
 

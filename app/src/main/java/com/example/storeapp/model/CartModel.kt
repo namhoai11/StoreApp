@@ -21,9 +21,6 @@ data class ProductsOnCart(
     val productId: String,
     val productName: String,
     val productImage: String,
-//    val productPrice: Double,
-//    val productOptions: ProductOptions? = null,
-//    val colorOptions: ColorOptions? = null,
     val productOptions: String = "",
     val colorOptions: String = "",
     val quantity: Int

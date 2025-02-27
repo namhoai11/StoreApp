@@ -10,7 +10,10 @@ import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
 import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.CouponType
+import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.ShippingModel
+import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -227,14 +230,17 @@ class CheckoutViewModel(
         val oldTotalPrice = _uiState.value.oldTotalPrice
         // Đảm bảo totalPrice không bị âm
         val totalPrice = when (coupon.type) {
-            CouponType.PERCENTAGE -> (oldTotalPrice - (oldTotalPrice * coupon.value)).coerceAtLeast(0.0)
+            CouponType.PERCENTAGE -> (oldTotalPrice - (oldTotalPrice * coupon.value)).coerceAtLeast(
+                0.0
+            )
+
             CouponType.FIXED_AMOUNT -> (oldTotalPrice - coupon.value).coerceAtLeast(0.0)
             else -> oldTotalPrice
         }
 
-        val finalPrice = if(coupon.type!=CouponType.FREE_SHIPPING){
+        val finalPrice = if (coupon.type != CouponType.FREE_SHIPPING) {
             totalPrice + (_uiState.value.selectedShipping?.price ?: 0.0)
-        }else{
+        } else {
             totalPrice
         }
 
@@ -256,4 +262,106 @@ class CheckoutViewModel(
         }
     }
 
+    fun onChoosePayment() {
+        _uiState.update {
+            it.copy(
+                isShowDialog = true,
+            )
+        }
+    }
+
+    fun dismissDialog() {
+        _uiState.update {
+            it.copy(
+                isShowDialog = false,
+            )
+        }
+    }
+
+    fun confirmChoosePaymentClicked() {
+        if (!validateCheckout()) {
+            Log.e("CheckoutViewModel", "Dữ liệu không hợp lệ: ${_uiState.value.errorMessage}")
+            return
+        }
+
+        viewModelScope.launch {
+            val currentUserId = _user.value?.id
+            if (currentUserId == null) {
+                _uiState.update { it.copy(errorMessage = "Không thể xác định người dùng") }
+                return@launch
+            }
+
+            try {
+                val order = OrderModel(
+                    userId = currentUserId,
+                    products = _uiState.value.products,
+                    totalPrice = _uiState.value.finalPrice,
+                    note = _uiState.value.note,
+                    status = OrderStatus.AWAITING_PAYMENT,
+                    paymentMethod = _uiState.value.selectedPaymentMethod,
+                    address = _uiState.value.selectedLocation ?: UserLocationModel()
+                )
+
+                val addOrderResult = repository.addOrderToFirestore(order)
+                if (addOrderResult.isFailure) {
+                    _uiState.update { it.copy(errorMessage = "Lỗi khi tạo đơn hàng: ${addOrderResult.exceptionOrNull()?.message}") }
+                    Log.e("CheckoutViewModel","Lỗi khi tạo đơn hàng: ${addOrderResult.exceptionOrNull()?.message}")
+                    return@launch
+                }
+
+                _uiState.value.products.forEach { product ->
+                    val result = repository.updateProductQuantityForCheckout(product)
+                    if (result.isFailure) {
+                        _uiState.update { it.copy(errorMessage = "Lỗi cập nhật số lượng sản phẩm: ${result.exceptionOrNull()?.message}") }
+                        Log.e("CheckoutViewModel","Lỗi cập nhật số lượng sản phẩm: ${result.exceptionOrNull()?.message}")
+
+                        return@launch
+                    }
+                }
+
+                _uiState.value.selectedCoupon?.let { coupon ->
+                    val result = repository.updateCouponQuantityForCheckout(coupon.id)
+                    if (result.isFailure) {
+                        _uiState.update { it.copy(errorMessage = "Lỗi cập nhật số lượng voucher: ${result.exceptionOrNull()?.message}") }
+                        Log.e("CheckoutViewModel","Lỗi cập nhật số lượng voucher: ${result.exceptionOrNull()?.message}")
+                        return@launch
+                    }
+                }
+
+                val removeCartResult = repository.removeCartByUser(currentUserId)
+                if (removeCartResult.isFailure) {
+                    _uiState.update { it.copy(errorMessage = "Lỗi xóa giỏ hàng: ${removeCartResult.exceptionOrNull()?.message}") }
+                    Log.e("CheckoutViewModel","Lỗi xóa giỏ hàng: ${removeCartResult.exceptionOrNull()?.message}")
+                    return@launch
+                }
+                _uiState.update { it.copy(successMessage = "Đặt hàng thành công!") }
+            } catch (e: Exception) {
+                Log.e("CheckoutViewModel", "Lỗi khi xác nhận thanh toán", e)
+                _uiState.update { it.copy(errorMessage = "Lỗi khi xác nhận thanh toán: ${e.message}") }
+            }
+        }
+    }
+
+
+    private fun validateCheckout(): Boolean {
+
+        if (_uiState.value.products.isEmpty()) {
+            Log.e("CheckoutViewModel", "Không có sản phẩm trong giỏ hàng")
+            return false
+        }
+
+        if (_uiState.value.selectedLocation == null) {
+            Log.e("CheckoutViewModel", "Chưa chọn địa chỉ giao hàng")
+            return false
+        }
+
+        if (_uiState.value.selectedPaymentMethod.isEmpty()) {
+            Log.e("CheckoutViewModel", "Chưa chọn phương thức thanh toán")
+            return false
+        }
+
+        // Nếu tất cả đều hợp lệ, xóa thông báo lỗi
+        _uiState.update { it.copy(errorMessage = "") }
+        return true
+    }
 }

@@ -34,7 +34,7 @@ import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.CartList
 import com.example.storeapp.ui.component.user.CartSummary
-import com.example.storeapp.ui.component.user.ConfirmRemovedDialog
+import com.example.storeapp.ui.component.user.ConfirmDialog
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -92,8 +92,9 @@ fun CartScreen(
             }
         )
         if (uiState.isShowConfirmRemovedDialog) {
-            ConfirmRemovedDialog(
+            ConfirmDialog(
                 onDismiss = { viewModel.dismissRemoveDialog() },
+                title = "Xóa Sản phẩm",
                 message = "Xác nhận xóa sản phẩm",
                 confirmRemove = { viewModel.confirmRemoveClicked() })
         }

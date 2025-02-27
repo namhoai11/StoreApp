@@ -219,13 +219,10 @@ class CartViewModel(
             }
 
             if (productsOnCartToShow.quantity == 1) {
-                // Nếu số lượng = 1, gọi hàm xoá thay vì giảm
-//                confirmRemoveClicked(productsOnCartToShow)
                 onRemoveClick(productsOnCartToShow)
                 return@launch
             }
 
-            // Lưu trạng thái cũ để rollback nếu lỗi
             var oldList = emptyList<ProductsOnCartToShow>()
             var oldTotalPrice = 0.0
 
@@ -240,7 +237,6 @@ class CartViewModel(
                     } else it
                 }
 
-                // Cập nhật tổng giá mới
                 val newTotalPrice = updatedList.sumOf { it.productTotalPrice }
 
                 currentState.copy(
@@ -249,7 +245,6 @@ class CartViewModel(
                 )
             }
 
-            // Gọi API giảm số lượng
             val result = repository.updateProductQuantityInCart(
                 currentUserId, productsOnCartToShow.toProductsOnCart(), CartAction.Decrease
             )

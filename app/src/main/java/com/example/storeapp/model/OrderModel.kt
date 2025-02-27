@@ -5,28 +5,37 @@ import com.google.firebase.Timestamp
 
 
 data class OrderModel(
-    val orderCode: String,
-    val userId: String,
-    val products: List<ProductsOnCartToShow>,
-    val totalPrice: Double,
+    val orderCode: String = "",
+    val userId: String = "",
+    val products: List<ProductsOnCartToShow> = emptyList(),
+    val totalPrice: Double = 0.0,
     val note: String = "",
-    val status: String,
-    val paymentMethod: String,
-    val addressId: String,
-    val createdAt: Timestamp,   // Sửa từ `String` thành `Timestamp`
-    val updatedAt: Timestamp,   // Sửa từ `String` thành `Timestamp`
+    val status: OrderStatus = OrderStatus.PENDING,
+    val paymentMethod: String = "",
+    val address: UserLocationModel = UserLocationModel(),
+    val createdAt: Timestamp = Timestamp.now(),
+    val updatedAt: Timestamp = Timestamp.now(),
     val deletedAt: Timestamp? = null
-)
+) {
+    constructor() : this(
+        "",
+        "",
+        emptyList(),
+        0.0,
+        "",
+        OrderStatus.PENDING,
+        "",
+        UserLocationModel(),
+        Timestamp.now(),
+        Timestamp.now(),
+        null
+    )
+}
 
-data class ProductDataForOrderModel(
-    val id: String,
-    val product: ProductModel,
-    val orderId: String,
-    val quantity: Int
-)
 
 enum class OrderStatus() {
     ALL,
+    AWAITING_PAYMENT,
     PENDING,
     CONFIRMED,
     SHIPPED,
@@ -36,11 +45,18 @@ enum class OrderStatus() {
     override fun toString(): String {
         return when (this) {
             ALL -> "Tất cả"
+            AWAITING_PAYMENT -> "Chờ thanh toán"
             PENDING -> "Chờ Xác nhận"
             CONFIRMED -> "Đã Xác nhận"
             SHIPPED -> "Đang giao"
             COMPLETED -> "Hoàn Thành"
             CANCELED -> "Đã Hủy"
+        }
+    }
+
+    companion object {
+        fun fromString(value: String): OrderStatus? {
+            return OrderStatus.entries.find { it.toString() == value }
         }
     }
 }

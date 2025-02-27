@@ -89,11 +89,12 @@ fun AlertDialog(
     )
 }
 @Composable
-fun ConfirmRemovedDialog(
+fun ConfirmDialog(
+    modifier: Modifier = Modifier,
     onDismiss: () -> Unit, // Thêm callback để đóng dialog
+    title: String="",
     message: String,
     confirmRemove: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
 //    val activity = (LocalContext.current as Activity)
 
@@ -103,7 +104,7 @@ fun ConfirmRemovedDialog(
             // button. If you want to disable that functionality, simply use an empty
             // onDismissRequest.
         },
-        title = { Text(text = "Xóa Sản phẩm") },
+        title = { Text(text = title) },
         text = { Text(text = message) },
         modifier = modifier,
         dismissButton = {
@@ -135,7 +136,7 @@ fun FinalScoreDialogPreview() {
     StoreAppTheme {
         ConfirmAddToCartDialog(
             {},
-            "",
+            "Xac nhan",
             {}
         )
     }

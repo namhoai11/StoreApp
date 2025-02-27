@@ -59,6 +59,7 @@ import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.user.AddressItemScreen
 import com.example.storeapp.ui.component.user.CartMiniList
+import com.example.storeapp.ui.component.user.ConfirmDialog
 import com.example.storeapp.ui.component.user.CouponInactiveSelected
 import com.example.storeapp.ui.component.user.CouponItem
 import com.example.storeapp.ui.component.user.CouponItemSelected
@@ -135,8 +136,15 @@ fun CheckoutScreen(
             onEditAddress = { onNavigateChooseAddress() },
             onChooseShipping = { viewModel.onChooseShipping() },
             onChooseCoupon = { viewModel.onChooseCoupon() },
-            onChoosePayment = {}
+            onChoosePayment = {viewModel.onChoosePayment()}
         )
+        if (uiState.isShowDialog) {
+            ConfirmDialog(
+                onDismiss = { viewModel.dismissDialog() },
+                title = "Xóa Sản phẩm",
+                message = "Xác nhận xóa sản phẩm",
+                confirmRemove = { viewModel.confirmChoosePaymentClicked() })
+        }
     }
 }
 
