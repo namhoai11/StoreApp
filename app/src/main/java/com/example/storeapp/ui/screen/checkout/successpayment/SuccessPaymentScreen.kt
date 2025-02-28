@@ -82,14 +82,12 @@ fun SuccessPaymentScreen(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             ) {
-                if (currentOrder != null) {
-                    Text(
-                        text = formatCurrency2(currentOrder.totalPrice),
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                Text(
+                    text = formatCurrency2(currentOrder.totalPrice),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f)
+                )
             }
             HorizontalDivider(
                 modifier = Modifier.padding(
@@ -109,13 +107,11 @@ fun SuccessPaymentScreen(
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.weight(1f)
                 )
-                if (currentOrder != null) {
-                    Text(
-                        text = currentOrder.orderCode,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                Text(
+                    text = currentOrder.orderCode,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -128,13 +124,11 @@ fun SuccessPaymentScreen(
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.weight(1f)
                 )
-                if (currentOrder != null) {
-                    Text(
-                        text = "${currentOrder.products.sumOf { it.quantity }}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                Text(
+                    text = "${currentOrder.products.sumOf { it.quantity }}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -147,16 +141,14 @@ fun SuccessPaymentScreen(
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.weight(1f)
                 )
-                if (currentOrder != null) {
-                    Text(
-                        text = currentOrder.address.userName + " - " +currentOrder.address.street + " - " + currentOrder.address.ward + " - " + currentOrder.address.district + " - " + currentOrder.address.province,
-                        fontSize = 16.sp,
-                        maxLines = 3,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.weight(1f)
+                Text(
+                    text = currentOrder.address.userName + " - " +currentOrder.address.street + " - " + currentOrder.address.ward + " - " + currentOrder.address.district + " - " + currentOrder.address.province,
+                    fontSize = 16.sp,
+                    maxLines = 3,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f)
 
-                    )
-                }
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -169,13 +161,11 @@ fun SuccessPaymentScreen(
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.weight(1f)
                 )
-                if (currentOrder != null) {
-                    Text(
-                        text = currentOrder.paymentMethod,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                Text(
+                    text = currentOrder.paymentMethod,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -188,13 +178,11 @@ fun SuccessPaymentScreen(
                     color = MaterialTheme.colorScheme.outline,
                     modifier = Modifier.weight(1f)
                 )
-                if (currentOrder != null) {
-                    Text(
-                        text = timestampToDateString(currentOrder.updatedAt),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
-                }
+                Text(
+                    text = timestampToDateString(currentOrder.updatedAt),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
             }
         }
         Button(

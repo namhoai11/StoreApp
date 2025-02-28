@@ -11,22 +11,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.storeapp.R
+import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
 fun OrderStatus(
-    status: String,
-//    modifier: Modifier = Modifier
+    status: OrderStatus,
+    modifier: Modifier = Modifier
 ) {
     // Xác định màu sắc dựa trên trạng thái
-    val containerColor = when (status.lowercase()) {
-        "đang giao" -> colorResource(id = R.color.blue) // Màu xanh dương
-        "hoàn thành" -> Color(0xFF4CAF50) // Màu xanh lá
-        "đã hủy" -> Color(0xFFF44336) // Màu đỏ
-        else -> Color(0xFF9E9E9E) // Màu xám mặc định
+    val containerColor = when (status) {
+        OrderStatus.AWAITING_PAYMENT -> Color(0xFFFF9800) // Cam (Chờ thanh toán)
+        OrderStatus.PENDING -> Color(0xFFFFC107) // Vàng (Chờ xác nhận)
+        OrderStatus.CONFIRMED -> Color(0xFF2196F3) // Xanh dương (Đã xác nhận)
+        OrderStatus.SHIPPED -> Color(0xFF3F51B5) // Xanh dương đậm (Đang giao)
+        OrderStatus.COMPLETED -> Color(0xFF4CAF50) // Xanh lá (Hoàn thành)
+        OrderStatus.CANCELED -> Color(0xFFF44336) // Đỏ (Đã hủy)
+        else -> Color(0xFF9E9E9E) // Xám (Mặc định)
     }
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -35,12 +41,16 @@ fun OrderStatus(
             containerColor = containerColor,
             contentColor = Color.White // Màu chữ
         ),
-//        modifier = Modifier.height(36.dp)
+        modifier = modifier
     ) {
         Text(
-            text = status,
-            modifier = Modifier.padding(20.dp, 8.dp),
-            fontWeight = FontWeight.Bold
+            text = status.toString(),
+            modifier = Modifier.padding(12.dp, 8.dp),
+
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            fontSize = 16.sp,
+            maxLines = 2
         )
     }
 
@@ -51,6 +61,6 @@ fun OrderStatus(
 @Composable
 fun OrderStatusPreview() {
     StoreAppTheme {
-        OrderStatus(status = "Đang giao")
+        OrderStatus(status = OrderStatus.AWAITING_PAYMENT)
     }
 }

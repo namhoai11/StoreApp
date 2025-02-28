@@ -19,6 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -26,9 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
+import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.OrderStatus
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.FilterOrder
 import com.example.storeapp.ui.component.user.OrderList
 import com.example.storeapp.ui.component.user.SearchOrder
@@ -44,23 +52,19 @@ object OrdersDestination : NavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrdersScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
     Scaffold(
-//        snackbarHost = {
-//            SnackbarHost(hostState = snackbarHostState) {
-//                Snackbar(
-//                    modifier = Modifier.padding(16.dp)
-//                ) {
-//                    Text(
-//                        text = it.visuals.message,
-//                    )
-//                }
-//            }
-//        },
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp),
+//                modifier = Modifier.padding(horizontal = 16.dp),
                 title = {
                     Text(
                         text = stringResource(id = R.string.orders_title),
@@ -73,7 +77,8 @@ fun OrdersScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
-                        modifier = Modifier.clickable { navController.navigateUp() }
+                        modifier = Modifier.padding(start = 16.dp)
+                            .clickable { navController.navigateUp() }
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -88,22 +93,24 @@ fun OrdersScreen(
             )
         }
     ) { innerPadding ->
-        OrderContent(innerPadding = innerPadding)
+        OrderContent(
+            uiState = uiState,
+            innerPadding = innerPadding,
+            onSearchOrder = { viewModel.searchOrdersByCode(it) },
+            onOrderStatusSelected = { viewModel.selectOrderStatus(it) }
+        )
     }
 }
 
 @Composable
 fun OrderContent(
+    modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    uiState: OrderUiState,
+    onOrderStatusSelected: (OrderStatus) -> Unit = {},
+    onOrderItemClick: (OrderModel) -> Unit = {},
+    onSearchOrder: (String) -> Unit = {}
 ) {
-//    val options = listOf(
-//        OrderStatusModel.All,
-//        OrderStatusModel.Shipping,
-//        OrderStatusModel.Completed,
-//        OrderStatusModel.Canceled
-//    )
-
     LazyColumn(
         contentPadding = innerPadding,
         modifier = modifier
@@ -125,8 +132,10 @@ fun OrderContent(
                         fontWeight = FontWeight.Bold
                     )
                     FilterOrder(
-//                        options = options,
-                        modifier = modifier
+                        modifier = modifier,
+                        onOptionSelected = {
+                            onOrderStatusSelected(it)
+                        }
                     )
                 }
                 Column(
@@ -138,13 +147,21 @@ fun OrderContent(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    SearchOrder()
+                    SearchOrder(onSearch = { onSearchOrder(it) })
                 }
 
             }
         }
         item {
-            OrderList(modifier = modifier.padding(top = 32.dp))
+            OrderList(
+                modifier = modifier.padding(top = 32.dp),
+                orderList = if (uiState.currentQuery.isNotBlank()) {
+                    uiState.ordersSearched
+                } else {
+                    uiState.currentListOrder
+                },
+                orderItemClick = { onOrderItemClick(it) }
+            )
         }
 
     }
@@ -156,6 +173,10 @@ fun OrderContent(
 @Composable
 fun OrderScreenPreview() {
     StoreAppTheme {
-        OrderContent(PaddingValues(0.dp))
+        OrderContent(
+            modifier = Modifier,
+            uiState = DataDummy.orderUiState,
+            innerPadding = PaddingValues(0.dp)
+        )
     }
 }

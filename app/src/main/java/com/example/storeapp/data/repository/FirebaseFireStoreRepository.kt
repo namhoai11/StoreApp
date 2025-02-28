@@ -6,6 +6,7 @@ import com.example.storeapp.model.CartModel
 import com.example.storeapp.model.CategoryModel
 import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.SliderModel
@@ -868,19 +869,25 @@ class FirebaseFireStoreRepository {
         }
     }
 
-    suspend fun getOrderById(orderId: String): Result<OrderModel?> {
+    suspend fun getOrderById(orderId: String): Result<OrderModel> {
         return try {
             val documentSnapshot =
                 firestore.collection("Orders").document(orderId).get().await()
             val order = documentSnapshot.toObject(OrderModel::class.java)
 
-            Log.d("FirestoreRepository", "Loaded Order with ID $orderId: $order")
-            Result.success(order) // Thành công, trả về kết quả
+            if (order != null) {
+                Log.d("FirestoreRepository", "Loaded Order with ID $orderId: $order")
+                Result.success(order) // Thành công, trả về order
+            } else {
+                Log.w("FirestoreRepository", "Order with ID $orderId not found")
+                Result.failure(Exception("Order not found")) // Trả về lỗi nếu không tìm thấy đơn hàng
+            }
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Error loading Order with ID $orderId", e)
-            Result.failure(e) // Lỗi, trả về exception
+            Result.failure(e) // Lỗi khác
         }
     }
+
 
     suspend fun updateOrderPaymentMethod(orderId: String, paymentMethod: String): Result<Unit> {
         return try {
@@ -897,10 +904,10 @@ class FirebaseFireStoreRepository {
 
             // Cập nhật phương thức thanh toán và thời gian cập nhật
             val updatedOrder = order.copy(
+                status = OrderStatus.PENDING,
                 paymentMethod = paymentMethod,
                 updatedAt = Timestamp.now()
             )
-
             // Dùng set với SetOptions.merge() để giữ nguyên các field khác
             orderRef.set(updatedOrder, SetOptions.merge()).await()
 
@@ -911,6 +918,29 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getOrdersByUser(userId: String): Result<List<OrderModel>> {
+        return try {
+            val querySnapshot = firestore.collection("Orders")
+                .whereEqualTo("userId", userId) // Lọc theo userId
+                .get()
+                .await()
+
+            val orders = querySnapshot.documents.mapNotNull { it.toObject(OrderModel::class.java) }
+
+            if (orders.isNotEmpty()) {
+                Log.d("FirestoreRepository", "Loaded ${orders.size} orders for userID $userId")
+                Result.success(orders)
+            } else {
+                Log.w("FirestoreRepository", "No orders found for userID: $userId")
+                Result.success(emptyList()) // Trả về danh sách rỗng thay vì lỗi
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading orders for userID: $userId", e)
+            Result.failure(e)
+        }
+    }
+
 
 
 }

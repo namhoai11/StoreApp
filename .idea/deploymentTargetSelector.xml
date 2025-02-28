@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-02-25T14:40:38.626069100Z">
+        <DropdownSelection timestamp="2025-02-28T15:37:06.077421400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=R58N70P6F2N" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\NamHoai\.android\avd\NamHoaiVirtual.avd" />
             </handle>
           </Target>
         </DropdownSelection>

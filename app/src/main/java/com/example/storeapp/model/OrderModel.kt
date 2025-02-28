@@ -15,7 +15,8 @@ data class OrderModel(
     val address: UserLocationModel = UserLocationModel(),
     val createdAt: Timestamp = Timestamp.now(),
     val updatedAt: Timestamp = Timestamp.now(),
-    val deletedAt: Timestamp? = null
+    val deletedAt: Timestamp? = null,
+    val estimatedDeliveryDate: Timestamp = Timestamp.now(), // Ngày nhận dự kiến
 ) {
     constructor() : this(
         "",
@@ -28,8 +29,10 @@ data class OrderModel(
         UserLocationModel(),
         Timestamp.now(),
         Timestamp.now(),
-        null
-    )
+        null,
+        Timestamp.now(),
+
+        )
 }
 
 
@@ -61,16 +64,4 @@ enum class OrderStatus() {
     }
 }
 
-//data class OrderModel(
-//
-//    val id: Int = 0,
-//
-//    val orderCode: String,
-//
-//    val totalPrice: Double,
-//
-//    val orderDate: Timestamp,
-//
-//    val items: List<CartModel>
-//)
 

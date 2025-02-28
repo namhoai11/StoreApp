@@ -216,7 +216,7 @@ fun PaymentContent(
                         color = MaterialTheme.colorScheme.outline
                     )
                     Text(
-                        text = uiState.currentOrder?.let { formatCurrency2(it.totalPrice) } ?: "",
+                        text = formatCurrency2(uiState.currentOrder.totalPrice),
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )

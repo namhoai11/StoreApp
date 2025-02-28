@@ -3,6 +3,7 @@ package com.example.storeapp.ui.component.user
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.R
+import com.example.storeapp.data.local.DataDummy
+import com.example.storeapp.model.OrderModel
+import com.example.storeapp.ui.component.function.timestampToDateOnlyString
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
-fun OrderList(modifier: Modifier = Modifier) {
-    val options = listOf("Tất cả", "Hoàn thành", "Đang giao", "Đã hủy")
+fun OrderList(
+    modifier: Modifier = Modifier,
+    orderList: List<OrderModel>,
+    orderItemClick: (OrderModel) -> Unit = {},
+) {
     LazyColumn(
         modifier = modifier
             .height(800.dp),
@@ -43,21 +50,26 @@ fun OrderList(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
 
     ) {
-        items(options) { item ->
-            OrderItem(status = item)
+        items(orderList) { item ->
+            OrderItem(item, orderItemClick = { orderItemClick(item) })
         }
     }
 }
 
 @Composable
 fun OrderItem(
-    status: String,
+    orderItem: OrderModel,
+    orderItemClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                orderItemClick()
+            }
     ) {
         Row(
             modifier = Modifier
@@ -81,10 +93,10 @@ fun OrderItem(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "#HD0921",
+                        text = orderItem.orderCode,
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
+                        fontSize = 14.sp
                     )
 
                 }
@@ -108,22 +120,21 @@ fun OrderItem(
                 }
                 DateOrder(
                     imageId = R.drawable.icon_calendar,
-                    dateOrderText = "Ngày xuất kho:",
-                    date = "02/04/2024",
+                    dateOrderText = "Ngày đặt:",
+                    date = timestampToDateOnlyString(orderItem.updatedAt),
                     modifier = modifier
                 )
                 DateOrder(
                     imageId = R.drawable.icon_calendar,
                     dateOrderText = "Ngày nhận(dự kiến):",
-                    date = "02/04/2024"
+                    date = timestampToDateOnlyString(orderItem.estimatedDeliveryDate)
                 )
                 DateOrder(
                     imageId = R.drawable.icon_pinlocation,
-                    dateOrderText = "Tp.Hồ Chí Minh, Việt Nam",
-//            date = "02/04/2024"
+                    dateOrderText = orderItem.address.street + " - " + orderItem.address.ward + " - " + orderItem.address.district + " - " + orderItem.address.province,
                 )
             }
-            OrderStatus(status = status)
+            OrderStatus(status = orderItem.status, modifier = Modifier.weight(0.5f))
         }
 
     }
@@ -134,8 +145,7 @@ fun OrderItem(
 @Composable
 fun OrderItemPreview() {
     StoreAppTheme {
-        val options = listOf("Tất cả", "Đang giao", "Hoàn thành", "Đã hủy")
-        OrderItem(status = "Hoàn thành")
+        OrderItem(orderItem = DataDummy.order)
     }
 }
 
@@ -144,8 +154,10 @@ fun OrderItemPreview() {
 @Composable
 fun OrderListPreview() {
     StoreAppTheme {
-        val options = listOf("Tất cả", "Đang giao", "Hoàn thành", "Đã hủy")
-        OrderList(modifier = Modifier.padding(start = 16.dp, end = 16.dp))
+        OrderList(
+            orderList = DataDummy.listOrder,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        )
     }
 }
 

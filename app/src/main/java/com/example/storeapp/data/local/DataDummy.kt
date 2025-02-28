@@ -33,6 +33,7 @@ import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProduc
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.ColorOptionsForAddProduct
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.screen.checkout.CheckoutUiState
+import com.example.storeapp.ui.screen.order.OrderUiState
 import com.google.firebase.Timestamp
 
 object DataDummy {
@@ -103,17 +104,20 @@ object DataDummy {
         ShippingModel(
             name = "Nhanh",
             price = 13.00,
-            description = "Thời gian dự kiến đến: 2 - 3 ngày"
+            description = "Thời gian dự kiến đến: 2 - 3 ngày",
+            estimatedDeliveryDays = 3
         ),
         ShippingModel(
             name = "Hỏa tốc",
             price = 15.00,
-            description = "Thời gian dự kiến đến: 1 - 2 ngày"
+            description = "Thời gian dự kiến đến: 1 - 2 ngày",
+            estimatedDeliveryDays = 2
         ),
         ShippingModel(
             name = "Tiết kiệm",
             price = 10.00,
-            description = "Thời gian dự kiến đến: 1 - 2 ngày"
+            description = "Thời gian dự kiến đến: 3 - 4 ngày",
+            estimatedDeliveryDays = 4
         )
     )
 
@@ -345,7 +349,8 @@ object DataDummy {
         selectedShipping = ShippingModel(
             name = "Nhanh",
             price = 13.00,
-            description = "Thời gian dự kiến đến: 2 - 3 ngày"
+            description = "Thời gian dự kiến đến: 2 - 3 ngày",
+            estimatedDeliveryDays = 3
         ),
         selectedCoupon = CouponModel(
             id = "1",
@@ -428,7 +433,8 @@ object DataDummy {
 //            updatedAt = Timestamp.now()
         ),
         createdAt = Timestamp.now(),
-        updatedAt = Timestamp.now()
+        updatedAt = Timestamp.now(),
+        estimatedDeliveryDate = Timestamp.now()
     )
 
     // Dữ liệu mẫu cho Order
@@ -437,6 +443,8 @@ object DataDummy {
         order,
         order
     )
+
+    val orderUiState = OrderUiState(listOrder = listOrder)
 
     val listProductOptions = listOf(
         ProductOptions(

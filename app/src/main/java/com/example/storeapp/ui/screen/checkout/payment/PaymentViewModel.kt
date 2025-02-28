@@ -96,14 +96,13 @@ class PaymentViewModel(
     }
 
     fun confirmPaymentClicked(navigate: (String) -> Unit) {
-        val orderCode = _uiState.value.currentOrder?.orderCode
+        val orderCode = _uiState.value.currentOrder.orderCode
         val paymentMethod = _uiState.value.paymentMethodSelected?.name
 
-        if (orderCode == null || paymentMethod == null) {
+        if (paymentMethod == null) {
             Log.e("PaymentViewModel", "Lỗi: Thiếu thông tin đơn hàng hoặc phương thức thanh toán")
             return
         }
-
         viewModelScope.launch {
             try {
                 val result = repository.updateOrderPaymentMethod(orderCode, paymentMethod)

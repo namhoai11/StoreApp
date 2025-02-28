@@ -71,7 +71,7 @@ fun OrderManagementItem(
                     fontSize = 12.sp
                 )
             }
-            OrderStatus(status = "Đang xử lý")
+            OrderStatus(status = orderItem.status)
         }
         HorizontalDivider(
             thickness = 2.dp,

@@ -345,7 +345,7 @@ fun OrderDashBoardItem(
                 )
 
             }
-            OrderStatus(status = "Đang xử lý")
+//            OrderStatus(status = "Đang xử lý")
         }
 //        Spacer(modifier = Modifier.height(8.dp))
 

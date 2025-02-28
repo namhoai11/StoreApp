@@ -46,7 +46,8 @@ fun DateOrder(
             text = dateOrderText,
             color = Color.Gray,
             fontWeight = FontWeight.Normal,
-            fontSize = 10.sp
+            fontSize = 10.sp,
+            maxLines = 3
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
