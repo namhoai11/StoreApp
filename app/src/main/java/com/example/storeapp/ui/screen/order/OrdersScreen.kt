@@ -53,8 +53,8 @@ object OrdersDestination : NavigationDestination {
 @Composable
 fun OrdersScreen(
     navController: NavController,
+    onNavigateOrderDetails:(String)->Unit,
     viewModel: OrderViewModel = viewModel(factory = AppViewModelProvider.Factory)
-
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -97,7 +97,8 @@ fun OrdersScreen(
             uiState = uiState,
             innerPadding = innerPadding,
             onSearchOrder = { viewModel.searchOrdersByCode(it) },
-            onOrderStatusSelected = { viewModel.selectOrderStatus(it) }
+            onOrderStatusSelected = { viewModel.selectOrderStatus(it) },
+            onOrderItemClick = {onNavigateOrderDetails(it.orderCode)}
         )
     }
 }

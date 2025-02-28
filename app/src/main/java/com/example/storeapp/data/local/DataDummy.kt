@@ -412,7 +412,7 @@ object DataDummy {
             )
         ),
         totalPrice = 3500000.0,
-        status = OrderStatus.PENDING,
+        status = OrderStatus.AWAITING_PAYMENT,
         orderCode = "VoHuyenTram",
         paymentMethod = "Credit Card",
         address = UserLocationModel(

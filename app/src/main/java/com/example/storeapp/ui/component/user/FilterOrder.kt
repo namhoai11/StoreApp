@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,6 +50,11 @@ fun FilterOrder(
             value = selectedOption,
             onValueChange = { },
             readOnly = true,
+            textStyle = TextStyle( // 👈 Thêm thuộc tính này
+                fontSize = 14.sp, // 👈 Chỉnh cỡ chữ theo ý muốn
+//                fontWeight = FontWeight.Medium,
+                color = Color.Black // Màu chữ khi chọn xong
+            ),
             trailingIcon = {
                 Icon(
                     Icons.Default.ArrowDropDown, // Thay bằng icon dropdown

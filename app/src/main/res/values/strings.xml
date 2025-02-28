@@ -48,6 +48,8 @@
 
     <string name="notificate_title">Notification</string>
     <string name="orders_title">Đơn hàng</string>
+    <string name="orderdetails_title">Chi tiết đơn hàng</string>
+
     <string name="customer_title">Khách hàng</string>
     <string name="adminaccount_title">Tài khoản Admin</string>
     <string name="voucher_title">Khuyến mãi</string>

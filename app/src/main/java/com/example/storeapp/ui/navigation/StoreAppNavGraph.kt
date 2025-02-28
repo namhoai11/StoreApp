@@ -66,6 +66,8 @@ import com.example.storeapp.ui.screen.login.verify.DoneVerifyDestination
 import com.example.storeapp.ui.screen.login.verify.DoneVerifyScreen
 import com.example.storeapp.ui.screen.login.verify.VerifyAccountDestination
 import com.example.storeapp.ui.screen.login.verify.VerifyScreen
+import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsDestination
+import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsScreen
 
 @Composable
 fun StoreAppNavHost(
@@ -249,7 +251,32 @@ fun StoreAppNavHost(
         }
 
         composable(OrdersDestination.route) {
-            OrdersScreen(navController = navController)
+            OrdersScreen(navController = navController,
+                onNavigateOrderDetails = {
+                    navController.navigate(
+                        OrderDetailsDestination.createRoute(
+                            orderId = it
+                        )
+                    )
+                }
+            )
+        }
+        composable(
+            OrderDetailsDestination.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            OrderDetailsScreen(navController = navController,
+                onNavigateToPayment = {
+                    navController.navigate(
+                        PaymentDestination.createRoute(
+                            orderId = it
+                        )
+                    )
+                },
+                navigateToOrderScreen = { navController.navigate(OrdersDestination.route) }
+            )
         }
         composable(ProfileDestination.route) {
             ProfileScreen(navController)

@@ -941,6 +941,37 @@ class FirebaseFireStoreRepository {
         }
     }
 
+    suspend fun cancelOrder(orderId: String): Result<Unit> {
+        return try {
+            val orderRef = firestore.collection("Orders").document(orderId)
+
+            // Lấy thông tin đơn hàng hiện tại
+            val snapshot = orderRef.get().await()
+            if (!snapshot.exists()) {
+                return Result.failure(Exception("Đơn hàng không tồn tại"))
+            }
+
+            val order = snapshot.toObject(OrderModel::class.java)
+                ?: return Result.failure(Exception("Lỗi chuyển đổi dữ liệu đơn hàng"))
+
+            // Cập nhật trạng thái đơn hàng thành CANCELED
+            val updatedOrder = order.copy(
+                status = OrderStatus.CANCELED,
+                updatedAt = Timestamp.now()
+            )
+
+            // Cập nhật đơn hàng trên Firestore
+            orderRef.set(updatedOrder, SetOptions.merge()).await()
+
+            Log.d("FirestoreRepository", "Đơn hàng đã được hủy thành công!")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Lỗi khi hủy đơn hàng", e)
+            Result.failure(e)
+        }
+    }
+
+
 
 
 }

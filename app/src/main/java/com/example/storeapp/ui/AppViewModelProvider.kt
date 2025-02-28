@@ -24,6 +24,7 @@ import com.example.storeapp.ui.screen.home.HomeViewModel
 import com.example.storeapp.ui.screen.login.LoginViewModel
 import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.screen.order.OrderViewModel
+import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsViewModel
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
 
 object AppViewModelProvider {
@@ -68,6 +69,12 @@ object AppViewModelProvider {
             )
         }
 
+        initializer {
+            OrderDetailsViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
 
         initializer {
             AddressViewModel(
