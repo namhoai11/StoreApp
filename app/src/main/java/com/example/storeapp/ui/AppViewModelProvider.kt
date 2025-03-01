@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import com.example.storeapp.StoreAppManagerApplication
 import com.example.storeapp.ui.screen.address.AddressViewModel
 import com.example.storeapp.ui.screen.address.add_address.AddAddressViewModel
+import com.example.storeapp.ui.screen.admin.dashboard.DashBoardViewModel
 import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCategoryViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
@@ -88,6 +89,12 @@ object AppViewModelProvider {
             AddAddressViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
                 storeAppManagerApplication().container.locationApiService
+            )
+        }
+
+        initializer {
+            DashBoardViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
 

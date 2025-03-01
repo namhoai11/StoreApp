@@ -287,8 +287,15 @@ fun StoreAppNavHost(
             DashBoardScreen(navController = navController,
                 navigateUserApp = {
                     navController.navigate(ProfileDestination.route)
-                })
+                },
+                onNavigateToOrderManagement = {
+                    navController.navigate(OrderManagementDestination.route)
+
+                }
+            )
         }
+
+
         composable(ManegeAdminDestination.route) {
             ManageScreen(navController = navController,
                 navigateUserApp = {
