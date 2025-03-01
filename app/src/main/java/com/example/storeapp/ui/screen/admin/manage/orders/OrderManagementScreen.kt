@@ -5,14 +5,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.data.local.OrderStatusProvider
+import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.OrderStatus
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminSearch
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.FilterList
@@ -28,7 +33,14 @@ object OrderManagementDestination : NavigationDestination {
 @Composable
 fun OrderManagementScreen(
     navController: NavController,
+    onNavigateOrderManagementDetail: (String) -> Unit,
+    viewModel: OrderManagementViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadData()
+    }
     Scaffold(
         topBar = {
             AdminTopAppBar(
@@ -47,23 +59,45 @@ fun OrderManagementScreen(
 //            )
 //        }
     ) { innerPadding ->
-        OrderManagementContent(innerPadding = innerPadding)
+        OrderManagementContent(
+            uiState = uiState,
+            innerPadding = innerPadding,
+            onOrderStatusSelected = { viewModel.selectOrderStatus(it) },
+            onOrderItemClick = { onNavigateOrderManagementDetail(it.orderCode) },
+            onSearchOrder = { viewModel.searchOrdersByCode(it) }
+        )
     }
 }
 
 @Composable
 fun OrderManagementContent(
+    uiState: OrderManagementUiState,
     innerPadding: PaddingValues,
+    onOrderStatusSelected: (OrderStatus) -> Unit = {},
+    onOrderItemClick: (OrderModel) -> Unit = {},
+    onSearchOrder: (String) -> Unit = {}
 ) {
+    val filterList = OrderStatus.entries.map { it.toString() }
     Column(
         modifier = Modifier.padding(innerPadding)
     ) {
         AdminSearch(
             textSearch = "Tìm kiếm đơn hàng",
+            onSearch = { onSearchOrder(it) },
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         )
-        FilterList(filterList = OrderStatusProvider.orderStatusList, onFilterSelected = {})
-        OrderManagementList(listOrder = DataDummy.listOrder)
+        FilterList(filterList = filterList, onFilterSelected = {
+            onOrderStatusSelected(OrderStatus.fromString(it)!!)
+        })
+        OrderManagementList(
+            if (uiState.currentQuery.isNotBlank()) {
+                uiState.ordersSearched
+            } else {
+                uiState.currentListOrders
+            },
+            userMap = uiState.userMap,
+            onOrderItemClick = { onOrderItemClick(it) }
+        )
     }
 }
 
@@ -72,8 +106,11 @@ fun OrderManagementContent(
 @Composable
 fun PreviewOrderManagementScreen() {
     StoreAppTheme {
-        OrderManagementScreen(
-            navController = rememberNavController()
+        OrderManagementContent(
+            uiState = OrderManagementUiState(
+                allOrder = DataDummy.listOrder,
+            ),
+            innerPadding = PaddingValues(0.dp)
         )
     }
 }

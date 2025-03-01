@@ -342,6 +342,16 @@ class FirebaseFireStoreRepository {
         }
     }
 
+    suspend fun getUserById(userId: String): UserModel {
+        val snapshot = firestore.collection("Users").document(userId).get().await()
+
+        return if (snapshot.exists()) {
+            snapshot.toObject(UserModel::class.java)?.copy(id = userId) ?: UserModel()
+        } else {
+            UserModel()
+        }
+    }
+
 
     suspend fun addWishListItem(currentUserId: String, productId: String) {
         val userRef = firestore.collection("Users").document(currentUserId)
@@ -544,18 +554,18 @@ class FirebaseFireStoreRepository {
     }
 
 
-    suspend fun getCartById(cartId: String): Result<CartModel?> {
-        return try {
-            val documentSnapshot = firestore.collection("Cart").document(cartId).get().await()
-            val cart = documentSnapshot.toObject(CartModel::class.java)
-
-            Log.d("FirestoreRepository", "Loaded Product with ID $cartId: $cart")
-            Result.success(cart) // Thành công, trả về kết quả
-        } catch (e: Exception) {
-            Log.e("FirestoreRepository", "Error loading product with ID $cartId", e)
-            Result.failure(e) // Lỗi, trả về exception
-        }
-    }
+//    suspend fun getCartById(cartId: String): Result<CartModel?> {
+//        return try {
+//            val documentSnapshot = firestore.collection("Cart").document(cartId).get().await()
+//            val cart = documentSnapshot.toObject(CartModel::class.java)
+//
+//            Log.d("FirestoreRepository", "Loaded Product with ID $cartId: $cart")
+//            Result.success(cart) // Thành công, trả về kết quả
+//        } catch (e: Exception) {
+//            Log.e("FirestoreRepository", "Error loading product with ID $cartId", e)
+//            Result.failure(e) // Lỗi, trả về exception
+//        }
+//    }
 
 
     suspend fun updateProductQuantityInCart(
@@ -683,29 +693,29 @@ class FirebaseFireStoreRepository {
         awaitClose { listener.remove() } // Hủy lắng nghe khi Flow bị đóng
     }
 
-    suspend fun addCouponToFireStore(coupon: CouponModel): Result<Unit> {
-        val couponRef = firestore.collection("Coupons") // Collection lưu coupon
-
-        return try {
-            // Tạo document mới với ID tự động
-            val newCouponRef = couponRef.document()
-
-            // Cập nhật model với ID mới
-            val newCoupon = coupon.copy(
-                id = newCouponRef.id,
-                code = newCouponRef.id
-            )
-
-            // Lưu coupon vào Firestore
-            newCouponRef.set(newCoupon).await()
-
-            Log.d("Firestore", "Coupon added successfully")
-            Result.success(Unit) // Thành công
-        } catch (e: Exception) {
-            Log.e("Firestore", "Error adding Coupon", e)
-            Result.failure(e) // Trả về lỗi
-        }
-    }
+//    suspend fun addCouponToFireStore(coupon: CouponModel): Result<Unit> {
+//        val couponRef = firestore.collection("Coupons") // Collection lưu coupon
+//
+//        return try {
+//            // Tạo document mới với ID tự động
+//            val newCouponRef = couponRef.document()
+//
+//            // Cập nhật model với ID mới
+//            val newCoupon = coupon.copy(
+//                id = newCouponRef.id,
+//                code = newCouponRef.id
+//            )
+//
+//            // Lưu coupon vào Firestore
+//            newCouponRef.set(newCoupon).await()
+//
+//            Log.d("Firestore", "Coupon added successfully")
+//            Result.success(Unit) // Thành công
+//        } catch (e: Exception) {
+//            Log.e("Firestore", "Error adding Coupon", e)
+//            Result.failure(e) // Trả về lỗi
+//        }
+//    }
 
     suspend fun addOrUpdateCouponToFireStore(coupon: CouponModel): Result<Unit> {
         val couponRef = firestore.collection("Coupons") // Collection lưu coupon
@@ -762,7 +772,6 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
-
 
 
     suspend fun getCoupons(): Result<List<CouponModel>> {
@@ -824,32 +833,32 @@ class FirebaseFireStoreRepository {
         }
     }
 
-    suspend fun addOrUpdateProduct(product: ProductModel): Result<Unit> {
-        val productRef = firestore.collection("Products") // Collection lưu sản phẩm
-
-        return try {
-            val productDocumentRef = if (product.id.isNotBlank()) {
-                productRef.document(product.id)
-            } else {
-                productRef.document()
-            }
-
-            val updatedProduct = product.copy(
-                id = productDocumentRef.id,
-                createdAt = product.createdAt.takeIf { product.id.isNotBlank() } ?: Timestamp.now(),
-                updatedAt = Timestamp.now()
-            )
-
-            // Sử dụng set với merge để cập nhật dữ liệu mà không ghi đè toàn bộ
-            productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
-
-            Log.d("Firestore", "Product added/updated successfully")
-            Result.success(Unit) // Thành công
-        } catch (e: Exception) {
-            Log.e("Firestore", "Error adding/updating Product", e)
-            Result.failure(e) // Trả về lỗi
-        }
-    }
+//    suspend fun addOrUpdateProduct(product: ProductModel): Result<Unit> {
+//        val productRef = firestore.collection("Products") // Collection lưu sản phẩm
+//
+//        return try {
+//            val productDocumentRef = if (product.id.isNotBlank()) {
+//                productRef.document(product.id)
+//            } else {
+//                productRef.document()
+//            }
+//
+//            val updatedProduct = product.copy(
+//                id = productDocumentRef.id,
+//                createdAt = product.createdAt.takeIf { product.id.isNotBlank() } ?: Timestamp.now(),
+//                updatedAt = Timestamp.now()
+//            )
+//
+//            // Sử dụng set với merge để cập nhật dữ liệu mà không ghi đè toàn bộ
+//            productDocumentRef.set(updatedProduct, SetOptions.merge()).await()
+//
+//            Log.d("Firestore", "Product added/updated successfully")
+//            Result.success(Unit) // Thành công
+//        } catch (e: Exception) {
+//            Log.e("Firestore", "Error adding/updating Product", e)
+//            Result.failure(e) // Trả về lỗi
+//        }
+//    }
 
     suspend fun addOrderToFirestore(order: OrderModel): Result<OrderModel> {
         return try {
@@ -865,6 +874,27 @@ class FirebaseFireStoreRepository {
             Result.success(updatedOrder)
         } catch (e: Exception) {
             Log.e("Firestore", "Error adding order", e)
+            Result.failure(e)
+        }
+    }
+
+
+    suspend fun getAllOrders(): Result<List<OrderModel>> {
+        return try {
+            val querySnapshot = firestore.collection("Orders")
+                .get()
+                .await()
+            val orders = querySnapshot.documents.mapNotNull { it.toObject(OrderModel::class.java) }
+
+            if (orders.isNotEmpty()) {
+                Log.d("FirestoreRepository", "Loaded ${orders.size}")
+                Result.success(orders)
+            } else {
+                Log.w("FirestoreRepository", "No orders found")
+                Result.success(emptyList()) // Trả về danh sách rỗng thay vì lỗi
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Error loading orders", e)
             Result.failure(e)
         }
     }
@@ -911,7 +941,10 @@ class FirebaseFireStoreRepository {
             // Dùng set với SetOptions.merge() để giữ nguyên các field khác
             orderRef.set(updatedOrder, SetOptions.merge()).await()
 
-            Log.d("FirestoreRepository", "Cập nhật phương thức thanh toán thành công: $paymentMethod")
+            Log.d(
+                "FirestoreRepository",
+                "Cập nhật phương thức thanh toán thành công: $paymentMethod"
+            )
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("FirestoreRepository", "Lỗi khi cập nhật phương thức thanh toán", e)
@@ -970,8 +1003,6 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
-
-
 
 
 }

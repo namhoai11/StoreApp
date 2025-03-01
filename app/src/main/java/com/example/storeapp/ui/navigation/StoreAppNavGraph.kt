@@ -296,7 +296,9 @@ fun StoreAppNavHost(
 
 
         composable(OrderManagementDestination.route) {
-            OrderManagementScreen(navController = navController)
+            OrderManagementScreen(navController = navController,
+                onNavigateOrderManagementDetail = {}
+            )
         }
         composable(CouponManagementDestination.route) {
             CouponManagementScreen(navController = navController,

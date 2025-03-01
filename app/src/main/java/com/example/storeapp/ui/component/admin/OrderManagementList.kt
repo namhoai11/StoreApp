@@ -1,6 +1,7 @@
 ﻿package com.example.storeapp.ui.component.admin
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,21 +24,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.component.function.formatCurrency2
+import com.example.storeapp.ui.component.function.timestampToDateString
 import com.example.storeapp.ui.component.user.OrderStatus
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 @Composable
 fun OrderManagementList(
-//    modifier: Modifier = Modifier,
-    listOrder: List<OrderModel>
+    listOrder: List<OrderModel>,
+    userMap: Map<String, UserModel> = emptyMap(), // 🆕 Thêm userMap
+    onOrderItemClick: (OrderModel) -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(listOrder) { item ->
-            OrderManagementItem(orderItem = item)
+            val user = userMap[item.userId]
+            OrderManagementItem(
+                orderItem = item,
+                user = user,
+                orderItemClick = { onOrderItemClick(item) })
         }
     }
 }
@@ -45,10 +53,15 @@ fun OrderManagementList(
 @Composable
 fun OrderManagementItem(
     orderItem: OrderModel,
+    user: UserModel? = null,
+    orderItemClick: () -> Unit = {}
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(10.dp)
+        elevation = CardDefaults.cardElevation(10.dp),
+        modifier = Modifier.clickable {
+            orderItemClick()
+        }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -56,7 +69,9 @@ fun OrderManagementItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
+                modifier = Modifier
+                    .padding(vertical = 16.dp, horizontal = 8.dp)
+                    .weight(1f),
             ) {
                 Text(
                     text = orderItem.orderCode,
@@ -65,13 +80,13 @@ fun OrderManagementItem(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "24-10-2024 15:00",
+                    text = timestampToDateString(orderItem.createdAt),
                     color = Color.Gray,
 //                            fontWeight = FontWeight.Bold,
                     fontSize = 12.sp
                 )
             }
-            OrderStatus(status = orderItem.status)
+            OrderStatus(modifier = Modifier.weight(0.5f), status = orderItem.status)
         }
         HorizontalDivider(
             thickness = 2.dp,
@@ -84,10 +99,12 @@ fun OrderManagementItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp, bottom = 16.dp)
+                    .weight(1f),
             ) {
                 Text(
-                    text = "COD",
+                    text = "Thông tin",
                     color = Color.Gray,
                     fontSize = 18.sp,
 //                    fontWeight = FontWeight.Bold
@@ -96,33 +113,40 @@ fun OrderManagementItem(
                     text = formatCurrency2(orderItem.totalPrice),
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
 //                    modifier = Modifier.alignByBaseline() // Canh theo baseline
                 )
                 Text(text = "(${getTotalProductCount(orderItem)} san pham)")
             }
             Column(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp, bottom = 16.dp)
+                    .weight(1f),
+                horizontalAlignment = Alignment.End // Căn lề phải cho toàn bộ nội dung
             ) {
                 Text(
-                    text = "COD",
+                    text = "Khách hàng",
                     color = Color.Gray,
-                    fontSize = 18.sp,
-//                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.End) // Căn sát phải
+                    fontSize = 18.sp
                 )
-                Text(
-                    text = formatCurrency2(orderItem.totalPrice),
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-//                    modifier = Modifier.alignByBaseline() // Canh theo baseline
-                    modifier = Modifier.align(Alignment.End) // Căn sát phải
-                )
-                Text(
-                    text = "(${getTotalProductCount(orderItem)} san pham)",
-                    modifier = Modifier.align(Alignment.End) // Căn sát phải
-                )
+                if (user != null) {
+                    Text(
+                        text = user.firstName + " " + user.lastName,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "(${user.id})"
+                    )
+                } else {
+                    Text(
+                        text = "Khách hàng không tồn tại",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
             }
         }
     }
@@ -147,7 +171,6 @@ fun PreviewOrderManagementItem() {
         OrderManagementItem(orderItem)
     }
 }
-
 
 
 fun getTotalProductCount(order: OrderModel): Int {

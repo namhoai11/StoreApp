@@ -1,8 +1,6 @@
-﻿package com.example.storeapp.ui.screen.order
+﻿package com.example.storeapp.ui.screen.admin.manage.orders
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
@@ -14,41 +12,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OrderViewModel(
+class OrderManagementViewModel(
     private val repository: FirebaseFireStoreRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(OrderUiState())
-    val uiState: StateFlow<OrderUiState> = _uiState.asStateFlow()
-
-    private val _user = MutableLiveData<UserModel?>()
-    val user: LiveData<UserModel?> = _user
+    private val _uiState = MutableStateFlow(OrderManagementUiState())
+    val uiState: StateFlow<OrderManagementUiState> = _uiState.asStateFlow()
 
     init {
-        loadUser()
+        loadData()
         viewModelScope.launch {
             _uiState.collect { state ->
-                Log.d("OrderViewModel", "Current UI State: $state")
-            }
-        }
-    }
-
-    private fun loadUser() {
-        viewModelScope.launch {
-            try {
-                val userData = repository.getCurrentUser()
-                _user.value = userData
-                Log.d("OrderViewModel", "User loaded: $userData")
-
-                loadData()
-
-            } catch (e: Exception) {
-                Log.e("OrderViewModel", "Error loading user", e)
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Lỗi khi tải người dùng"
-                    )
-                }
+                Log.d("OrderManagementViewModel", "Current UI State: $state")
             }
         }
     }
@@ -56,40 +30,41 @@ class OrderViewModel(
     fun loadData() = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
 
-        val currentUser = _user.value
-        if (currentUser == null) {
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = "Không thể xác định người dùng"
-                )
-            }
-            return@launch
-        }
-
-        val resultLoadOrder = repository.getOrdersByUser(currentUser.id)
+        val resultLoadOrder = repository.getAllOrders()
         resultLoadOrder.onSuccess { orders ->
             if (orders.isNotEmpty()) {
+                // Lấy danh sách userId duy nhất từ danh sách đơn hàng
+                val userIds = orders.map { it.userId }.toSet()
+
+                // Lấy thông tin người dùng từ Firestore
+                val userMap = mutableMapOf<String, UserModel>()
+                userIds.forEach { userId ->
+                    val userResult = repository.getUserById(userId)
+                    userMap[userId] = userResult
+                }
+
                 val listOrderByStatus = orders.groupBy { it.status }
+
                 _uiState.update {
                     it.copy(
-                        listOrder = orders,
-                        listOrderByStatus = listOrderByStatus,
+                        allOrder = orders,
+                        ordersByStatus = listOrderByStatus,
+                        userMap = userMap, // Lưu thông tin User riêng biệt
                         isLoading = false
                     )
                 }
             } else {
                 _uiState.update {
                     it.copy(
-                        listOrder = emptyList(),
-                        listOrderByStatus = emptyMap(),
+                        allOrder = emptyList(),
+                        ordersByStatus = emptyMap(),
                         isLoading = false,
                         errorMessage = "Không có đơn hàng nào"
                     )
                 }
             }
         }.onFailure { exception ->
-            Log.e("OrderViewModel", "Error loading orders", exception)
+            Log.e("OrderManagementViewModel", "Error loading orders", exception)
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -98,6 +73,7 @@ class OrderViewModel(
             }
         }
     }
+
 
     fun selectOrderStatus(status: OrderStatus) {
         _uiState.update { it.copy(currentOrderStatus = status) }
@@ -108,15 +84,16 @@ class OrderViewModel(
     fun searchOrdersByCode(query: String) = viewModelScope.launch {
         _uiState.update { currentState ->
             val filteredOrders = if (query.isNotBlank()) {
-                currentState.currentListOrder.filter { it.orderCode.contains(query, ignoreCase = true) }
+                currentState.allOrder.filter { it.orderCode.contains(query, ignoreCase = true) }
             } else {
-                currentState.currentListOrder
+                currentState.allOrder
             }
             currentState.copy(
                 ordersSearched = filteredOrders,
                 currentQuery = query
             )
         }
-        Log.d("OrderViewModel", "itemsSearched:${_uiState.value.ordersSearched}")
+        Log.d("OrderManagementViewModel", "itemsSearched:${_uiState.value.ordersSearched}")
     }
+
 }
