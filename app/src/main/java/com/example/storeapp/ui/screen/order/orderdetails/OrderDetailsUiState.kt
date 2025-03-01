@@ -6,6 +6,7 @@ data class OrderDetailsUiState(
     val order: OrderModel = OrderModel(),
     val isShowPaymentDialog: Boolean = false,
     val isShowCanceledOrderDialog:Boolean=false,
+    val isShowCompletedOrderDialog:Boolean=false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val successMessage: String? = null

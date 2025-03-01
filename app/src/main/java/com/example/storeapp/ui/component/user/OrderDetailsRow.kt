@@ -45,7 +45,7 @@ fun OrderDetailsRow(
         Text(
             text = orderText,
             color = Color.Gray,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
             maxLines = 3
         )
@@ -53,7 +53,7 @@ fun OrderDetailsRow(
         Text(
             text = content,
             color = Color.Gray,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp
         )
     }

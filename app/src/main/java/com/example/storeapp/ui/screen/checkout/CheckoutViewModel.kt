@@ -16,10 +16,12 @@ import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class CheckoutViewModel(
     savedStateHandle: SavedStateHandle,
@@ -318,6 +320,12 @@ class CheckoutViewModel(
                     Log.e("CheckoutViewModel","Lỗi xóa giỏ hàng: ${removeCartResult.exceptionOrNull()?.message}")
                     return@launch
                 }
+                val createdAt = Timestamp.now()
+
+                // Tính ngày giao dự kiến
+                val estimatedDays = _uiState.value.selectedShipping?.estimatedDeliveryDays ?: 0
+                val estimatedDeliveryDate = Timestamp(Date(createdAt.toDate().time + estimatedDays * 24 * 60 * 60 * 1000))
+
                 val order = OrderModel(
                     userId = currentUserId,
                     products = _uiState.value.products,
@@ -325,7 +333,9 @@ class CheckoutViewModel(
                     note = _uiState.value.note,
                     status = OrderStatus.AWAITING_PAYMENT,
                     paymentMethod = _uiState.value.selectedPaymentMethod,
-                    address = _uiState.value.selectedLocation ?: UserLocationModel()
+                    address = _uiState.value.selectedLocation ?: UserLocationModel(),
+                    createdAt = createdAt,
+                    estimatedDeliveryDate = estimatedDeliveryDate
                 )
 
                 val addOrderResult = repository.addOrderToFirestore(order)

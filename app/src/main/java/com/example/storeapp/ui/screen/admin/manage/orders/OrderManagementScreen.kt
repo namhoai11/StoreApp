@@ -48,7 +48,7 @@ fun OrderManagementScreen(
                 "Quản lý",
                 "Đơn hàng",
                 { navController.navigateUp() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
 //        bottomBar = {

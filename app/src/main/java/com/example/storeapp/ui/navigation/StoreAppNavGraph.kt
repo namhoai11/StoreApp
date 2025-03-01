@@ -28,6 +28,8 @@ import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponMa
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponScreen
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementScreen
+import com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement.OrderDetailsManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement.OrderDetailsManagementScreen
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementScreen
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductManagementDestination
@@ -297,9 +299,20 @@ fun StoreAppNavHost(
 
         composable(OrderManagementDestination.route) {
             OrderManagementScreen(navController = navController,
-                onNavigateOrderManagementDetail = {}
+                onNavigateOrderManagementDetail = {
+                    navController.navigate(OrderDetailsManagementDestination.createRoute(it))
+                }
             )
         }
+        composable(
+            route = OrderDetailsManagementDestination.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            OrderDetailsManagementScreen(navController = navController)
+        }
+
         composable(CouponManagementDestination.route) {
             CouponManagementScreen(navController = navController,
                 onAddCouponClick = {
@@ -310,6 +323,7 @@ fun StoreAppNavHost(
                 }
             )
         }
+
         composable(
             route = AddCouponManagementDestination.route,
             arguments = listOf(

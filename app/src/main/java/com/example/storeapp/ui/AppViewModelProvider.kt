@@ -13,6 +13,7 @@ import com.example.storeapp.ui.screen.admin.manage.category.add_category.AddCate
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddCouponViewModel
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementViewModel
+import com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement.OrderDetailsManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
@@ -128,6 +129,13 @@ object AppViewModelProvider {
         }
         initializer {
             OrderManagementViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+
+        initializer {
+            OrderDetailsManagementViewModel(
+                this.createSavedStateHandle(),
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }

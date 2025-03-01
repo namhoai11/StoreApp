@@ -1,8 +1,7 @@
-﻿package com.example.storeapp.ui.screen.order.orderdetails
+﻿package com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,18 +17,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +39,7 @@ import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.function.timestampToDateOnlyString
 import com.example.storeapp.ui.component.user.CartMiniList
@@ -55,65 +49,46 @@ import com.example.storeapp.ui.component.user.OrderStatus
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
-object OrderDetailsDestination : NavigationDestination {
-    override val route = "orderdetails?orderId={orderId}"
-    override val titleRes = R.string.orderdetails_title
+
+object OrderDetailsManagementDestination : NavigationDestination {
+    override val route = "orderdetailsmanagement?orderId={orderId}"
+    override val titleRes = R.string.ordermanage_title
     fun createRoute(orderId: String?): String {
-        return "orderdetails?orderId=$orderId"
+        return "orderdetailsmanagement?orderId=$orderId"
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderDetailsScreen(
-//    modifier: Modifier = Modifier,
+fun OrderDetailsManagementScreen(
     navController: NavController,
-    onNavigateToPayment: (String) -> Unit,
-    navigateToOrderScreen: () -> Unit,
-    viewModel: OrderDetailsViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: OrderDetailsManagementViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Chi tiết đơn hàng",
-//                        fontFamily = poppinsFontFamily,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                navigationIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "back",
-                        modifier = Modifier
-                            .clickable { navController.navigateUp() }
-                            .padding(horizontal = 16.dp)
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+            AdminTopAppBar(
+                R.drawable.arrowback,
+                "Quản lý",
+                "Đơn hàng",
+                { navController.navigateUp() },
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
-        }
+        },
+//        bottomBar = {
+//            AdminBottomNavigationBar(
+//                navController = navController,
+//                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+//
+//            )
+//        }
     ) { innerPadding ->
-        OrderDetailsContent(innerPadding = innerPadding, uiState = uiState,
-            onPaymentClick = { viewModel.onChoosePayment() },
+        OrderDetailsManagementContent(
+            innerPadding = innerPadding,
+            uiState = uiState,
             cancelOrderClicked = { viewModel.onChooseCanceledOrder() },
-            completedOrderClicked = { viewModel.onChooseCompletedOrder() }
+            buttonOrderClicked = { viewModel.onChooseCompletedOrder() }
         )
-        if (uiState.isShowPaymentDialog) {
-            ConfirmDialog(
-                onDismiss = { viewModel.dismissPaymentDialog() },
-                title = "Xác nhận",
-                message = "Xác nhận tới thanh toán",
-                confirmRemove = {
-                    onNavigateToPayment(uiState.order.orderCode)
-                })
-        }
         if (uiState.isShowCanceledOrderDialog) {
             ConfirmDialog(
                 onDismiss = { viewModel.dismissCanceledOrderDialog() },
@@ -121,33 +96,30 @@ fun OrderDetailsScreen(
                 message = "Xác nhận hủy đơn hàng",
                 confirmRemove = {
                     viewModel.cancelOrderClicked()
-//                    navigateToOrderScreen()
                 }
             )
         }
+
         if (uiState.isShowCompletedOrderDialog) {
             ConfirmDialog(
                 onDismiss = { viewModel.dismissCompletedOrderDialog() },
                 title = "Xác nhận",
-                message = "Xác nhận đơn hàng hoàn thành",
+                message = uiState.currentButtonText,
                 confirmRemove = {
                     viewModel.completedOrderClicked()
-                    navigateToOrderScreen()
                 }
             )
         }
-
     }
 }
 
 @Composable
-fun OrderDetailsContent(
+fun OrderDetailsManagementContent(
 //    modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
-    uiState: OrderDetailsUiState,
-    onPaymentClick: () -> Unit = {},
+    uiState: OrderDetailsManagementUiState,
     cancelOrderClicked: () -> Unit = {},
-    completedOrderClicked: () -> Unit = {},
+    buttonOrderClicked: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -207,6 +179,26 @@ fun OrderDetailsContent(
                 modifier = Modifier.padding(16.dp)
             )
             OrderDetailsRow(
+                imageId = R.drawable.icon_user_filled,
+                orderText = "Khách hàng:",
+                content = (uiState.user?.lastName
+                    ?: "Khách hàng không còn hoạt động") + " " + (uiState.user?.firstName ?: ""),
+            )
+            OrderDetailsRow(
+                imageId = R.drawable.icon_email,
+                orderText = "Email:",
+                content = uiState.user?.email ?: "",
+            )
+            OrderDetailsRow(
+                imageId = R.drawable.icon_telephone,
+                orderText = "Điện thoại:",
+                content = uiState.user?.phone ?: "",
+            )
+            HorizontalDivider(
+                thickness = 1.dp,
+                modifier = Modifier.padding(16.dp)
+            )
+            OrderDetailsRow(
                 imageId = R.drawable.icon_pinlocation,
                 orderText = "Địa chỉ:",
                 content = uiState.order.address.street + " - " + uiState.order.address.ward + " - " + uiState.order.address.district + " - " + uiState.order.address.province,
@@ -260,21 +252,25 @@ fun OrderDetailsContent(
                         thickness = 1.dp,
                         color = Color.Black,
                     )
-                    if (uiState.order.status == OrderStatus.AWAITING_PAYMENT) {
+                    if (
+                        uiState.order.status != OrderStatus.AWAITING_PAYMENT
+                        && uiState.order.status != OrderStatus.CANCELED
+                        && uiState.order.status != OrderStatus.COMPLETED
+                    ) {
                         Button(
-//                        enabled = uiState.isButtonEnabled,
+                        enabled = (!uiState.isLoading),
                             modifier = Modifier
                                 .padding(top = 8.dp, bottom = 8.dp)
                                 .height(55.dp)
                                 .fillMaxWidth(),
                             shape = RoundedCornerShape(10.dp),
-                            onClick = { onPaymentClick() },
+                            onClick = { buttonOrderClicked() },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary
                             )
                         ) {
                             Text(
-                                text = "Thanh toán",
+                                text = uiState.currentButtonText,
                                 fontSize = 16.sp,
                                 color = Color.White
                             )
@@ -287,6 +283,7 @@ fun OrderDetailsContent(
                                 .height(55.dp)
                                 .fillMaxWidth(),
                             shape = RoundedCornerShape(10.dp),
+                            enabled = (!uiState.isLoading),
                             onClick = { cancelOrderClicked() },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Red
@@ -300,26 +297,7 @@ fun OrderDetailsContent(
                             )
                         }
                     }
-                    if (uiState.order.status != OrderStatus.CANCELED && uiState.order.status != OrderStatus.AWAITING_PAYMENT) {
-                        Button(
-                            modifier = Modifier
-                                .padding(top = 8.dp, bottom = 8.dp)
-                                .height(55.dp)
-                                .fillMaxWidth(),
-                            shape = RoundedCornerShape(10.dp),
-                            onClick = { completedOrderClicked() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Green
-                            )
-                        ) {
-                            Text(
-                                text = "Hoàn thành",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White // ⚪ Chữ trắng
-                            )
-                        }
-                    }
+
                 }
             }
         }
@@ -331,13 +309,12 @@ fun OrderDetailsContent(
 @Composable
 fun OrderScreenPreview() {
     StoreAppTheme {
-        OrderDetailsContent(
+        OrderDetailsManagementContent(
 //            modifier = Modifier,
-            uiState = OrderDetailsUiState(
+            uiState = OrderDetailsManagementUiState(
                 order = DataDummy.order
             ),
             innerPadding = PaddingValues(0.dp)
         )
     }
 }
-

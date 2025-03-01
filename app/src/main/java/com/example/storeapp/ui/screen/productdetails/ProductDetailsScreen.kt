@@ -89,7 +89,7 @@ fun ProductDetailsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier.padding(horizontal = 16.dp),
+//                modifier = Modifier.padding(horizontal = 16.dp),
                 title = {
                     Text(
                         text = stringResource(R.string.product_detail),
@@ -102,7 +102,10 @@ fun ProductDetailsScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "back",
-                        modifier = Modifier.clickable { navController.navigateUp() }
+                        modifier = Modifier
+                            .clickable { navController.navigateUp() }
+                            .padding(horizontal = 16.dp)
+
                     )
                 },
                 actions = {
@@ -113,9 +116,12 @@ fun ProductDetailsScreen(
                         ),
                         tint = Color.Unspecified,
                         contentDescription = "favourite",
-                        modifier = Modifier.clickable {
-                            viewModel.favoriteClick()
-                        }
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable {
+                                viewModel.favoriteClick()
+                            }
+
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -409,7 +415,7 @@ fun OptionsSelector(
                 ) {
 
                     Text(
-                        text = "${options.optionsName}",
+                        text = options.optionsName,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                         color = if (index == selectedOptionIndex) colorResource(id = R.color.purple)

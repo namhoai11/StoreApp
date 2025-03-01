@@ -1,4 +1,4 @@
-﻿package com.example.storeapp.ui.screen.order.orderdetails
+﻿package com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OrderDetailsViewModel(
+class OrderDetailsManagementViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: FirebaseFireStoreRepository
 
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(OrderDetailsUiState())
-    val uiState: StateFlow<OrderDetailsUiState> = _uiState
+    private val _uiState = MutableStateFlow(OrderDetailsManagementUiState())
+    val uiState: StateFlow<OrderDetailsManagementUiState> = _uiState
 
     private val orderId: String? = savedStateHandle["orderId"]
 
@@ -25,27 +25,39 @@ class OrderDetailsViewModel(
         loadOrder()
         viewModelScope.launch {
             _uiState.collect { state ->
-                Log.d("PaymentViewModel", "Current UI State: $state")
+                Log.d("OrderDetailsManagementViewModel", "Current UI State: $state")
             }
         }
     }
 
-    private fun loadOrder() {
+    fun loadOrder() {
         viewModelScope.launch {
             if (orderId.isNullOrEmpty()) {
-                Log.w("OrderDetailsViewModel", "No orderId provided, skipping load.")
+                Log.w("OrderDetailsManagementViewModel", "No orderId provided, skipping load.")
                 return@launch
             }
             _uiState.update { it.copy(isLoading = true) }
             val result = repository.getOrderById(orderId)
             result.onSuccess { order ->
+                val userResult = runCatching { repository.getUserById(order.userId) }.getOrNull()
+
+                val currentButtonText = when (order.status) {
+                    OrderStatus.PENDING -> "Xác nhận đơn hàng"
+                    OrderStatus.CONFIRMED -> "Giao hàng"
+                    OrderStatus.SHIPPED -> "Hoàn thành"
+                    OrderStatus.ALL -> ""
+                    OrderStatus.AWAITING_PAYMENT -> "Thanh toán"
+                    OrderStatus.COMPLETED -> "Đã hoàn thành"
+                    OrderStatus.CANCELED -> "Đã hủy"
+                }
                 _uiState.update {
                     it.copy(
                         order = order,
+                        user = userResult,
+                        currentButtonText = currentButtonText,
                         isLoading = false
                     )
                 }
-                Log.d("OrderDetailsViewModel", "Order Loaded: ${_uiState.value.order}")
             }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }
             }
@@ -57,41 +69,49 @@ class OrderDetailsViewModel(
             val result =
                 repository.updateOrderStatus(_uiState.value.order.orderCode, OrderStatus.CANCELED)
             result.onSuccess {
-                Log.d("OrderViewModel", "Hủy đơn hàng thành công!")
+                Log.d("OrderDetailsManagementViewModel", "Hủy đơn hàng thành công!")
                 loadOrder()
                 // Cập nhật UI nếu cần
             }.onFailure {
-                Log.e("OrderViewModel", "Lỗi khi hủy đơn hàng: ${it.message}")
+                Log.e("OrderDetailsManagementViewModel", "Lỗi khi hủy đơn hàng: ${it.message}")
             }
         }
     }
 
     fun completedOrderClicked() {
+
+        _uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+        val orderStatus = when (_uiState.value.order.status) {
+            OrderStatus.COMPLETED -> OrderStatus.COMPLETED
+            OrderStatus.ALL -> OrderStatus.ALL
+            OrderStatus.AWAITING_PAYMENT -> OrderStatus.PENDING
+            OrderStatus.PENDING -> OrderStatus.CONFIRMED
+            OrderStatus.CONFIRMED -> OrderStatus.SHIPPED
+            OrderStatus.SHIPPED -> OrderStatus.COMPLETED
+            OrderStatus.CANCELED -> OrderStatus.CANCELED
+        }
         viewModelScope.launch {
             val result =
-                repository.updateOrderStatus(_uiState.value.order.orderCode, OrderStatus.COMPLETED)
+                repository.updateOrderStatus(_uiState.value.order.orderCode, orderStatus)
             result.onSuccess {
-                Log.d("OrderViewModel", "Xac nhan thành công!")
+                Log.d("OrderDetailsManagementViewModel", "Cap nhat thành công!")
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+                loadOrder()
                 // Cập nhật UI nếu cần
             }.onFailure {
-                Log.e("OrderViewModel", "Lỗi khi xac nhan hoan thanh: ${it.message}")
+                Log.e(
+                    "OOrderDetailsManagementViewModel",
+                    "Lỗi khi cap nhat trang thai don hang: ${it.message}"
+                )
             }
-        }
-    }
-
-    fun onChoosePayment() {
-        _uiState.update {
-            it.copy(
-                isShowPaymentDialog = true,
-            )
-        }
-    }
-
-    fun dismissPaymentDialog() {
-        _uiState.update {
-            it.copy(
-                isShowPaymentDialog = false,
-            )
         }
     }
 
@@ -126,5 +146,4 @@ class OrderDetailsViewModel(
             )
         }
     }
-
 }

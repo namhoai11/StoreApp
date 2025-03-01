@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -134,7 +133,7 @@ fun AddCouponScreen(
                 textRole,
                 "Khuyến mãi",
                 { navController.navigateUp() },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
     ) { innerPadding ->

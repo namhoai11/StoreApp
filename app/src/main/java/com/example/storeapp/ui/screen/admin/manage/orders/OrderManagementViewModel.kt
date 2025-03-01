@@ -36,13 +36,14 @@ class OrderManagementViewModel(
                 // Lấy danh sách userId duy nhất từ danh sách đơn hàng
                 val userIds = orders.map { it.userId }.toSet()
 
-                // Lấy thông tin người dùng từ Firestore
+                // Tạo map để lưu thông tin người dùng
                 val userMap = mutableMapOf<String, UserModel>()
                 userIds.forEach { userId ->
-                    val userResult = repository.getUserById(userId)
-                    userMap[userId] = userResult
+                    val userResult = runCatching { repository.getUserById(userId) }.getOrNull()
+                    if (userResult != null) {
+                        userMap[userId] = userResult
+                    }
                 }
-
                 val listOrderByStatus = orders.groupBy { it.status }
 
                 _uiState.update {
@@ -73,6 +74,7 @@ class OrderManagementViewModel(
             }
         }
     }
+
 
 
     fun selectOrderStatus(status: OrderStatus) {
