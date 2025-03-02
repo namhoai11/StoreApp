@@ -99,7 +99,6 @@ object AddCouponManagementDestination : NavigationDestination {
 }
 
 
-
 @Composable
 fun AddCouponScreen(
     navController: NavController,
@@ -312,11 +311,19 @@ fun AddCouponContent(
                 dateInput = timestampToDateOnlyString(uiState.couponDetailsItem.startDate),
                 onDateChange = onStartDateChange
             )
+            HorizontalDivider(
+                thickness = 1.dp,
+                modifier = Modifier.padding(16.dp)
+            )
             AddDateField(
                 title = "Kết thúc",
                 isEditing = isEditing,
                 dateInput = timestampToDateOnlyString(uiState.couponDetailsItem.endDate),
                 onDateChange = onEndDateChange
+            )
+            HorizontalDivider(
+                thickness = 1.dp,
+                modifier = Modifier.padding(16.dp)
             )
             AddLargeTextField(
                 title = "Mô tả",
@@ -515,6 +522,7 @@ fun AddLargeTextField(
 
 @Composable
 fun AddDateField(
+    modifier: Modifier = Modifier,
     title: String,
     isEditing: Boolean,
     dateInput: String = "",
@@ -522,7 +530,7 @@ fun AddDateField(
 
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Circle at the bottom
@@ -546,10 +554,7 @@ fun AddDateField(
             onDateSelected = onDateChange
         )
     }
-    HorizontalDivider(
-        thickness = 1.dp,
-        modifier = Modifier.padding(16.dp)
-    )
+
 }
 
 @SuppressLint("DefaultLocale")

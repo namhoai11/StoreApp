@@ -23,6 +23,8 @@ class FirebaseAuthRepository {
                     "email" to email,
                     "firstName" to userModel.firstName,
                     "lastName" to userModel.lastName,
+                    "dateOfBirt" to userModel.dateOfBirth,
+                    "gender" to userModel.gender,
                     "phone" to userModel.phone,
                     "createdAt" to userModel.createdAt,
                     "updatedAt" to userModel.updatedAt

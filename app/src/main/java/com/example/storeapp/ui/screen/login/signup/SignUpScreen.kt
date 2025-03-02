@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +17,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -54,9 +57,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.storeapp.R
+import com.example.storeapp.model.Gender
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.admin.FilterOption
+import com.example.storeapp.ui.component.function.timestampToDateOnlyString
 import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.admin.manage.coupon.add_coupon.AddDateField
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 
@@ -129,6 +136,43 @@ fun SignUpScreen(
                 placeholder = "Họ",
                 isPasswordField = false,
                 leadingIcon = R.drawable.icon_user_outlined
+            )
+        }
+        AddDateField(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            title = "Ngày sinh",
+            isEditing = true,
+            dateInput = timestampToDateOnlyString(uiState.dateOfBirth),
+            onDateChange = { viewModel.onDateOfBirthChange(it) }
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Circle at the bottom
+            Box(
+                modifier = Modifier
+                    .size(18.dp)
+                    .background(Color.Gray, shape = CircleShape)
+//                        .align(Alignment.BottomStart) // Đặt chấm tròn ở dưới cùng
+            )
+            Text(
+                text = "Giới tính",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            val listOptions = Gender.entries.map { it.toString() }
+            FilterOption(
+                modifier = Modifier.width(250.dp),
+                isEditing = true,
+                listOptions = listOptions,
+                selectedOption = uiState.gender.toString(),
+                onOptionSelected = { viewModel.onGenderSelected(Gender.fromString(it)!!) }
             )
         }
         LoginTextField(

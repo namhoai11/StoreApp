@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseAuthRepository
+import com.example.storeapp.model.Gender
 import com.example.storeapp.model.UserModel
+import com.example.storeapp.ui.component.function.toTimestamp
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +48,19 @@ class SignUpViewModel(
 
         } catch (_: Exception) {
 
+        }
+    }
+
+    fun onDateOfBirthChange(newDate: String) {
+        val timestamp = newDate.toTimestamp() // Chuyển chuỗi thành Timestamp
+        _uiState.update { it.copy(dateOfBirth = timestamp) }
+    }
+
+    fun onGenderSelected(gender: Gender) {
+        _uiState.update {
+            it.copy(
+                gender = gender
+            )
         }
     }
 
@@ -126,6 +141,8 @@ class SignUpViewModel(
             val userModel = UserModel(
                 firstName = _uiState.value.firstName,
                 lastName = _uiState.value.lastName,
+                dateOfBirth = _uiState.value.dateOfBirth,
+                gender = _uiState.value.gender,
                 email = _uiState.value.email,
                 phone = _uiState.value.phone,
                 createdAt = Timestamp(Date()),
