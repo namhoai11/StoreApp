@@ -57,6 +57,8 @@
     <string name="favorite_title">Favorite</string>
     <string name="category_title">Danh mục</string>
     <string name="profile_title">Profile</string>
+    <string name="profiledetail_title">Profile Detail</string>
+
     <string name="productdetails_title">ProductDetails</string>
     <string name="product_detail">Product Details</string>
     <string name="our_product">Sản phẩm</string>

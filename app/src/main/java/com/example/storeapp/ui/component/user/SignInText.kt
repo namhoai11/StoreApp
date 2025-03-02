@@ -2,18 +2,17 @@
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,38 +24,25 @@ fun SignInText(
     onTextClicked: () -> Unit,
     @StringRes normalText: Int,
     @StringRes clickableText: Int,
-    @StringRes textAnnomation: Int,
-
+    modifier: Modifier = Modifier // Thêm modifier vào đây
 ) {
-//    val normalText = stringResource(id = R.string.non_account)
-//    val clickableText = stringResource(id = R.string.signup_title)
-
-    val annotatedString = buildAnnotatedString {
-        append(stringResource(id = normalText))
-        append(" ")
-        pushStringAnnotation(tag = stringResource(id = clickableText), annotation = stringResource(
-            id = textAnnomation
-        ))
-        withStyle(
-            style = SpanStyle(
-                color = colorResource(id = R.color.purple),
-                fontWeight = FontWeight.Bold
-            )
-        ) {
-            append(stringResource(id = clickableText))
-        }
-        pop()
+    Row(
+        modifier = modifier.padding(top = 16.dp), // Áp dụng modifier vào Row
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(id = normalText),
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(id = clickableText),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(id = R.color.purple),
+            modifier = Modifier.clickable { onTextClicked() }
+        )
     }
-
-    Text(
-        text = annotatedString,
-        modifier = Modifier
-            .padding(top = 16.dp)
-            .clickable {
-                onTextClicked()
-            },
-        style = TextStyle(fontSize = 18.sp, textAlign = TextAlign.Center)
-    )
 }
 
 
@@ -68,7 +54,7 @@ fun PreviewSignInText() {
         SignInText(
             normalText = R.string.non_account,
             clickableText = R.string.signup_title,
-            textAnnomation = R.string.signup_annotation,
+//            textAnnomation = R.string.signup_annotation,
             onTextClicked = {}
         )
     }

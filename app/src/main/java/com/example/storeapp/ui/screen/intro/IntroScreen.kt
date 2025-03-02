@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.example.storeapp.ui.screen.intro
 
 import androidx.compose.foundation.Image
@@ -9,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -132,10 +131,11 @@ fun IntroScreen(
         SignInText(
             normalText = R.string.non_account,
             clickableText = R.string.signup_title,
-            textAnnomation = R.string.signup_annotation,
+//            textAnnomation = R.string.signup_annotation,
             onTextClicked = {
                 onNavigateSignUp()
-            }
+            },
+            modifier = Modifier.navigationBarsPadding()
         )
     }
 }

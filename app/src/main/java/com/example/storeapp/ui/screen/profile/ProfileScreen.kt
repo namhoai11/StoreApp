@@ -52,6 +52,7 @@ object ProfileDestination : NavigationDestination {
 @Composable
 fun ProfileScreen(
     navController: NavController,
+    onNavigateProfileDetailScreen: () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = {
@@ -64,7 +65,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier.padding(contentPadding)
         ) {
-            ProfileTopBar({})
+            ProfileTopBar { onNavigateProfileDetailScreen() }
             ProfileScreenContent(navController)
         }
     }
@@ -72,7 +73,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileTopBar(
-    navigateEditAccountScreen: () -> Unit,
+    navigateProfileDetailScreen: () -> Unit,
 ) {
     // Sử dụng scrollBehavior trong TopAppBar
     Row(
@@ -135,7 +136,7 @@ fun ProfileTopBar(
                 painter = painterResource(id = R.drawable.edit),
                 contentDescription = "",
                 modifier = Modifier.clickable {
-                    navigateEditAccountScreen()
+                    navigateProfileDetailScreen()
                 }
             )
         }
@@ -146,7 +147,7 @@ fun ProfileTopBar(
 @Composable
 fun ProfileScreenContent(
     navController: NavController,
-    ) {
+) {
     Card(
         shape = RoundedCornerShape(
             topStart = 32.dp,

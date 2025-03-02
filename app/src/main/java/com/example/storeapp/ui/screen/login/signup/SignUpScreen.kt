@@ -16,13 +16,16 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -77,12 +80,15 @@ fun SignUpScreen(
     onNavigateSignIn: () -> Unit,
     viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val scrollState = rememberScrollState()
+
     val uiState by viewModel.uiState.collectAsState()  // Lấy trạng thái từ ViewModel
     Column(
         Modifier
             .padding(WindowInsets.statusBars.asPaddingValues())
             .fillMaxHeight()
             .fillMaxWidth()
+            .verticalScroll(scrollState)
             .background(color = Color(android.graphics.Color.parseColor("#ffffff"))),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -257,7 +263,9 @@ fun SignUpScreen(
             onTextClicked = { onNavigateSignIn() },
             normalText = R.string.have_account,
             clickableText = R.string.login_title,
-            textAnnomation = R.string.signin_annotation
+//            textAnnomation = R.string.signin_annotation,
+            modifier = Modifier.navigationBarsPadding()
+                .padding(bottom = 16.dp)
         )
     }
 }

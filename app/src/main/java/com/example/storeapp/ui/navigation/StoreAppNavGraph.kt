@@ -70,6 +70,8 @@ import com.example.storeapp.ui.screen.login.verify.VerifyAccountDestination
 import com.example.storeapp.ui.screen.login.verify.VerifyScreen
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsDestination
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsScreen
+import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailDestination
+import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailScreen
 
 @Composable
 fun StoreAppNavHost(
@@ -281,8 +283,16 @@ fun StoreAppNavHost(
             )
         }
         composable(ProfileDestination.route) {
-            ProfileScreen(navController)
+            ProfileScreen(navController,
+                onNavigateProfileDetailScreen = {
+                    navController.navigate(ProfileDetailDestination.route)
+                })
         }
+
+        composable(ProfileDetailDestination.route) {
+            ProfileDetailScreen(navController)
+        }
+
         composable(DashboardAdminDestination.route) {
             DashBoardScreen(navController = navController,
                 navigateUserApp = {

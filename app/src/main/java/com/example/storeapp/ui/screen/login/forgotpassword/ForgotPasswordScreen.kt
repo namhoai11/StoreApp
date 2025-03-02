@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -152,10 +153,11 @@ fun ForgotPasswordScreen(
             SignInText(
                 normalText = R.string.remembered_password,
                 clickableText = R.string.login_title,
-                textAnnomation = R.string.signin_annotation,
+//                textAnnomation = R.string.signin_annotation,
                 onTextClicked = {
                     onNavigateSignIn()
-                }
+                },
+                modifier = Modifier.navigationBarsPadding()
             )
 
         }

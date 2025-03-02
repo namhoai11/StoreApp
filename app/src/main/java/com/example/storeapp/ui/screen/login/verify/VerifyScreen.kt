@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -205,9 +206,10 @@ fun VerifyScreen(
             SignInText(
                 normalText = R.string.dont_received_code,
                 clickableText = R.string.resend,
-                textAnnomation = R.string.resend_annotation,
+//                textAnnomation = R.string.resend_annotation,
                 onTextClicked = {
-                }
+                },
+                modifier = Modifier.navigationBarsPadding(),
             )
         }
     }

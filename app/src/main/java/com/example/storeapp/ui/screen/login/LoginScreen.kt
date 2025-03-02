@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,9 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +43,6 @@ import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.SignInText
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.login.signup.LoginTextField
-import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 
@@ -155,10 +153,10 @@ fun LoginScreen(
         SignInText(
             normalText = R.string.non_account,
             clickableText = R.string.signup_title,
-            textAnnomation = R.string.signup_annotation,
             onTextClicked = {
                 onNavigateSignUp()
-            }
+            },
+            modifier = Modifier.navigationBarsPadding()
         )
         Row() {
             Image(
