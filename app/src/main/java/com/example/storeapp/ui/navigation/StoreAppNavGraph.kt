@@ -52,6 +52,8 @@ import com.example.storeapp.ui.screen.intro.IntroDestination
 import com.example.storeapp.ui.screen.intro.IntroScreen
 import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.LoginScreen
+import com.example.storeapp.ui.screen.login.changepassword.ChangePasswordDestination
+import com.example.storeapp.ui.screen.login.changepassword.ChangePasswordScreen
 import com.example.storeapp.ui.screen.login.forgotpassword.ForgotPasswordDestination
 import com.example.storeapp.ui.screen.login.forgotpassword.ForgotPasswordScreen
 import com.example.storeapp.ui.screen.notification.NotificateDestination
@@ -424,9 +426,15 @@ fun StoreAppNavHost(
                 onNavigateSignIn = {
                     navController.navigate(LoginDestination.route)
                 },
-                onNavigateVerify = {
-                    navController.navigate(VerifyAccountDestination.route)
-                })
+//                onNavigateVerify = {
+//                    navController.navigate(VerifyAccountDestination.route)
+//                },
+            )
+        }
+        composable(ChangePasswordDestination.route) {
+            ChangePasswordScreen(
+                navController = navController
+            )
         }
         composable(VerifyAccountDestination.route) {
             VerifyScreen(navController = navController,

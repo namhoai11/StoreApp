@@ -189,8 +189,6 @@ class ProfileEditViewModel(
                 false
             }
 
-
-
             else -> true
         }
     }

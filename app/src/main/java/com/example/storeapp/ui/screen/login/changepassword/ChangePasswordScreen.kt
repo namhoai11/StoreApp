@@ -1,14 +1,18 @@
-﻿ package com.example.storeapp.ui.screen.login.changepassword
+﻿package com.example.storeapp.ui.screen.login.changepassword
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -16,10 +20,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,20 +33,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.storeapp.R
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.screen.login.signup.LoginTextField
+import com.example.storeapp.ui.theme.StoreAppTheme
 
 object ChangePasswordDestination : NavigationDestination {
     override val route = "change_password"
     override val titleRes = R.string.change_password
 }
-@Preview
+
 @Composable
-fun ChangePasswordScreen() {
+fun ChangePasswordScreen(
+    navController: NavController,
+    viewModel: ChangePasswordViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    ChangePasswordContent(uiState = uiState,
+        onOldPasswordChange = { viewModel.onOldPasswordChange(it) },
+        onNewPasswordChange = { viewModel.onNewPasswordChange(it) },
+        onConfirmNewPasswordChange = { viewModel.onConfirmNewPasswordChange(it) },
+        onConFirm = {
+            viewModel.changePassword {
+                navController.navigate(LoginDestination.route)
+            }
+        }
+    )
+}
+
+@Composable
+fun ChangePasswordContent(
+    uiState: ChangePasswordUiState,
+    onOldPasswordChange: (String) -> Unit = {},
+    onNewPasswordChange: (String) -> Unit = {},
+    onConfirmNewPasswordChange: (String) -> Unit = {},
+    onConFirm: () -> Unit = {}
+) {
     Column(
         Modifier
             .fillMaxHeight()
+            .padding(WindowInsets.statusBars.asPaddingValues())
             .fillMaxWidth()
             .background(color = Color(android.graphics.Color.parseColor("#ffffff"))),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -81,40 +114,40 @@ fun ChangePasswordScreen() {
 
                 )
         }
-//        Text(
-//            text = "Welcome to Commerc",
-//            fontSize = 30.sp,
-//            fontStyle = FontStyle.Italic,
-//            fontWeight = FontWeight.Bold,
-//            color = Color(android.graphics.Color.parseColor("#7d32a8"))
+//        LoginTextField(
+//            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+//            value = uiState.email,
+//            onValueChange = { onEmailChange(it) },
+//            placeholder = "Email",
+//            isPasswordField = false,
+//            leadingIcon = R.drawable.icon_email
 //        )
-        var pass by remember { mutableStateOf("") }
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.oldPassword,
+            onValueChange = { onOldPasswordChange(it) },
             placeholder = "Mật khẩu cũ",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.newPassword,
+            onValueChange = { onNewPasswordChange(it) },
             placeholder = "Mật khẩu mới",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
         LoginTextField(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            value = pass,
-            onValueChange = { pass = it },
+            value = uiState.confirmNewPassword,
+            onValueChange = { onConfirmNewPasswordChange(it) },
             placeholder = "Nhập lại mật khẩu mới",
             isPasswordField = true,
             leadingIcon = R.drawable.icon_padlock_filled
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onConFirm,
             Modifier
                 .fillMaxWidth()
                 .height(66.dp)
@@ -132,34 +165,22 @@ fun ChangePasswordScreen() {
             )
 
         }
-//        Text(
-//            text = "Don't remember password? Click here",
-//            Modifier.padding(top = 8.dp, bottom = 8.dp),
-//            fontSize = 14.sp,
-//            color = Color(0xFF7D32A8),
-//        )
-//        Row() {
-//            Image(
-//                painter = painterResource(id = R.drawable.google),
-//                contentDescription = null,
-//                Modifier.padding(8.dp)
-//            )
-//            Image(
-//                painter = painterResource(id = R.drawable.twitter),
-//                contentDescription = null,
-//                Modifier.padding(8.dp)
-//            )
-//            Image(
-//                painter = painterResource(id = R.drawable.facebook),
-//                contentDescription = null,
-//                Modifier.padding(8.dp)
-//            )
-//        }
         Image(
             painter = painterResource(id = R.drawable.bottom_background),
             contentDescription = "",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Preview("LightMode", showBackground = true)
+@Preview("DarkMode", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PreviewChangePasswordContent() {
+    StoreAppTheme {
+        ChangePasswordContent(
+            uiState = ChangePasswordUiState()
         )
     }
 }

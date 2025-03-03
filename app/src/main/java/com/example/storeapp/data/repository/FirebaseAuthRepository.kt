@@ -5,6 +5,9 @@ import com.example.storeapp.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthRepository {
@@ -61,6 +64,42 @@ class FirebaseAuthRepository {
             Result.success(result)
         } catch (e: Exception) {
             Log.e("FirebaseAuthRepository", "Login failed: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+
+    suspend fun updateUserPassword(oldPassword: String, newPassword: String): Result<Unit> {
+        return try {
+            val user = auth.currentUser ?: return Result.failure(Exception("Người dùng chưa đăng nhập"))
+            val email = user.email ?: return Result.failure(Exception("Không tìm thấy email người dùng"))
+
+            // Xác thực mật khẩu cũ trước khi thay đổi
+            val credential = EmailAuthProvider.getCredential(email, oldPassword)
+            user.reauthenticate(credential).await()
+
+            // Cập nhật mật khẩu mới
+            user.updatePassword(newPassword).await()
+
+            Log.d("FirebaseAuthRepository", "Cập nhật mật khẩu thành công")
+            Result.success(Unit)
+        } catch (e: FirebaseAuthInvalidCredentialsException) {
+            Result.failure(Exception("Mật khẩu cũ không chính xác"))
+        } catch (e: FirebaseAuthRecentLoginRequiredException) {
+            Result.failure(Exception("Vui lòng đăng nhập lại để thay đổi thông tin"))
+        } catch (e: Exception) {
+            Log.e("FirebaseAuthRepository", "Lỗi khi cập nhật mật khẩu", e)
+            Result.failure(e)
+        }
+    }
+    // Gửi email đặt lại mật khẩu
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Log.d("FirebaseAuthRepository", "Email đặt lại mật khẩu đã được gửi")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirebaseAuthRepository", "Lỗi khi gửi email đặt lại mật khẩu", e)
             Result.failure(e)
         }
     }

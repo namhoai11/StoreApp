@@ -35,13 +35,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.SettingProfileNavigatonItemProvider
+import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
+import com.example.storeapp.ui.screen.login.LoginDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
 object ProfileDestination : NavigationDestination {
@@ -52,7 +55,8 @@ object ProfileDestination : NavigationDestination {
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    onNavigateProfileDetailScreen: () -> Unit = {}
+    onNavigateProfileDetailScreen: () -> Unit = {},
+    viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Scaffold(
         bottomBar = {
@@ -66,7 +70,10 @@ fun ProfileScreen(
             modifier = Modifier.padding(contentPadding)
         ) {
             ProfileTopBar { onNavigateProfileDetailScreen() }
-            ProfileScreenContent(navController)
+            ProfileScreenContent(navController, logOut = {
+                viewModel.logOut()
+                navController.navigate(LoginDestination.route)
+            })
         }
     }
 }
@@ -147,6 +154,7 @@ fun ProfileTopBar(
 @Composable
 fun ProfileScreenContent(
     navController: NavController,
+    logOut: () -> Unit = {},
 ) {
     Card(
         shape = RoundedCornerShape(
@@ -183,7 +191,7 @@ fun ProfileScreenContent(
             }
             item {
                 OutlinedButton(
-                    onClick = { },
+                    onClick = logOut,
                     modifier = Modifier
                         .padding(
                             horizontal = 32.dp,

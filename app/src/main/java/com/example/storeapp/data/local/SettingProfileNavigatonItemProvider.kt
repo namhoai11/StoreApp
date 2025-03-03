@@ -5,6 +5,7 @@ import com.example.storeapp.R
 import com.example.storeapp.ui.screen.address.AddressDestination
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.cart.CartDestination
+import com.example.storeapp.ui.screen.login.changepassword.ChangePasswordDestination
 import com.example.storeapp.ui.screen.notification.NotificateDestination
 import com.example.storeapp.ui.screen.order.OrdersDestination
 
@@ -47,6 +48,7 @@ object SettingProfileNavigatonItemProvider {
         SettingProfileNavigaton(
             title = "Bảo mật tài khoản",
             description = "Các chính sách và chế độ bảo mật",
+            route = ChangePasswordDestination.route,
             icon = R.drawable.protection
         ),
         SettingProfileNavigaton(

@@ -25,10 +25,13 @@ import com.example.storeapp.ui.screen.favorite.WishListViewModel
 import com.example.storeapp.ui.screen.ourproduct.OurProductViewModel
 import com.example.storeapp.ui.screen.home.HomeViewModel
 import com.example.storeapp.ui.screen.login.LoginViewModel
+import com.example.storeapp.ui.screen.login.changepassword.ChangePasswordViewModel
+import com.example.storeapp.ui.screen.login.forgotpassword.ForgotPasswordViewModel
 import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.screen.order.OrderViewModel
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsViewModel
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
+import com.example.storeapp.ui.screen.profile.ProfileViewModel
 import com.example.storeapp.ui.screen.profile.editprofile.ProfileEditViewModel
 import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailViewModel
 
@@ -93,7 +96,11 @@ object AppViewModelProvider {
                 storeAppManagerApplication().container.locationApiService
             )
         }
-
+        initializer {
+            ProfileViewModel(
+                storeAppManagerApplication().container.firebaseAuthRepository,
+            )
+        }
         initializer {
             ProfileDetailViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
@@ -180,6 +187,17 @@ object AppViewModelProvider {
         }
         initializer {
             LoginViewModel(
+                storeAppManagerApplication().container.firebaseAuthRepository
+            )
+        }
+        initializer {
+            ChangePasswordViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+                storeAppManagerApplication().container.firebaseAuthRepository
+            )
+        }
+        initializer {
+            ForgotPasswordViewModel(
                 storeAppManagerApplication().container.firebaseAuthRepository
             )
         }
