@@ -28,6 +28,7 @@ import com.example.storeapp.ui.component.user.SectionTitle
 import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.screen.cart.CartViewModel
+import com.example.storeapp.ui.screen.intro.IntroDestination
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -53,7 +54,12 @@ fun HomeScreen(
 
     val homeUiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.user.observeAsState()
-
+    LaunchedEffect(currentUser, homeUiState.isUserLoading) {
+        if (!homeUiState.isUserLoading && currentUser == null) {
+            Log.d("HomeScreen", "User is null, navigating to Intro")
+            navController.navigate(IntroDestination.route)
+        }
+    }
     val cartUiState by cartViewModel.uiState.collectAsState()
     Log.d("HomeScreen", "user: $currentUser")
     val bannersLog = homeUiState.banners
@@ -75,12 +81,12 @@ fun HomeScreen(
                 cartQuantity = cartUiState.listProductOnCart.size
             )
         },
-            bottomBar = {
-                StoreAppBottomNavigationBar(
-                    navController = navController,
-                    currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-                )
-            }
+        bottomBar = {
+            StoreAppBottomNavigationBar(
+                navController = navController,
+                currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+            )
+        }
     ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,

@@ -36,8 +36,10 @@ class HomeViewModel(
 
     private fun loadUser() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isUserLoading = true) } // 🔥 Bắt đầu tải user
             val userData = repository.getCurrentUser()
             _user.value = userData
+            _uiState.update { it.copy(isUserLoading = false) } // ✅ Load xong
             Log.d("HomeViewModel", "User loaded: $userData")
         }
     }

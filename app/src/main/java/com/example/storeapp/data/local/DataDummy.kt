@@ -11,6 +11,7 @@ import com.example.storeapp.model.CouponActive
 import com.example.storeapp.model.CouponModel
 import com.example.storeapp.model.CouponType
 import com.example.storeapp.model.District
+import com.example.storeapp.model.Gender
 import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.PaymentMethodModel
@@ -18,9 +19,11 @@ import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.model.ProductsOnCart
 import com.example.storeapp.model.Province
+import com.example.storeapp.model.Role
 import com.example.storeapp.model.ShippingModel
 import com.example.storeapp.model.StockByVariant
 import com.example.storeapp.model.UserLocationModel
+import com.example.storeapp.model.UserModel
 import com.example.storeapp.model.Ward
 import com.example.storeapp.ui.screen.address.AddressUiState
 import com.example.storeapp.ui.screen.address.add_address.AddAddressUiState
@@ -37,6 +40,81 @@ import com.example.storeapp.ui.screen.order.OrderUiState
 import com.google.firebase.Timestamp
 
 object DataDummy {
+    val user = UserModel(
+        id = "1",
+        role = Role.USER,
+        tier = 1,
+        totalSpent = 50000L,
+        defaultLocationId = "loc_001",
+        firstName = "Nguyễn",
+        lastName = "An",
+        imageUrl = "https://example.com/user1.jpg",
+        gender = Gender.MALE,
+        dateOfBirth = Timestamp.now(),
+        email = "nguyenan@example.com",
+        phone = "0123456789",
+        vouchers = listOf("VC100", "VC200"),
+        wishList = listOf("prod_001", "prod_002"),
+        createdAt = Timestamp.now(),
+        updatedAt = Timestamp.now()
+    )
+    val dummyUsers = listOf(
+        UserModel(
+            id = "1",
+            role = Role.USER,
+            tier = 1,
+            totalSpent = 50000L,
+            defaultLocationId = "loc_001",
+            firstName = "Nguyễn",
+            lastName = "An",
+            imageUrl = "https://example.com/user1.jpg",
+            gender = Gender.MALE,
+            dateOfBirth = Timestamp.now(),
+            email = "nguyenan@example.com",
+            phone = "0123456789",
+            vouchers = listOf("VC100", "VC200"),
+            wishList = listOf("prod_001", "prod_002"),
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
+        ),
+        UserModel(
+            id = "2",
+            role = Role.ADMIN,
+            tier = 3,
+            totalSpent = 250000L,
+            defaultLocationId = "loc_002",
+            firstName = "Trần",
+            lastName = "Bình",
+            imageUrl = "https://example.com/user2.jpg",
+            gender = Gender.MALE,
+            dateOfBirth = Timestamp.now(),
+            email = "tranbinh@example.com",
+            phone = "0987654321",
+            vouchers = listOf("VC300"),
+            wishList = listOf("prod_003"),
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
+        ),
+        UserModel(
+            id = "3",
+            role = Role.USER,
+            tier = 2,
+            totalSpent = 120000L,
+            defaultLocationId = "loc_003",
+            firstName = "Lê",
+            lastName = "Cẩm",
+            imageUrl = "https://example.com/user3.jpg",
+            gender = Gender.FEMALE,
+            dateOfBirth = Timestamp.now(),
+            email = "lecaml@example.com",
+            phone = "0901234567",
+            vouchers = listOf(),
+            wishList = listOf("prod_004", "prod_005"),
+            createdAt = Timestamp.now(),
+            updatedAt = Timestamp.now()
+        )
+    )
+
     // Dữ liệu mẫu cho địa chỉ người dùng
     val dummyUserLocation = listOf(
         UserLocationModel(

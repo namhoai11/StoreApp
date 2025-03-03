@@ -15,6 +15,7 @@ data class HomeUiState(
     val showCategoryLoading: Boolean = true,
     val showRecommendedLoading: Boolean = true,
     val cartQuantity: Int = 0,
+    val isUserLoading: Boolean = true,
 ) {
     val currentListItems: List<ProductModel>
         get() = when (currentCategoryId) {

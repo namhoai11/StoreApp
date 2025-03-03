@@ -65,10 +65,11 @@ fun DashBoardScreen(
     val name = "${currentUser?.firstName ?: ""} ${currentUser?.lastName ?: ""}"
 
     LaunchedEffect(currentUser) {
-        if (currentUser?.role != Role.ADMIN) {
+        if (currentUser != null && currentUser!!.role != Role.ADMIN) {
             navigateUserApp()
         }
     }
+
 
     Scaffold(
         topBar = {

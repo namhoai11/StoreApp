@@ -352,6 +352,20 @@ class FirebaseFireStoreRepository {
         }
     }
 
+    suspend fun getAllUser(): Result<List<UserModel>> {
+        return try {
+            val snapshot = firestore.collection("Users").get().await()
+            val users = snapshot.documents.mapNotNull { it.toObject(UserModel::class.java) }
+            Log.d("Firestore", "Confirm loading Users")
+
+            Result.success(users)
+        } catch (e: Exception) {
+            Log.e("Firestore", "Error loading Users", e)
+            Result.failure(e)
+        }
+    }
+
+
     /** Cập nhật thông tin người dùng lên Firestore và trả về Result<Unit> */
     suspend fun updateUser(user: UserModel): Result<Unit> {
         return try {

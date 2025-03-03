@@ -10,6 +10,7 @@ data class UserModel(
     val defaultLocationId: String = "",
     val firstName: String = "",
     val lastName: String = "",
+    val imageUrl: String = "",
     val gender: Gender = Gender.OTHER,
     val dateOfBirth: Timestamp = Timestamp.now(),
     val email: String = "",
@@ -27,6 +28,7 @@ data class UserModel(
         defaultLocationId = "",
         firstName = "",
         lastName = "",
+        imageUrl = "",
         gender = Gender.OTHER, // Giá trị mặc định
         dateOfBirth = Timestamp.now(), // Giá trị mặc định
         email = "",

@@ -1,26 +1,23 @@
-﻿package com.example.storeapp.ui.screen.admin.manage.product
+﻿package com.example.storeapp.ui.screen.admin.manage.user
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,10 +26,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,7 +38,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
-import com.example.storeapp.model.ProductModel
+import com.example.storeapp.model.Role
+import com.example.storeapp.model.UserModel
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminSearch
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
@@ -49,65 +47,54 @@ import com.example.storeapp.ui.component.admin.FilterList
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
-
-object ProductManagementDestination : NavigationDestination {
-    override val route = "product management"
-    override val titleRes = R.string.management_product
+object UserManagementDestination : NavigationDestination {
+    override val route = "user_management"
+    override val titleRes = R.string.management_user
 }
 
 @Composable
-fun ProductManagementScreen(
+fun UserManagementScreen(
     navController: NavController,
-    onAddProductClick: () -> Unit,
     onNavigateProductDetail: (String) -> Unit,
-    viewModel: ProductManagementViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: UserManagementViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.loadData()
     }
-    LaunchedEffect(uiState.categories) {
-        if (uiState.categories.isNotEmpty() && uiState.currentCategoryId == "-2") {
-            viewModel.selectCategory(uiState.categories.first().name)
-        }
-    }
-
-
     Scaffold(
         topBar = {
             AdminTopAppBar(
                 R.drawable.arrowback,
                 "Quản lý",
-                "Sản phẩm",
+                "Tài khoản",
                 { navController.navigateUp() },
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 48.dp, bottom = 16.dp)
             )
         },
     ) { innerPadding ->
-        ProductManagementContent(
+        UserManagementContent(
             innerPadding = innerPadding,
             uiState = uiState,
-            onAddProductClick = onAddProductClick,
-            onFilterSelected = { viewModel.selectCategory(it) },
-            onProductItemClick = {
+            onFilterSelected = { viewModel.selectRole(it) },
+            onUserItemClick = {
                 onNavigateProductDetail(it.id)
             },
-            onSearchProduct = {viewModel.searchProductsByName(it)}
+            onSearchUser = { viewModel.searchUsersByName(it) }
         )
     }
 }
 
 @Composable
-fun ProductManagementContent(
+fun UserManagementContent(
     innerPadding: PaddingValues,
-    uiState: ProductManagementUiState,
-    onAddProductClick: () -> Unit = {},
+    uiState: UserManagementUiState,
     onFilterSelected: (String) -> Unit = {},
-    onProductItemClick: (ProductModel) -> Unit = {},
-    onSearchProduct: (String) -> Unit = {}
+    onUserItemClick: (UserModel) -> Unit = {},
+    onSearchUser: (String) -> Unit = {}
 ) {
 
-    val listCategory = uiState.categories.map { it.name }
+    val filterList = Role.entries.map { it.toString() }
     Column(
         modifier = Modifier
             .padding(innerPadding)
@@ -120,79 +107,49 @@ fun ProductManagementContent(
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             AdminSearch(
-                textSearch = "Tìm kiếm sản phẩm",
-                onSearch = onSearchProduct,
+                textSearch = "Tìm kiếm tài khoản",
+                onSearch = onSearchUser,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp)
             )
-            FilterList(filterList = listCategory, onFilterSelected = onFilterSelected)
-            ProductManagementList(
-                productList = if (uiState.currentQuery.isNotBlank()) {
-                    uiState.productsSearched
+            FilterList(filterList = filterList, onFilterSelected = onFilterSelected)
+            UserManagementList(
+                userList = if (uiState.currentQuery.isNotBlank()) {
+                    uiState.usersSearched
                 } else {
-                    uiState.currentListItems
+                    uiState.currentListUser
                 },
-                productItemClick = { onProductItemClick(it) })
-
-        }
-        Card(
-            border = BorderStroke(
-                width = 1.dp,
-                color = Color.LightGray
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(vertical = 24.dp, horizontal = 16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onAddProductClick()
-                    }
-            ) {
-                Text(
-                    text = "Thêm sản phẩm",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.Center)
-                )
-            }
+                userItemClick = { onUserItemClick(it) })
         }
     }
 }
 
 @Composable
-fun ProductManagementList(
-    productList: List<ProductModel>,
-    productItemClick: (ProductModel) -> Unit = {}
+fun UserManagementList(
+    userList: List<UserModel>,
+    userItemClick: (UserModel) -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(productList) { item ->
-            ProductManagementItem(item = item, productItemClick = { productItemClick(item) })
+        items(userList) { item ->
+            UserManagementItem(item = item, userItemClick = { userItemClick(item) })
         }
     }
 }
 
 @Composable
-fun ProductManagementItem(
-    item: ProductModel,
-    productItemClick: () -> Unit = {}
+fun UserManagementItem(
+    item: UserModel,
+    userItemClick: () -> Unit = {}
 ) {
-    val stockVar = item.stockByVariant.sumOf { it.quantity }
+    val name = "${item.firstName} ${item.lastName}"
+
     Card(
         shape = RoundedCornerShape(20.dp),
         elevation = CardDefaults.cardElevation(10.dp),
         modifier = Modifier.clickable {
-            productItemClick()
+            userItemClick()
         }
     ) {
         Row(
@@ -202,14 +159,11 @@ fun ProductManagementItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = item.images.firstOrNull(),
-                contentDescription = item.name,
+                model = (item.imageUrl), contentDescription = "",
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
+                    .size(80.dp),
+                contentScale = ContentScale.Inside,
             )
-
             Column(
                 modifier = Modifier.padding(start = 16.dp)
             ) {
@@ -221,7 +175,7 @@ fun ProductManagementItem(
                     Column(
                     ) {
                         Text(
-                            text = item.name,
+                            text = name,
                             color = Color.Black,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
@@ -242,32 +196,34 @@ fun ProductManagementItem(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Giá:",
+                        text = "Số điện thoại:",
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                     )
                     Text(
-                        text = "${item.price}",
+                        text = item.phone,
                         color = Color.Gray,
                         fontSize = 16.sp,
                     )
-
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Tồn kho:",
+                        text = "Email:",
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                     )
+                    Spacer(modifier =Modifier.width(8.dp))
                     Text(
-                        text = "$stockVar",
+                        text = item.email,
                         color = Color.Gray,
                         fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -279,10 +235,12 @@ fun ProductManagementItem(
 @Preview("Light Theme", showBackground = true)
 //@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewProductManagementContent() {
+fun PreviewUserManagementContent() {
     StoreAppTheme {
-        ProductManagementContent(
-            uiState = DataDummy.productManagementUiState,
+        UserManagementContent(
+            uiState = UserManagementUiState(
+                listUser = DataDummy.dummyUsers
+            ),
             innerPadding = PaddingValues(0.dp)
         )
     }
@@ -291,20 +249,17 @@ fun PreviewProductManagementContent() {
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewProductManagementList() {
-    val sampleCategories = DataDummy.listProduct
+fun PreviewUserManagementList() {
     StoreAppTheme {
-        ProductManagementList(sampleCategories)
+        UserManagementList(DataDummy.dummyUsers)
     }
 }
 
 @Preview("Light Theme", showBackground = true)
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PreviewProductManagementItem() {
-    val sampleItem = DataDummy.productItem
+fun PreviewUserManagementItem() {
     StoreAppTheme {
-        ProductManagementItem(sampleItem)
+        UserManagementItem(DataDummy.user)
     }
 }
-

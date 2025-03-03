@@ -6,8 +6,7 @@ import com.example.storeapp.ui.screen.admin.manage.category.CategoryManagementDe
 import com.example.storeapp.ui.screen.admin.manage.coupon.CouponManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.orders.OrderManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementDestination
-import com.example.storeapp.ui.screen.favorite.FavoriteDestination
-import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
+import com.example.storeapp.ui.screen.admin.manage.user.UserManagementDestination
 
 object ManagementNavigationItems {
     val navigationItemList = listOf(
@@ -18,16 +17,16 @@ object ManagementNavigationItems {
             route = OrderManagementDestination.route
         ),
         NavigationItem(
-            title = OurProductDestination.titleRes,
+            title = UserManagementDestination.titleRes,
             icon = R.drawable.admin_iconcustomer,
             iconActive = R.drawable.admin_iconcustomer,
-            route = OurProductDestination.route
+            route = UserManagementDestination.route
         ),
         NavigationItem(
-            title = FavoriteDestination.titleRes,
+            title = UserManagementDestination.titleRes,
             icon = R.drawable.admin_iconmanager,
             iconActive = R.drawable.admin_iconmanager,
-            route = FavoriteDestination.route
+            route = UserManagementDestination.route
         ),
         NavigationItem(
             title = CategoryManagementDestination.titleRes,
