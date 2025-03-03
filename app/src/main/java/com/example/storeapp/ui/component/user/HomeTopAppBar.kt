@@ -19,9 +19,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,7 +41,7 @@ fun HomeTopAppBar(
     cartQuantity: Int = 0,
     userName: String = ""
 ) {
-    var itemCount by remember { mutableStateOf(1) }
+    val itemCount by remember { mutableIntStateOf(1) }
     // Sử dụng scrollBehavior trong TopAppBar
     TopAppBar(
         title = {
@@ -55,7 +54,7 @@ fun HomeTopAppBar(
             ) {
                 Column {
                     Text(
-                        text = "Welcome Back",
+                        text = "Chào mừng",
                         color = Color.Black,
                         fontSize = 14.sp
                     )

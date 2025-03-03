@@ -1,10 +1,13 @@
 ﻿package com.example.storeapp.ui.screen.admin.dashboard
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
 import com.example.storeapp.model.OrderStatus
+import com.example.storeapp.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,12 +21,24 @@ class DashBoardViewModel(
     private val _uiState = MutableStateFlow(DashBoardUiState())
     val uiState: StateFlow<DashBoardUiState> = _uiState.asStateFlow()
 
+    private val _user = MutableLiveData<UserModel?>()
+    val user: LiveData<UserModel?> = _user
+
     init {
+        loadUser()
         loadData()
         viewModelScope.launch {
             _uiState.collect { state ->
                 Log.d("DashBoardViewModel", "Current UI State: $state")
             }
+        }
+    }
+
+    private fun loadUser() {
+        viewModelScope.launch {
+            val userData = repository.getCurrentUser()
+            _user.value = userData
+            Log.d("HomeViewModel", "User loaded: $userData")
         }
     }
 

@@ -20,8 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.OrderModel
+import com.example.storeapp.model.Role
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminBottomNavigationBar
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
@@ -58,12 +61,21 @@ fun DashBoardScreen(
     viewModel: DashBoardViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val currentUser by viewModel.user.observeAsState()
+    val name = "${currentUser?.firstName ?: ""} ${currentUser?.lastName ?: ""}"
+
+    LaunchedEffect(currentUser) {
+        if (currentUser?.role != Role.ADMIN) {
+            navigateUserApp()
+        }
+    }
+
     Scaffold(
         topBar = {
             AdminTopAppBar(
                 R.drawable.icon_navhome,
                 "Admin",
-                "LaHoaiNam",
+                name,
                 navigateUserApp,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 48.dp)
             )

@@ -16,7 +16,11 @@ class FirebaseAuthRepository {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     // Đăng ký người dùng mới
-    suspend fun registerUser(email: String, password: String, userModel: UserModel): Result<AuthResult> {
+    suspend fun registerUser(
+        email: String,
+        password: String,
+        userModel: UserModel
+    ): Result<AuthResult> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
@@ -24,6 +28,7 @@ class FirebaseAuthRepository {
                 val userMap = mapOf(
                     "id" to user.uid,
                     "email" to email,
+                    "role" to userModel.role,
                     "firstName" to userModel.firstName,
                     "lastName" to userModel.lastName,
                     "dateOfBirt" to userModel.dateOfBirth,
@@ -44,7 +49,7 @@ class FirebaseAuthRepository {
         }
     }
 
-//    private suspend fun sendEmailVerification(): Result<Unit> {
+    //    private suspend fun sendEmailVerification(): Result<Unit> {
 //        return try {
 //            auth.currentUser?.sendEmailVerification()?.await()
 //            Log.d("FirebaseAuthRepository", "Email verification sent")
@@ -71,8 +76,10 @@ class FirebaseAuthRepository {
 
     suspend fun updateUserPassword(oldPassword: String, newPassword: String): Result<Unit> {
         return try {
-            val user = auth.currentUser ?: return Result.failure(Exception("Người dùng chưa đăng nhập"))
-            val email = user.email ?: return Result.failure(Exception("Không tìm thấy email người dùng"))
+            val user =
+                auth.currentUser ?: return Result.failure(Exception("Người dùng chưa đăng nhập"))
+            val email =
+                user.email ?: return Result.failure(Exception("Không tìm thấy email người dùng"))
 
             // Xác thực mật khẩu cũ trước khi thay đổi
             val credential = EmailAuthProvider.getCredential(email, oldPassword)
@@ -92,6 +99,7 @@ class FirebaseAuthRepository {
             Result.failure(e)
         }
     }
+
     // Gửi email đặt lại mật khẩu
     suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
         return try {

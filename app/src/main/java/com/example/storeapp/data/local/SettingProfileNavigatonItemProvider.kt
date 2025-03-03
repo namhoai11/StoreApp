@@ -2,6 +2,7 @@
 
 import androidx.annotation.DrawableRes
 import com.example.storeapp.R
+import com.example.storeapp.model.Role
 import com.example.storeapp.ui.screen.address.AddressDestination
 import com.example.storeapp.ui.screen.admin.dashboard.DashboardAdminDestination
 import com.example.storeapp.ui.screen.cart.CartDestination
@@ -29,16 +30,16 @@ object SettingProfileNavigatonItemProvider {
             route = OrdersDestination.route,
             icon = R.drawable.icon_order
         ),
-        SettingProfileNavigaton(
-            title = "Ngân hàng",
-            description = "Thông tin tài khoản ngân hàng liên kết",
-            icon = R.drawable.credit_card
-        ),
-        SettingProfileNavigaton(
-            title = "Phiếu giảm giá",
-            description = "ShopVoucher dành riêng cho bạn",
-            icon = R.drawable.icon_coupon_outlined
-        ),
+//        SettingProfileNavigaton(
+//            title = "Ngân hàng",
+//            description = "Thông tin tài khoản ngân hàng liên kết",
+//            icon = R.drawable.credit_card
+//        ),
+//        SettingProfileNavigaton(
+//            title = "Phiếu giảm giá",
+//            description = "ShopVoucher dành riêng cho bạn",
+//            icon = R.drawable.icon_coupon_outlined
+//        ),
         SettingProfileNavigaton(
             title = "Thông báo",
             description = "Thông báo mới nhất",
@@ -56,7 +57,7 @@ object SettingProfileNavigatonItemProvider {
             description = "Trang quản trị",
             icon = R.drawable.administrator,
             route = DashboardAdminDestination.route,
-            requiredRole = 1,
+            requiredRole = Role.ADMIN,
         ),
     )
 }
@@ -67,6 +68,6 @@ data class SettingProfileNavigaton(
     val description: String,
     @DrawableRes val icon: Int,
     val route: String = "",
-    val requiredRole: Int = 0 // Mặc định ai cũng thấy (0: User, 1: Admin)
+    val requiredRole: Role = Role.USER // Mặc định ai cũng thấy (0: User, 1: Admin)
 )
 

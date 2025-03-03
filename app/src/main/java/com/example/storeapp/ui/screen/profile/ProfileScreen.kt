@@ -26,6 +26,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.storeapp.R
 import com.example.storeapp.data.local.SettingProfileNavigatonItemProvider
+import com.example.storeapp.model.Role
 import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.user.StoreAppBottomNavigationBar
 import com.example.storeapp.ui.navigation.NavigationDestination
@@ -58,6 +61,15 @@ fun ProfileScreen(
     onNavigateProfileDetailScreen: () -> Unit = {},
     viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val currentUser by viewModel.user.observeAsState()
+
+    val userRole = if (currentUser != null) {
+        currentUser!!.role
+    } else {
+        Role.USER
+    }
+
+    val name = "${currentUser?.firstName ?: ""} ${currentUser?.lastName ?: ""}"
     Scaffold(
         bottomBar = {
             StoreAppBottomNavigationBar(
@@ -69,17 +81,21 @@ fun ProfileScreen(
         Column(
             modifier = Modifier.padding(contentPadding)
         ) {
-            ProfileTopBar { onNavigateProfileDetailScreen() }
-            ProfileScreenContent(navController, logOut = {
-                viewModel.logOut()
-                navController.navigate(LoginDestination.route)
-            })
+            ProfileTopBar(userName = name,
+                navigateProfileDetailScreen = { onNavigateProfileDetailScreen() })
+            ProfileScreenContent(
+                userRole = userRole,
+                navController = navController, logOut = {
+                    viewModel.logOut()
+                    navController.navigate(LoginDestination.route)
+                })
         }
     }
 }
 
 @Composable
 fun ProfileTopBar(
+    userName: String = "",
     navigateProfileDetailScreen: () -> Unit,
 ) {
     // Sử dụng scrollBehavior trong TopAppBar
@@ -111,7 +127,7 @@ fun ProfileTopBar(
 //                        fontSize = 14.sp
 //                    )
             Text(
-                text = "LaHoaiNam",
+                text = userName,
                 color = Color.Black,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
@@ -153,6 +169,7 @@ fun ProfileTopBar(
 
 @Composable
 fun ProfileScreenContent(
+    userRole: Role = Role.USER,
     navController: NavController,
     logOut: () -> Unit = {},
 ) {
@@ -169,13 +186,20 @@ fun ProfileScreenContent(
         LazyColumn(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             item {
                 Text(
-                    text = "Account Settings",
+                    text = "Cài đặt tài khoản",
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
                     modifier = Modifier.padding(start = 16.dp, top = 32.dp),
                 )
             }
-            items(SettingProfileNavigatonItemProvider.navigationItemList) { item ->
+
+            val listOption = if (userRole == Role.USER) {
+                SettingProfileNavigatonItemProvider.navigationItemList.filter { it.requiredRole == Role.USER }
+            } else {
+                SettingProfileNavigatonItemProvider.navigationItemList
+            }
+
+            items(listOption) { item ->
                 SettingItem(
                     icon = item.icon, title = item.title, descript = item.description,
                     onItemClicked = {
@@ -260,7 +284,7 @@ fun SettingItem(
 @Composable
 fun PreviewProfileScreenConten() {
     StoreAppTheme {
-        ProfileScreenContent(rememberNavController())
+        ProfileScreenContent(navController = rememberNavController())
 
     }
 }
@@ -282,5 +306,5 @@ fun PreviewSettingItem() {
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewHomeTopAppBar() {
-    ProfileTopBar({})
+    ProfileTopBar(userName = "LaHoaiNam", navigateProfileDetailScreen = {})
 }

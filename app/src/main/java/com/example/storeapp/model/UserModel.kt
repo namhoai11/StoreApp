@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 
 data class UserModel(
     val id: String = "",
-    val role: Int = 0,
+    val role: Role = Role.USER,
     val tier: Int = 0,
     val totalSpent: Long = 0L,
     val defaultLocationId: String = "",
@@ -21,7 +21,7 @@ data class UserModel(
 ) {
     constructor() : this(
         id = "",
-        role = 0,
+        role = Role.USER,
         tier = 0,
         totalSpent = 0L,
         defaultLocationId = "",
@@ -53,6 +53,24 @@ enum class Gender {
 
     companion object {
         fun fromString(value: String): Gender? {
+            return entries.find { it.toString() == value }
+        }
+    }
+}
+
+enum class Role {
+    USER,
+    ADMIN;
+
+    override fun toString(): String {
+        return when (this) {
+            USER -> "Người dùng"
+            ADMIN -> "Quản trị"
+        }
+    }
+
+    companion object {
+        fun fromString(value: String): Role? {
             return entries.find { it.toString() == value }
         }
     }

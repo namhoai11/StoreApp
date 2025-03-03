@@ -50,12 +50,6 @@ fun HomeScreen(
         cartViewModel.resetCartUiState()
     }
 
-//    LaunchedEffect(navController) {
-//        navController.currentBackStackEntryFlow.collect { backStackEntry ->
-//            Log.d("NavStack", "Current destination: ${backStackEntry.destination.route}")
-//        }
-//    }
-
 
     val homeUiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.user.observeAsState()
@@ -68,6 +62,7 @@ fun HomeScreen(
     Log.d("HomeScreen", "categories: $categoryLog")
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val name = "${currentUser?.firstName ?: ""} ${currentUser?.lastName ?: ""}"
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -76,7 +71,7 @@ fun HomeScreen(
                 scrollBehavior = scrollBehavior,// Truyền scrollBehavior vào đây
                 navigateCartScreen,
                 navigateNotification,
-                userName = "${currentUser?.firstName} ${currentUser?.lastName}",
+                userName = name,
                 cartQuantity = cartUiState.listProductOnCart.size
             )
         },
