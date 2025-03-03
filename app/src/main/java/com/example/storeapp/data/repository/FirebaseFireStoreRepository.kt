@@ -352,6 +352,32 @@ class FirebaseFireStoreRepository {
         }
     }
 
+    /** Cập nhật thông tin người dùng lên Firestore và trả về Result<Unit> */
+    suspend fun updateUser(user: UserModel): Result<Unit> {
+        return try {
+            val userMap = mapOf(
+                "firstName" to user.firstName,
+                "lastName" to user.lastName,
+                "dateOfBirth" to user.dateOfBirth,
+                "gender" to user.gender,
+                "phone" to user.phone,
+                "updatedAt" to Timestamp.now()
+            )
+
+            firestore.collection("Users").document(user.id)
+                .set(userMap, SetOptions.merge()) // Chỉ cập nhật các trường được truyền
+                .await()
+
+            Log.d("FirebaseFireStoreRepository", "Cập nhật thành công: $userMap")
+            Result.success(Unit) // Trả về thành công
+
+        } catch (e: Exception) {
+            Log.e("FirebaseFireStoreRepository", "Lỗi khi cập nhật người dùng", e)
+            Result.failure(e) // Trả về lỗi
+        }
+    }
+
+
 
 
     suspend fun addWishListItem(currentUserId: String, productId: String) {

@@ -70,6 +70,8 @@ import com.example.storeapp.ui.screen.login.verify.VerifyAccountDestination
 import com.example.storeapp.ui.screen.login.verify.VerifyScreen
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsDestination
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsScreen
+import com.example.storeapp.ui.screen.profile.editprofile.ProfileEditDestination
+import com.example.storeapp.ui.screen.profile.editprofile.ProfileEditScreen
 import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailDestination
 import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailScreen
 
@@ -290,7 +292,16 @@ fun StoreAppNavHost(
         }
 
         composable(ProfileDetailDestination.route) {
-            ProfileDetailScreen(navController)
+            ProfileDetailScreen(
+                navController = navController,
+                onNavigateEditProfile = { navController.navigate(ProfileEditDestination.route) }
+            )
+        }
+
+        composable(ProfileEditDestination.route) {
+            ProfileEditScreen(
+                navController = navController,
+            )
         }
 
         composable(DashboardAdminDestination.route) {

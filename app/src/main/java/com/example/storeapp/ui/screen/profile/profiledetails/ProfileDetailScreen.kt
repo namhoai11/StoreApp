@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -55,23 +58,38 @@ object ProfileDetailDestination : NavigationDestination {
 @Composable
 fun ProfileDetailScreen(
     navController: NavController,
-
+    onNavigateEditProfile: () -> Unit,
     viewModel: ProfileDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentUser by viewModel.user.observeAsState()
 
-    currentUser?.let { ProfileDetailContent(uiState = uiState, currentUser = it) }
+    LaunchedEffect(Unit) {
+        viewModel.loadUser()
+    }
+    currentUser?.let {
+        ProfileDetailContent(
+            uiState = uiState, currentUser = it,
+            onEditProfileClick = onNavigateEditProfile,
+            onCloseClick = { navController.navigateUp() }
+        )
+    }
 }
 
 
 @Composable
 fun ProfileDetailContent(
     uiState: ProfileDetailUiState = ProfileDetailUiState(),
-    currentUser: UserModel = UserModel()
+    currentUser: UserModel = UserModel(),
+    onEditProfileClick: () -> Unit = {},
+    onCloseClick: () -> Unit = {},
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 64.dp)
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 64.dp)
+            .verticalScroll(scrollState)
     ) {
         Text(
             text = "Thông tin tài khoản".uppercase(),
@@ -167,7 +185,7 @@ fun ProfileDetailContent(
         }
 
         Button(
-            onClick = { },
+            onClick = { onEditProfileClick() },
             modifier = Modifier
                 .padding(
                     horizontal = 32.dp,
@@ -185,7 +203,7 @@ fun ProfileDetailContent(
             )
         }
         OutlinedButton(
-            onClick = { },
+            onClick = { onCloseClick() },
             modifier = Modifier
                 .padding(
                     horizontal = 32.dp,
@@ -206,10 +224,10 @@ fun ProfileDetailContent(
 
 @Composable
 fun UserInfoRow(
+    modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     label: String = "",
     value: String = "",
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier

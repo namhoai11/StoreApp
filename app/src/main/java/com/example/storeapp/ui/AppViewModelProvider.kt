@@ -29,6 +29,7 @@ import com.example.storeapp.ui.screen.login.signup.SignUpViewModel
 import com.example.storeapp.ui.screen.order.OrderViewModel
 import com.example.storeapp.ui.screen.order.orderdetails.OrderDetailsViewModel
 import com.example.storeapp.ui.screen.productdetails.ProductDetailsViewModel
+import com.example.storeapp.ui.screen.profile.editprofile.ProfileEditViewModel
 import com.example.storeapp.ui.screen.profile.profiledetails.ProfileDetailViewModel
 
 object AppViewModelProvider {
@@ -95,6 +96,12 @@ object AppViewModelProvider {
 
         initializer {
             ProfileDetailViewModel(
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
+
+        initializer {
+            ProfileEditViewModel(
                 storeAppManagerApplication().container.firebaseFireStoreRepository,
             )
         }
