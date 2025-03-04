@@ -19,6 +19,7 @@ import com.example.storeapp.ui.screen.admin.manage.orders.orderdetailsmanagement
 import com.example.storeapp.ui.screen.admin.manage.product.ProductManagementViewModel
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductViewModel
 import com.example.storeapp.ui.screen.admin.manage.user.UserManagementViewModel
+import com.example.storeapp.ui.screen.admin.manage.user.userdetails.UserDetailsManagementViewModel
 import com.example.storeapp.ui.screen.cart.CartViewModel
 import com.example.storeapp.ui.screen.checkout.CheckoutViewModel
 import com.example.storeapp.ui.screen.checkout.payment.PaymentViewModel
@@ -184,6 +185,12 @@ object AppViewModelProvider {
             )
         }
 
+        initializer {
+            UserDetailsManagementViewModel(
+                this.createSavedStateHandle(),
+                storeAppManagerApplication().container.firebaseFireStoreRepository,
+            )
+        }
 
 
         initializer {

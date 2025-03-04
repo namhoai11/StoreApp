@@ -9,6 +9,7 @@ import com.example.storeapp.model.OrderModel
 import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.ProductModel
 import com.example.storeapp.model.ProductsOnCart
+import com.example.storeapp.model.Role
 import com.example.storeapp.model.SliderModel
 import com.example.storeapp.model.UserLocationModel
 import com.example.storeapp.model.UserModel
@@ -366,6 +367,35 @@ class FirebaseFireStoreRepository {
     }
 
 
+    suspend fun updateUserRole(userId: String, newRole: Role): Result<Unit> {
+        return try {
+            val userRef = firestore.collection("Users").document(userId)
+
+            val snapshot = userRef.get().await()
+            if (!snapshot.exists()) {
+                return Result.failure(Exception("Tai khoan không tồn tại"))
+            }
+
+            val user = snapshot.toObject(UserModel::class.java)
+                ?: return Result.failure(Exception("Lỗi chuyển đổi dữ liệu user"))
+
+            // Cập nhật trạng thái đơn hàng
+            val updatedUser = user.copy(
+                role = newRole,
+                updatedAt = Timestamp.now()
+            )
+
+            // Cập nhật trên Firestore
+            userRef.set(updatedUser, SetOptions.merge()).await()
+
+            Log.d("FirestoreRepository", "User đã được cập nhật Role thành $newRole!")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("FirestoreRepository", "Lỗi khi cập nhật userRole", e)
+            Result.failure(e)
+        }
+    }
+
     /** Cập nhật thông tin người dùng lên Firestore và trả về Result<Unit> */
     suspend fun updateUser(user: UserModel): Result<Unit> {
         return try {
@@ -390,8 +420,6 @@ class FirebaseFireStoreRepository {
             Result.failure(e) // Trả về lỗi
         }
     }
-
-
 
 
     suspend fun addWishListItem(currentUserId: String, productId: String) {
@@ -1074,7 +1102,6 @@ class FirebaseFireStoreRepository {
             Result.failure(e)
         }
     }
-
 
 
 }

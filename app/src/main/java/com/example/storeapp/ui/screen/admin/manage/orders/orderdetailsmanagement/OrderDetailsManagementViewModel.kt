@@ -30,7 +30,7 @@ class OrderDetailsManagementViewModel(
         }
     }
 
-    fun loadOrder() {
+    private fun loadOrder() {
         viewModelScope.launch {
             if (orderId.isNullOrEmpty()) {
                 Log.w("OrderDetailsManagementViewModel", "No orderId provided, skipping load.")

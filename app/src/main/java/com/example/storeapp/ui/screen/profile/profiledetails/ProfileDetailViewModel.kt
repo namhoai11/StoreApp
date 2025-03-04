@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.storeapp.data.repository.FirebaseFireStoreRepository
+import com.example.storeapp.model.OrderStatus
 import com.example.storeapp.model.UserModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,7 +70,9 @@ class ProfileDetailViewModel(
             val resultLoadOrder = repository.getOrdersByUser(userId)
 
             resultLoadOrder.onSuccess { orders ->
-                val sumTotalPrice = orders.sumOf { it.totalPrice }
+                val validOrders = orders.filter { it.status != OrderStatus.CANCELED }
+
+                val sumTotalPrice = validOrders.sumOf { it.totalPrice }
                 _uiState.update {
                     it.copy(
                         userSpend = sumTotalPrice,

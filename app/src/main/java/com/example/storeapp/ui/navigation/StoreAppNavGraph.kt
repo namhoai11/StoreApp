@@ -36,6 +36,8 @@ import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProduc
 import com.example.storeapp.ui.screen.admin.manage.product.add_product.AddProductScreen
 import com.example.storeapp.ui.screen.admin.manage.user.UserManagementDestination
 import com.example.storeapp.ui.screen.admin.manage.user.UserManagementScreen
+import com.example.storeapp.ui.screen.admin.manage.user.userdetails.UserDetailsManagementDestination
+import com.example.storeapp.ui.screen.admin.manage.user.userdetails.UserDetailsManagementScreen
 import com.example.storeapp.ui.screen.favorite.FavoriteDestination
 import com.example.storeapp.ui.screen.favorite.WishListScreen
 import com.example.storeapp.ui.screen.ourproduct.OurProductDestination
@@ -414,13 +416,24 @@ fun StoreAppNavHost(
         ) {
             AddCategoryScreen(navController = navController)
         }
+
+
         composable(UserManagementDestination.route) {
             UserManagementScreen(
                 navController = navController,
                 onNavigateProductDetail = {
-
+                    navController.navigate(UserDetailsManagementDestination.createRoute(it))
                 }
             )
+        }
+
+        composable(
+            route = UserDetailsManagementDestination.route,
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType; nullable = true },
+            )
+        ) {
+            UserDetailsManagementScreen(navController = navController)
         }
 
 

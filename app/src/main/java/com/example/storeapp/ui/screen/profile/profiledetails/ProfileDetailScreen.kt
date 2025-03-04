@@ -132,11 +132,28 @@ fun ProfileDetailContent(
                         fontWeight = FontWeight.Bold
                     )
                     Row(
-//                        modifier = Modifier.fillMaxWidth(),
+//                        modifier = Modifier.weight(0.4f),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        UserInfoRow(icon = R.drawable.icon_user_filled, label = "khách hàng")
+                        Image(
+                            painter = painterResource(id = R.drawable.icon_user_filled),
+                            contentDescription = currentUser.role.toString(),
+                            modifier = Modifier.size(20.dp),
+                            colorFilter = ColorFilter.tint(Color.Gray) // Làm biểu tượng đồng bộ màu xám
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = currentUser.role.toString(),
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
                     }
+//                    Row(
+////                        modifier = Modifier.fillMaxWidth(),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        UserInfoRow(icon = R.drawable.icon_user_filled, label = "khách hàng")
+//                    }
                 }
             }
 
