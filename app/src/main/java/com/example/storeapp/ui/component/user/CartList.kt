@@ -38,6 +38,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.storeapp.R
 import com.example.storeapp.data.local.DataDummy
+import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.screen.cart.ProductsOnCartToShow
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -81,16 +82,16 @@ fun CartItem(
 
     val textPrice: String = when {
         cartItem.productOptions.isNotEmpty() && cartItem.colorOptions.isNotEmpty() ->
-            "${cartItem.productOptions} - ${cartItem.colorOptions} - ${cartItem.productPrice}"
+            "${cartItem.productOptions} - ${cartItem.colorOptions} - ${formatCurrency2(cartItem.productPrice)}"
 
         cartItem.productOptions.isNotEmpty() ->
-            "${cartItem.productOptions} - ${cartItem.productPrice}"
+            "${cartItem.productOptions} -  ${formatCurrency2(cartItem.productPrice)}"
 
         cartItem.colorOptions.isNotEmpty() ->
-            "${cartItem.colorOptions} - ${cartItem.productPrice}"
+            "${cartItem.colorOptions} -  ${formatCurrency2(cartItem.productPrice)}"
 
         else ->
-            "${cartItem.productPrice}"
+            " ${formatCurrency2(cartItem.productPrice)}"
     }
 
     Card(
@@ -132,7 +133,7 @@ fun CartItem(
                         )
                         Text(
                             text = textPrice,
-                            color = colorResource(id = R.color.purple),
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .padding(start = 8.dp)
                         )
@@ -209,7 +210,7 @@ fun CartItem(
                     } else {
 
                         Text(
-                            text = "${cartItem.productTotalPrice}",
+                            text = formatCurrency2(cartItem.productTotalPrice),
 //                        text = "ProductPrice",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -253,7 +254,7 @@ fun NumberInCart(
                 .padding(2.dp)
                 .size(28.dp)
                 .background(
-                    colorResource(id = R.color.purple),
+                    MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .clickable { decreaseClick() }
@@ -339,12 +340,12 @@ fun CartItemMini(
 //            Spacer(modifier = Modifier.weight(1f))
             Row {
                 Text(
-                    text = "${item.quantity} x $${"%.2f".format(item.productPrice)}",
+                    text = "${item.quantity} x ${formatCurrency2(item.productPrice)}",
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
-                    text = "${item.productTotalPrice}",
+                    text = formatCurrency2(item.productTotalPrice),
                     fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -430,7 +431,7 @@ fun CartListPreview() {
 @Composable
 fun CartMiniListPreview() {
     StoreAppTheme {
-        val cart = DataDummy.cartItems
+//        val cart = DataDummy.cartItems
         CartMiniList(products = DataDummy.listProductsOnCartToShow)
     }
 }

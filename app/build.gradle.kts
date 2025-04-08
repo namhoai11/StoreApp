@@ -92,6 +92,7 @@ dependencies {
     //add nav
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+
     // Add Room dependencies
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

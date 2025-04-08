@@ -205,7 +205,7 @@ fun AddCouponContent(
                             .padding(10.dp)
                             .size(32.dp)
                             .background(
-                                color = Color.Cyan,
+                                color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .clickable {

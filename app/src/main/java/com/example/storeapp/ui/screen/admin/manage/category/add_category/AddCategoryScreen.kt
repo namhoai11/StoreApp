@@ -105,7 +105,7 @@ fun AddCategoryScreen(
             uiState = uiState,
             isEditing = isEditing,
             editCategoryClick = { viewModel.editCategoryClicked() },
-            deleteCategoryClick = { viewModel.removeCategory { navController.navigateUp() } },
+//            deleteCategoryClick = { viewModel.removeCategory { navController.navigateUp() } },
             onNameChange = { viewModel.onNameChange(it) },
             onDescriptionChange = { viewModel.onDescriptionChange(it) },
             onImageSelected = { viewModel.onImageSelected(it) },
@@ -158,7 +158,7 @@ fun AddCategoryContent(
                             .padding(10.dp)
                             .size(32.dp)
                             .background(
-                                color = Color.Cyan,
+                                color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .clickable {

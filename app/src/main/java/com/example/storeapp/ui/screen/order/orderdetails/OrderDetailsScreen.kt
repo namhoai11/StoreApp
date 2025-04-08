@@ -300,7 +300,10 @@ fun OrderDetailsContent(
                             )
                         }
                     }
-                    if (uiState.order.status != OrderStatus.CANCELED && uiState.order.status != OrderStatus.AWAITING_PAYMENT) {
+                    if (uiState.order.status != OrderStatus.CANCELED
+                        && uiState.order.status != OrderStatus.AWAITING_PAYMENT
+                        && uiState.order.status != OrderStatus.COMPLETED
+                    ) {
                         Button(
                             modifier = Modifier
                                 .padding(top = 8.dp, bottom = 8.dp)

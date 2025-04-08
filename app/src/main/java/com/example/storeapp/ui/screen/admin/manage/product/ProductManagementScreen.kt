@@ -46,6 +46,7 @@ import com.example.storeapp.ui.AppViewModelProvider
 import com.example.storeapp.ui.component.admin.AdminSearch
 import com.example.storeapp.ui.component.admin.AdminTopAppBar
 import com.example.storeapp.ui.component.admin.FilterList
+import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.navigation.NavigationDestination
 import com.example.storeapp.ui.theme.StoreAppTheme
 
@@ -248,7 +249,7 @@ fun ProductManagementItem(
                         fontSize = 16.sp,
                     )
                     Text(
-                        text = "${item.price}",
+                        text = formatCurrency2(item.price),
                         color = Color.Gray,
                         fontSize = 16.sp,
                     )

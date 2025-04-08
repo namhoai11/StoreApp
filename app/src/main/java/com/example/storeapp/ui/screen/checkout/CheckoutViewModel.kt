@@ -100,6 +100,7 @@ class CheckoutViewModel(
                 }
                 return@launch
             }
+
             val productIds = cart.products.map { it.productId }
             val products = repository.getProductByListId(productIds).associateBy { it.id }
 

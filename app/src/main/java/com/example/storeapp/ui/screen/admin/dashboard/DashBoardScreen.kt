@@ -311,7 +311,7 @@ fun OrderDashboard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Cyan
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         modifier = modifier
     ) {

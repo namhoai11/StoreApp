@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.storeapp.R
 import com.example.storeapp.model.ProductModel
+import com.example.storeapp.ui.component.function.formatCurrency2
 
 @Composable
 fun ListItems(items: List<ProductModel>, navigateToItemDetails: (String) -> Unit) {
@@ -118,8 +120,8 @@ fun Item(item: ProductModel, navigateToItemDetail: (String) -> Unit) {
                 )
             }
             Text(
-                text = "$${item.price}",
-                color = colorResource(id = R.color.purple),
+                text = formatCurrency2(item.price),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )

@@ -54,6 +54,7 @@ import com.example.storeapp.data.local.DataDummy
 import com.example.storeapp.model.ColorOptions
 import com.example.storeapp.model.ProductOptions
 import com.example.storeapp.ui.AppViewModelProvider
+import com.example.storeapp.ui.component.function.formatCurrency2
 import com.example.storeapp.ui.component.user.AlertDialog
 import com.example.storeapp.ui.component.user.ConfirmAddToCartDialog
 import com.example.storeapp.ui.component.user.LoadingBox
@@ -216,7 +217,7 @@ fun ProductDetailsContent(
                         .padding(end = 16.dp)
                 )
                 Text(
-                    text = "$${productDetailsUiState.currentPrice}",
+                    text = formatCurrency2(productDetailsUiState.currentPrice),
                     fontSize = 22.sp
                 )
             }
@@ -257,13 +258,13 @@ fun ProductDetailsContent(
                 Button(
                     onClick = onAddToCartClick,
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.purple)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp)
                         .height(50.dp)
                 ) {
-                    Text(text = "Buy Now", fontSize = 18.sp)
+                    Text(text = "Mua ngay", fontSize = 18.sp)
                 }
                 IconButton(
                     onClick = onCartClick,
@@ -424,7 +425,7 @@ fun OptionsSelector(
                     )
 
                     Text(
-                        text = "$${options.priceForOptions}",
+                        text = formatCurrency2(options.priceForOptions),
                         textAlign = TextAlign.Center,
                         //                            fontWeight = FontWeight.Bold,
                         color = if (index == selectedOptionIndex) colorResource(id = R.color.purple)

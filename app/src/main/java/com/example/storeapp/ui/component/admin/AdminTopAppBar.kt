@@ -49,7 +49,7 @@ fun AdminTopAppBar(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color.Cyan
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         modifier = modifier
     ) {

@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -88,7 +89,7 @@ fun DotIndicator(
     modifier: Modifier = Modifier,
     totalDot: Int,
     selectedIndex: Int,
-    selectedColor: Color = colorResource(id = R.color.purple),
+    selectedColor: Color = MaterialTheme.colorScheme.primary,
     unSelectedColor: Color = colorResource(id = R.color.grey),
     dotSize: Dp,
     spacing: Dp = 4.dp,

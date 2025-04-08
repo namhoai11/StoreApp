@@ -265,7 +265,7 @@ fun AddProductContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         IconButton(
-                            Color.Cyan,
+                            MaterialTheme.colorScheme.primary,
                             R.drawable.edit,
                             "Edit",
                             editProductClick
@@ -311,7 +311,6 @@ fun AddProductContent(
                 thickness = 1.dp,
                 modifier = Modifier.padding(16.dp)
             )
-
             AddTextField(
                 title = "Tên",
                 isEditing = isEditing,
@@ -902,7 +901,7 @@ fun AddStockByVariantField(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(
-                        Color.Cyan,
+                        MaterialTheme.colorScheme.primary,
                         R.drawable.edit,
                         "Edit",
                         onEditStockByVariantClick
